@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NibriBoard", "NibriBoard\NibriBoard.csproj", "{B7F806D9-9C50-4BA8-A803-0FC2EC5F5932}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nibriboard", "Nibriboard\Nibriboard.csproj", "{B7F806D9-9C50-4BA8-A803-0FC2EC5F5932}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

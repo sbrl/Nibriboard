@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NibriBoard
+namespace Nibriboard
 {
 	class MainClass
 	{
