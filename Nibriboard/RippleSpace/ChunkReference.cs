@@ -17,6 +17,10 @@ namespace Nibriboard.RippleSpace
 			
 		}
 
+		/// <summary>
+		/// Converts this chunk-space reference to plane-space.
+		/// </summary>
+		/// <returns>This chunk-space reference in plane-space.</returns>
 		public LocationReference InPlanespace()
 		{
 			return new LocationReference(

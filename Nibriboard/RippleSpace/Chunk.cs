@@ -6,8 +6,20 @@ namespace Nibriboard.RippleSpace
 	/// </summary>
 	public class Chunk
 	{
-		public Chunk()
+		/// <summary>
+		/// The plane that this chunk is located on.
+		/// </summary>
+		public readonly Plane Plane;
+
+		/// <summary>
+		/// The size of this chunk.
+		/// </summary>
+		public readonly int Size;
+
+		public Chunk(Plane inPlane, int inSize)
 		{
+			Plane = inPlane;
+			Size = inSize;
 		}
 	}
 }
