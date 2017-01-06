@@ -34,6 +34,12 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RippleSpace\Plane.cs" />
+    <Compile Include="RippleSpace\Chunk.cs" />
+    <Compile Include="RippleSpace\LocationReference.cs" />
+    <Compile Include="RippleSpace\ChunkReference.cs" />
+    <Compile Include="RippleSpace\DrawnLine.cs" />
+    <Compile Include="RippleSpace\Reference.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="RippleSpace\" />
