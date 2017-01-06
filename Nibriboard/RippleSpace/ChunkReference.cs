@@ -29,5 +29,10 @@ namespace Nibriboard.RippleSpace
 				Y / Plane.ChunkSize
 			);
 		}
+
+		public string AsFilename()
+		{
+			return $"{Plane.Name}-{X},{Y}.chunk";
+		}
 	}
 }
