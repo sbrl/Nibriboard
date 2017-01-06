@@ -7,7 +7,14 @@ namespace Nibriboard.RippleSpace
 	/// </summary>
 	public abstract class Reference
 	{
+		public readonly Plane Plane;
+
 		public int X { get; set; }
 		public int Y { get; set; }
+
+		public Reference(Plane inPlane, int inX, int inY)
+		{
+			Plane = inPlane;
+		}
 	}
 }

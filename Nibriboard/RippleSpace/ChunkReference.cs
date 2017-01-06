@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Policy;
 namespace Nibriboard.RippleSpace
 {
 	/// <summary>
@@ -11,8 +12,18 @@ namespace Nibriboard.RippleSpace
 	/// </remarks>
 	public class ChunkReference : Reference
 	{
-		public ChunkReference()
+		public ChunkReference(Plane inPlane, int inX, int inY) : base(inPlane, inX, inY)
 		{
+			
+		}
+
+		public LocationReference InPlanespace()
+		{
+			return new LocationReference(
+				Plane,
+				X / Plane.ChunkSize,
+				Y / Plane.ChunkSize
+			);
 		}
 	}
 }

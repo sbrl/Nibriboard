@@ -6,8 +6,9 @@ namespace Nibriboard.RippleSpace
 	/// </summary>
 	public class LocationReference : Reference
 	{
-		public LocationReference()
+		public LocationReference(Plane inPlane, int inX, int inY) : base(inPlane, inX, inY)
 		{
+			
 		}
 	}
 }
