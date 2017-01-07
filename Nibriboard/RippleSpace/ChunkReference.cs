@@ -36,6 +36,25 @@ namespace Nibriboard.RippleSpace
 			return $"{Plane.Name}-{X},{Y}.chunk";
 		}
 
+		public override bool Equals(object obj)
+		{
+			ChunkReference otherChunkReference = obj as ChunkReference;
+			if (otherChunkReference == null)
+				return false;
+
+			if (X == otherChunkReference.X && Y == otherChunkReference.Y &&
+			   Plane == otherChunkReference.Plane)
+			{
+				return true;
+			}
+			return false;
+		}
+
+		public override string ToString()
+		{
+			return $"ChunkReference: {base.ToString()}";
+		}
+
 		public static ChunkReference Parse(Plane plane, string source)
 		{
 			if (!source.StartsWith("ChunkReference:"))

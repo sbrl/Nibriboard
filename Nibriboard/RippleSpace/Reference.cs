@@ -16,5 +16,10 @@ namespace Nibriboard.RippleSpace
 		{
 			Plane = inPlane;
 		}
+
+		public override string ToString()
+		{
+			return $"({X}, {Y}, {Plane.Name})";
+		}
 	}
 }

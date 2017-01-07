@@ -124,6 +124,27 @@ namespace Nibriboard.RippleSpace
 			}
 		}
 
+		/// <summary>
+		/// Adds one or more new drawn lines to the chunk.
+		/// Note that new lines added must not cross chunk borders.
+		/// </summary>
+		/// <param name="newLines">The new line(s) to add.</param>
+		public void Add(params DrawnLine[] newLines)
+		{
+			int i = 0;
+			foreach (DrawnLine newLine in newLines)
+			{
+				if (newLine.SpansMultipleChunks == true)
+					throw new ArgumentException("Error: A line you tried to add spans multiple chunks.", $"newLines[{i}]");
+
+				if (newLine.ContainingChunk != Location)
+					throw new ArgumentException($"Error: A line you tried to add isn't in this chunk ({Location}).", $"newLine[{i}]");
+
+				lines.Add(newLine);
+				i++;
+			}
+		}
+
 		public IEnumerator<DrawnLine> GetEnumerator()
 		{
 			UpdateAccessTime();

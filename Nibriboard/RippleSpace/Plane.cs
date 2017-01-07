@@ -59,7 +59,8 @@ namespace Nibriboard.RippleSpace
 
 			// Uh-oh! The chunk isn't loaded at moment. Load it quick & then
 			// return it fast.
-			Chunk loadedChunk = await Chunk.FromFile(this, chunkLocation.AsFilename());
+			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilename());
+			Chunk loadedChunk = await Chunk.FromFile(this, chunkFilePath);
 			loadedChunkspace.Add(chunkLocation, loadedChunk);
 
 			return loadedChunk;
