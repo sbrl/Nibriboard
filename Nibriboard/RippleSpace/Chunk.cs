@@ -1,16 +1,17 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Collections;
+using System.Runtime.Serialization;
 
 namespace Nibriboard.RippleSpace
 {
 	/// <summary>
 	/// Represents a single chunk of an infinite <see cref="Nibriboard.RippleSpace.Plane" />.
 	/// </summary>
-	public class Chunk : IEnumerable<DrawnLine>
+	[Serializable]
+	public class Chunk : IEnumerable<DrawnLine>, IDeserializationCallback
 	{
 		/// <summary>
 		/// The lines that this chunk currently contains.
@@ -18,14 +19,15 @@ namespace Nibriboard.RippleSpace
 		private List<DrawnLine> lines = new List<DrawnLine>();
 
 		/// <summary>
-		/// The plane that this chunk is located on.
-		/// </summary>
-		public readonly Plane Plane;
-
-		/// <summary>
 		/// The size of this chunk.
 		/// </summary>
 		public readonly int Size;
+
+		/// <summary>
+		/// The location of this chunk chunk on the plane.
+		/// </summary>
+		public readonly ChunkReference Location;
+
 
 		/// <summary>
 		/// The time at which this chunk was loaded.
@@ -36,16 +38,79 @@ namespace Nibriboard.RippleSpace
 		/// </summary>
 		public DateTime TimeLastAccessed { get; private set; } = DateTime.Now;
 
-		public Chunk(Plane inPlane, int inSize)
+		/// <summary>
+		/// Whether this <see cref="T:Nibriboard.RippleSpace.Chunk"/> is primary chunk.
+		/// Primary chunks are always loaded.
+		/// </summary>
+		public bool IsPrimaryChunk
+		{
+			get {
+				if(Location.X < Location.Plane.PrimaryChunkAreaSize &&
+				   Location.X > -Location.Plane.PrimaryChunkAreaSize &&
+				   Location.Y < Location.Plane.PrimaryChunkAreaSize &&
+				   Location.Y > -Location.Plane.PrimaryChunkAreaSize)
+				{
+					return true;
+				}
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Whether this chunk is inactive or not.
+		/// </summary>
+		/// <remarks>
+		/// Note that even if a chunk is inactive, it's not guaranteed that
+		/// it will be unloaded. It's possible that the server will keep it
+		/// loaded anyway - it could be a primary chunk, or the server may not
+		/// have many chunks loaded at a particular time.
+		/// </remarks>
+		public bool Inactive
+		{
+			get {
+				// If the time we were last accessed + the inactive timer is
+				// still less than the current time, then we're inactive.
+				if (TimeLastAccessed.AddMilliseconds(Plane.InactiveMillisecs) < DateTime.Now)
+					return false;
+				
+				return true;
+			}
+		}
+
+		/// <summary>
+		/// Whether this chunk could, theorectically, be unloaded. Of course,
+		/// the server may decide it doesn't need to unload us even if we're
+		/// inactive.
+		/// </summary>
+		public bool CouldUnload
+		{
+			get {
+				// If we're a primary chunk or not inactive, then we shouldn't
+				// unload it.
+				if (IsPrimaryChunk || !Inactive)
+					return false;
+				
+				return true;
+			}
+		}
+
+		public Chunk(Plane inPlane, int inSize, ChunkReference inLocation)
 		{
 			Plane = inPlane;
 			Size = inSize;
+			Location = inLocation;
 		}
 
+		/// <summary>
+		/// Updates the time the chunk was last accessed, thereby preventing it
+		/// from becoming inactive.
+		/// </summary>
 		public void UpdateAccessTime()
 		{
 			TimeLastAccessed = DateTime.Now;
 		}
+
+		#region Enumerator
 
 		public DrawnLine this[int i]
 		{
@@ -70,25 +135,28 @@ namespace Nibriboard.RippleSpace
 			return GetEnumerator();
 		}
 
+		#endregion
+
+		#region Serialisation
+
 		public static async Task<Chunk> FromFile(Plane plane, string filename)
 		{
-			StreamReader chunkSource = new StreamReader(filename);
+			FileStream chunkSource = new FileStream(filename, FileMode.Open);
 			return await FromStream(plane, chunkSource);
 		}
-		public static async Task<Chunk> FromStream(Plane plane, StreamReader chunkSource)
+		public static async Task<Chunk> FromStream(Plane plane, Stream chunkSource)
 		{
-			Chunk result = new Chunk(
-				plane,
-				int.Parse(chunkSource.ReadLine())
-			);
+			Chunk loadedChunk = await Utilities.DeserialiseBinaryObject<Chunk>(chunkSource);
+			loadedChunk.Plane = plane;
 
-			string nextLine = string.Empty;
-			while((nextLine = await chunkSource.ReadLineAsync()) != null)
-			{
-				throw new NotImplementedException();
-			}
-
-			return result;
+			return loadedChunk;
 		}
+
+		public void OnDeserialization(object sender)
+		{
+			UpdateAccessTime();
+		}
+
+		#endregion
 	}
 }
