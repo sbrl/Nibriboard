@@ -23,12 +23,12 @@ namespace Nibriboard.RippleSpace
 
 		public override bool Equals(object obj)
 		{
-			ChunkReference otherChunkReference = obj as ChunkReference;
-			if (otherChunkReference == null)
+			LocationReference otherLocationReference = obj as LocationReference;
+			if (otherLocationReference == null)
 				return false;
 			
-			if(X == otherChunkReference.X && Y == otherChunkReference.Y &&
-			   Plane == otherChunkReference.Plane)
+			if(X == otherLocationReference.X && Y == otherLocationReference.Y &&
+			   Plane == otherLocationReference.Plane)
 			{
 				return true;
 			}
