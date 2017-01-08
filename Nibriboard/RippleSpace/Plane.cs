@@ -65,5 +65,22 @@ namespace Nibriboard.RippleSpace
 
 			return loadedChunk;
 		}
+
+		public async Task AddLine(DrawnLine newLine)
+		{
+			List<DrawnLine> chunkedLine;
+			// Split the line up into chunked pieces if neccessary
+			if(newLine.SpansMultipleChunks)
+				chunkedLine = newLine.SplitOnChunks(ChunkSize);
+			else
+				chunkedLine = new List<DrawnLine>() { newLine };
+
+			// Add each segment to the appropriate chunk
+			foreach(DrawnLine newLineSegment in chunkedLine)
+			{
+				Chunk containingChunk = await FetchChunk(newLineSegment.ContainingChunk);
+				containingChunk.Add(newLineSegment);
+			}
+		}
 	}
 }
