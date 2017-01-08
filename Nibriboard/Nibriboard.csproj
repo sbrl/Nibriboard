@@ -30,6 +30,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="IotWeb.Common">
+      <HintPath>..\packages\IotWeb.0.8.6\lib\net45\IotWeb.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="IotWeb.Server">
+      <HintPath>..\packages\IotWeb.0.8.6\lib\net45\IotWeb.Server.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -44,6 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="RippleSpace\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
