@@ -1,0 +1,28 @@
+{
+  "name": "nibriboard-client",
+  "version": "0.0.1",
+  "description": "The client program for nibriboard, an infinite whiteboard.",
+  "main": "index.js",
+  "dependencies": {
+    "rollupify": "^0.3.8"
+  },
+  "devDependencies": {
+    "rollupify": "^0.3.8"
+  },
+  "scripts": {
+    "test": "echo There aren\\'t any tests yet!"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.starbeamrainbowlabs.com/sbrl/Nibriboard"
+  },
+  "keywords": [
+    "whiteboard",
+    "infinite",
+    "chunks",
+    "drawing",
+    "client"
+  ],
+  "author": "Starbeamrainbowlabs <feedback@starbeamrainbowlabs.com>",
+  "license": "MPL-2.0"
+}

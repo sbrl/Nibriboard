@@ -47,9 +47,14 @@
     <Compile Include="RippleSpace\DrawnLine.cs" />
     <Compile Include="RippleSpace\Reference.cs" />
     <Compile Include="Utilities.cs" />
+    <Compile Include="Nibriboard.cs" />
+  </ItemGroup>
+  <ItemGroup>
+  	<EmbeddedResource Include="Client\" Exclude="node_modules" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="RippleSpace\" />
+    <Folder Include="Client\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
