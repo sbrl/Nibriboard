@@ -14,6 +14,11 @@ namespace Nibriboard.RippleSpace
 	public class Chunk : IEnumerable<DrawnLine>, IDeserializationCallback
 	{
 		/// <summary>
+		/// The plane upon which this chunk is located.
+		/// </summary>
+		private Plane plane;
+
+		/// <summary>
 		/// The lines that this chunk currently contains.
 		/// </summary>
 		private List<DrawnLine> lines = new List<DrawnLine>();
@@ -70,7 +75,7 @@ namespace Nibriboard.RippleSpace
 			get {
 				// If the time we were last accessed + the inactive timer is
 				// still less than the current time, then we're inactive.
-				if (TimeLastAccessed.AddMilliseconds(Plane.InactiveMillisecs) < DateTime.Now)
+				if (TimeLastAccessed.AddMilliseconds(plane.InactiveMillisecs) < DateTime.Now)
 					return false;
 				
 				return true;
@@ -96,7 +101,7 @@ namespace Nibriboard.RippleSpace
 
 		public Chunk(Plane inPlane, int inSize, ChunkReference inLocation)
 		{
-			Plane = inPlane;
+			plane = inPlane;
 			Size = inSize;
 			Location = inLocation;
 		}
@@ -168,7 +173,7 @@ namespace Nibriboard.RippleSpace
 		public static async Task<Chunk> FromStream(Plane plane, Stream chunkSource)
 		{
 			Chunk loadedChunk = await Utilities.DeserialiseBinaryObject<Chunk>(chunkSource);
-			loadedChunk.Plane = plane;
+			loadedChunk.plane = plane;
 
 			return loadedChunk;
 		}

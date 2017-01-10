@@ -3,18 +3,16 @@ using IotWeb.Common.Http;
 using System.Threading.Tasks;
 namespace Nibriboard
 {
-	public class NibriWebSocketClient : IWebSocketRequestHandler
+	public class NibriWebSocketHandler : IWebSocketRequestHandler
 	{
-		WebSocket client;
-
-		public NibriWebSocketClient()
+		public NibriWebSocketHandler()
 		{
 		}
 
-		public void Connected(WebSocket socket)
+		public void Connected(WebSocket client)
 		{
-			client = socket;
-			client.DataReceived += async (WebSocket clientSocket, string frame) => {
+			
+			/*client.DataReceived += async (WebSocket clientSocket, string frame) => {
 				try {
 					await onMessage(frame);
 				}
@@ -24,7 +22,7 @@ namespace Nibriboard
 				}
 
 				//Task.Run(async () => await onMessage(frame)).Wait();
-			};
+			};*/
 		}
 
 		/// <summary>
@@ -37,11 +35,6 @@ namespace Nibriboard
 		{
 			Log.WriteLine("[Nibriboard/Websocket] Accepting {0} via {1}.", uri, protocol);
 			return true;
-		}
-
-		private async Task onMessage(string frame)
-		{
-
 		}
 	}
 }

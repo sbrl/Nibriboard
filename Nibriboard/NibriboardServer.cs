@@ -28,15 +28,10 @@ namespace Nibriboard
 			);
 			httpServer.AddWebSocketRequestHandler(
 				"/RipplespaceConnection",
-
+				new NibriWebSocketHandler()
 			);
 			httpServer.Start();
 			Log.WriteLine("[NibriboardServer] Started on port {0}", Port);
-		}
-
-		private void Test()
-		{
-			HttpListener.
 		}
 	}
 }

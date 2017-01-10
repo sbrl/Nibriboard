@@ -57,15 +57,19 @@
     <Compile Include="RippleSpace\Reference.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="NibriboardServer.cs" />
+    <Compile Include="NibriWebSocketHandler.cs" />
     <Compile Include="Log.cs" />
-    <Compile Include="NibriWebSocketClient.cs" />
+    <Compile Include="Utilities\EmbeddedFiles.cs" />
   </ItemGroup>
   <ItemGroup>
-  	<EmbeddedResource Include="Client\" Exclude="node_modules" />
+  	<EmbeddedResource Include="Client\index.html" />
+  	<EmbeddedResource Include="Client\NibriClient.js" />
+  	<EmbeddedResource Include="Client\Nibri.css" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="RippleSpace\" />
     <Folder Include="Client\" />
+    <Folder Include="Utilities\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

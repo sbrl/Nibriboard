@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Configuration;
+using System.IO;
+
 namespace Nibriboard.RippleSpace
 {
 	/// <summary>
@@ -50,8 +52,8 @@ namespace Nibriboard.RippleSpace
 			source = source.Substring("LocationReference:".Length);
 			source = source.Trim("() \v\t\r\n".ToCharArray());
 
-			int x = source.Substring(0, source.IndexOf(","));
-			int y = source.Substring(source.IndexOf(",") + 1);
+			int x = int.Parse(source.Substring(0, source.IndexOf(",")));
+			int y = int.Parse(source.Substring(source.IndexOf(",") + 1));
 			return new LocationReference(
 				plane,
 				x,

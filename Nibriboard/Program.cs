@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using SBRLUtilities;
 
 namespace Nibriboard
 {
@@ -7,6 +9,7 @@ namespace Nibriboard
 		public static void Main(string[] args)
 		{
 			Console.WriteLine("Hello World!");
+			EmbeddedFiles.WriteResourceList();
 		}
 	}
 }

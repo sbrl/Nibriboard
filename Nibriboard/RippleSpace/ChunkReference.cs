@@ -64,8 +64,8 @@ namespace Nibriboard.RippleSpace
 			source = source.Substring("ChunkReference:".Length);
 			source = source.Trim("() \v\t\r\n".ToCharArray());
 
-			int x = source.Substring(0, source.IndexOf(","));
-			int y = source.Substring(source.IndexOf(",") + 1);
+			int x = int.Parse(source.Substring(0, source.IndexOf(",")));
+			int y = int.Parse(source.Substring(source.IndexOf(",") + 1));
 			return new ChunkReference(
 				plane,
 				x,
