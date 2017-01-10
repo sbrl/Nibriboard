@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace Nibriboard.RippleSpace
 {
 	/// <summary>
-	/// Represents a single chunk of an infinite <see cref="Nibriboard.RippleSpace.Plane" />.
+	/// Represents a single chunk of an infinite <see cref="NibriboardServer.RippleSpace.Plane" />.
 	/// </summary>
 	[Serializable]
 	public class Chunk : IEnumerable<DrawnLine>, IDeserializationCallback

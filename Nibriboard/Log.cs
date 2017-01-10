@@ -1,10 +1,13 @@
 ﻿using System;
 namespace Nibriboard
 {
-	public class Log
+	public static class Log
 	{
-		public Log()
+		public static int WriteLine(string text, params object[] args)
 		{
+			string outputText = $"[{DateTime.Now}] " + string.Format(text, args);
+			Console.WriteLine(outputText);
+			return outputText.Length;
 		}
 	}
 }

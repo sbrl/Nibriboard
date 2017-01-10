@@ -8,7 +8,7 @@ namespace Nibriboard.RippleSpace
 	/// </summary>
 	/// <remarks>
 	/// Defaults to chunk-space, but absolute plane-space can also be calculated
-	/// and obtained (A <see cref="Nibriboard.RippleSpace.LocationReference" />
+	/// and obtained (A <see cref="NibriboardServer.RippleSpace.LocationReference" />
 	/// is returned).
 	/// </remarks>
 	public class ChunkReference : Reference

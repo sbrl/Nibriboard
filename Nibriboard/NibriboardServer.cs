@@ -2,15 +2,16 @@
 using System.Reflection;
 using IotWeb.Server;
 using IotWeb.Common.Http;
+using System.Net;
 namespace Nibriboard
 {
-	public class Nibriboard
+	public class NibriboardServer
 	{
 		private HttpServer httpServer;
 
 		public readonly int Port = 31586;
 
-		public Nibriboard()
+		public NibriboardServer()
 		{
 		}
 
@@ -22,10 +23,20 @@ namespace Nibriboard
 				new HttpResourceHandler(
 					Assembly.GetExecutingAssembly(),
 					"Nibriboard",
-					"index.hmtl"
+					"index.html"
 				)
 			);
+			httpServer.AddWebSocketRequestHandler(
+				"/RipplespaceConnection",
+
+			);
 			httpServer.Start();
+			Log.WriteLine("[NibriboardServer] Started on port {0}", Port);
+		}
+
+		private void Test()
+		{
+			HttpListener.
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace Nibriboard.RippleSpace
 	public class DrawnLine
 	{
 		/// <summary>
-		/// The id of line that this <see cref="Nibriboard.RippleSpace.DrawnLine" /> is part of.
+		/// The id of line that this <see cref="NibriboardServer.RippleSpace.DrawnLine" /> is part of.
 		/// Note that this id may not be unique - several lines that were all
 		/// drawn at once may also have the same id. This is such that a single
 		/// line that was split across multiple chunks can still be referenced.

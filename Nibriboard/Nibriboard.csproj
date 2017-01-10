@@ -24,7 +24,7 @@
         <Command>
           <type>BeforeBuild</type>
           <command>npm run build</command>
-          <workingdir>${ProjectDir}\Client</workingdir>
+          <workingdir>${ProjectDir}/Client</workingdir>
         </Command>
       </CustomCommands>
     </CustomCommands>
@@ -56,7 +56,9 @@
     <Compile Include="RippleSpace\DrawnLine.cs" />
     <Compile Include="RippleSpace\Reference.cs" />
     <Compile Include="Utilities.cs" />
-    <Compile Include="Nibriboard.cs" />
+    <Compile Include="NibriboardServer.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="NibriWebSocketClient.cs" />
   </ItemGroup>
   <ItemGroup>
   	<EmbeddedResource Include="Client\" Exclude="node_modules" />
