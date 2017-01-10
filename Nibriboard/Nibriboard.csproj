@@ -57,9 +57,10 @@
     <Compile Include="RippleSpace\Reference.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="NibriboardServer.cs" />
-    <Compile Include="NibriWebSocketHandler.cs" />
+    <Compile Include="NibriClientManager.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Utilities\EmbeddedFiles.cs" />
+    <Compile Include="NibriClient.cs" />
   </ItemGroup>
   <ItemGroup>
   	<EmbeddedResource Include="Client\index.html" />
