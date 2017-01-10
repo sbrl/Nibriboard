@@ -18,8 +18,14 @@ namespace Nibriboard
 		{
 			httpServer = new HttpServer(Port);
 			httpServer.AddHttpRequestHandler(
-				"/"
+				"/",
+				new HttpResourceHandler(
+					Assembly.GetExecutingAssembly(),
+					"Nibriboard",
+					"index.hmtl"
+				)
 			);
+			httpServer.Start();
 		}
 	}
 }

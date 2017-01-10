@@ -9,8 +9,12 @@
   "devDependencies": {
     "rollupify": "^0.3.8"
   },
+  "config": {
+    "bundle_file": "NibriClient.js"
+  },
   "scripts": {
-    "test": "echo There aren\\'t any tests yet!"
+    "test": "echo There aren\\'t any tests yet!",
+    "build": "browserify $npm_package_main -t rollupify -o $npm_package_config_bundle_file",
   },
   "repository": {
     "type": "git",
