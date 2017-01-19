@@ -26,6 +26,8 @@ namespace Nibriboard
 
 				//Task.Run(async () => await onMessage(frame)).Wait();
 			};
+
+			
 		}
 
 		private async Task onMessage(string frame)

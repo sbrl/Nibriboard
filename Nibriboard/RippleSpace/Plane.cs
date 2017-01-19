@@ -82,5 +82,10 @@ namespace Nibriboard.RippleSpace
 				containingChunk.Add(newLineSegment);
 			}
 		}
+
+		public async Task PerformMaintenance()
+		{
+			// TODO: Perform maintenance here
+		}
 	}
 }

@@ -1,22 +1,26 @@
 ﻿using System;
 using System.Reflection;
+
 using IotWeb.Server;
 using IotWeb.Common.Http;
-using System.Net;
+
+using Nibriboard.RippleSpace;
+using System.Threading.Tasks;
+
 namespace Nibriboard
 {
 	public class NibriboardServer
 	{
 		private HttpServer httpServer;
 
+		private RippleSpaceManager planeManager = new RippleSpaceManager();
+
 		public readonly int Port = 31586;
 
-		public NibriboardServer()
+		public NibriboardServer(int inPort = 31586)
 		{
-		}
+			Port = inPort;
 
-		public void Setup()
-		{
 			httpServer = new HttpServer(Port);
 			httpServer.AddHttpRequestHandler(
 				"/",
@@ -30,8 +34,14 @@ namespace Nibriboard
 				"/RipplespaceConnection",
 				new NibriClientManager()
 			);
+		}
+
+		public async Task Start()
+		{
 			httpServer.Start();
 			Log.WriteLine("[NibriboardServer] Started on port {0}", Port);
+
+			await planeManager.StartMaintenanceMonkey();
 		}
 	}
 }
