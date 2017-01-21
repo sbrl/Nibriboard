@@ -36,6 +36,10 @@ namespace Nibriboard.RippleSpace
 			return $"{Plane.Name}-{X},{Y}.chunk";
 		}
 
+		public override int GetHashCode ()
+		{
+			return $"({Plane.Name})+{X}+{Y}".GetHashCode();
+		}
 		public override bool Equals(object obj)
 		{
 			ChunkReference otherChunkReference = obj as ChunkReference;

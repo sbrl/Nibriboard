@@ -8,7 +8,7 @@ namespace Nibriboard
 		public static double SecondsSinceStart {
 			get {
 				TimeSpan timeSinceStart = DateTime.Now - ServerStartTime;
-				return timeSinceStart.TotalSeconds;
+				return Math.Round(timeSinceStart.TotalSeconds, 4);
 			}
 		}
 	}

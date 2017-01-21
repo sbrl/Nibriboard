@@ -11,7 +11,7 @@ namespace SBRLUtilities
 	/// A collection of static methods for manipulating embedded resources.
 	/// </summary>
 	/// <description>
-	/// v0.2, by Starbeamrainbowlabs <feedback@starbeamrainbowlabs.com>
+	/// v0.3, by Starbeamrainbowlabs <feedback@starbeamrainbowlabs.com>
 	/// Last updated 8th August 2016.
 	/// Licensed under MPL-2.0.
 	/// 
@@ -20,6 +20,8 @@ namespace SBRLUtilities
 	/// 	- Initial release.
 	/// v0.2 (8th August 2016):
 	/// 	- Changed namespace.
+	/// v0.3 (21st January 2017):
+	/// 	- Added GetRawReader()
 	/// </description>
 	public static class EmbeddedFiles
 	{
@@ -52,11 +54,22 @@ namespace SBRLUtilities
 		/// <summary>
 		/// Gets a StreamReader attached to the specified embedded resource.
 		/// </summary>
-		/// <param name="filename">The filename of the embedded resource to a StreamReader for.</param>
+		/// <param name="filename">The filename of the embedded resource to get a StreamReader of.</param>
 		/// <returns>A StreamReader attached to the specified embedded resource.</returns>
 		public static StreamReader GetReader(string filename)
 		{
-			return new StreamReader(Assembly.GetCallingAssembly().GetManifestResourceStream(filename));
+			return new StreamReader(GetRawReader(filename));
+		}
+
+		/// <summary>
+		/// Gets a raw Stream that's attached to the specified embedded resource.
+		/// Useful when you want to copy an embedded resource to some other stream.
+		/// </summary>
+		/// <param name="filename">The path to the embedded resource.</param>
+		/// <returns>A raw Stream object attached to the specified file..</returns>
+		public static Stream GetRawReader(string filename)
+		{
+			return Assembly.GetCallingAssembly().GetManifestResourceStream(filename);
 		}
 
 		/// <summary>
@@ -76,7 +89,7 @@ namespace SBRLUtilities
 		/// <returns>The specified embedded resource's content as a byte array.</returns>
 		public static async Task<byte[]> ReadAllBytesAsync(string filename)
 		{
-			using (Stream resourceStream = Assembly.GetCallingAssembly().GetManifestResourceStream(filename))
+			using (Stream resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(filename))
 			using (MemoryStream temp = new MemoryStream())
 			{
 				await resourceStream.CopyToAsync(temp);

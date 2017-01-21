@@ -36,6 +36,10 @@ namespace Nibriboard.RippleSpace
 			}
 			return false;
 		}
+		public override int GetHashCode ()
+		{
+			return $"({Plane.Name})+{X}+{Y}".GetHashCode();
+		}
 
 		public override string ToString()
 		{

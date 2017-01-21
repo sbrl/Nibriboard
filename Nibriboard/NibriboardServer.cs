@@ -24,11 +24,12 @@ namespace Nibriboard
 			httpServer = new HttpServer(Port);
 			httpServer.AddHttpRequestHandler(
 				"/",
-				new HttpResourceHandler(
+				new HttpEmbeddedFileHandler("Nibriboard.ClientFiles")
+				/*new HttpResourceHandler(
 					Assembly.GetExecutingAssembly(),
-					"Nibriboard",
+					"ClientFiles",
 					"index.html"
-				)
+				)*/
 			);
 			httpServer.AddWebSocketRequestHandler(
 				"/RipplespaceConnection",
