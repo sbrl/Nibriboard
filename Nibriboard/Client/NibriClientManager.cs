@@ -8,10 +8,13 @@ namespace Nibriboard.Client
 {
 	public class NibriClientManager : IWebSocketRequestHandler
 	{
+		ClientSettings clientSettings;
+
 		List<NibriClient> clients = new List<NibriClient>();
 
-		public NibriClientManager()
+		public NibriClientManager(ClientSettings inClientSettings)
 		{
+			clientSettings = inClientSettings;
 		}
 
 		/// <summary>
@@ -22,8 +25,8 @@ namespace Nibriboard.Client
 		/// <returns>Whether we want to accept the WebSocket connection attempt or not.</returns>
 		public bool WillAcceptRequest(string uri, string protocol)
 		{
-			Log.WriteLine("[Nibriboard/Websocket] Accepting {0} via {1}.", uri, protocol);
-			return true;
+			Log.WriteLine("[Nibriboard/Websocket] Accepting new {0} connection.", protocol);
+			return clientSettings.WebsocketProtocol == protocol;
 		}
 		/// <summary>
 		/// Handles WebSocket clients when they first connect, wrapping them in

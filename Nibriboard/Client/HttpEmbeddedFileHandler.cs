@@ -36,10 +36,11 @@ namespace Nibriboard.Client
 				return;
 			}
 
-			response.ContentType = getMimeType(request.URI);
-			response.Headers.Add("content-type", response.ContentType);
 
 			string expandedFilePath = getEmbeddedFileReference(request.URI);
+			if (!embeddedFiles.Contains(expandedFilePath)) {
+				expandedFilePath += "index.html";
+			}
 			if (!embeddedFiles.Contains(expandedFilePath)) {
 				response.ResponseCode = HttpResponseCode.NotFound;
 				response.ContentType = "text/plain";
@@ -47,6 +48,10 @@ namespace Nibriboard.Client
 				logRequest(request, response);
 				return;
 			}
+
+			response.ContentType = getMimeType(expandedFilePath);
+			response.Headers.Add("content-type", response.ContentType);
+
 			byte[] embeddedFile = EmbeddedFiles.ReadAllBytes(expandedFilePath);
 			response.ContentLength = embeddedFile.Length;
 			response.Content.Write(embeddedFile, 0, embeddedFile.Length);

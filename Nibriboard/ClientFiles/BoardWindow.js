@@ -22,6 +22,7 @@ class BoardWindow extends EventEmitter
 		FaviconNotification.add();
 		
 		get("/Settings.json").then(JSON.parse).then((function(settings) {
+			console.info("[setup]", "Obtained settings from server:", settings);
 			this.settings = settings;
 			this.setup();
 		}).bind(this), function(errorMessage) {
@@ -29,6 +30,10 @@ class BoardWindow extends EventEmitter
 		});
 		
 		this.trackWindowSize();
+	}
+	
+	setup() {
+		this.rippleLink = new RippleLink(this.settings.WebsocketUri, this);
 	}
 	
 	nextFrame()

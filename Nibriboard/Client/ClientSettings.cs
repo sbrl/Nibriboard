@@ -20,6 +20,8 @@ namespace Nibriboard.Client
 			}
 		}
 
+		public string WebsocketProtocol = "RippleLink";
+
 		public ClientSettings()
 		{
 
