@@ -1,7 +1,7 @@
 ﻿using System;
 using IotWeb.Common.Http;
 using System.Threading.Tasks;
-namespace Nibriboard
+namespace Nibriboard.Client
 {
 	public class NibriClient
 	{

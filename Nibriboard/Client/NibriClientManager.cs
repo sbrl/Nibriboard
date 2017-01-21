@@ -3,7 +3,8 @@ using IotWeb.Common.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Diagnostics;
-namespace Nibriboard
+
+namespace Nibriboard.Client
 {
 	public class NibriClientManager : IWebSocketRequestHandler
 	{

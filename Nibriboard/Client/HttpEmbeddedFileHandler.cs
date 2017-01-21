@@ -7,7 +7,7 @@ using SBRLUtilities;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Nibriboard
+namespace Nibriboard.Client
 {
 	public class HttpEmbeddedFileHandler : IHttpRequestHandler
 	{

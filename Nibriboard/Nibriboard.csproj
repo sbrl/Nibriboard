@@ -60,13 +60,15 @@
     <Compile Include="RippleSpace\Reference.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="NibriboardServer.cs" />
-    <Compile Include="NibriClient.cs" />
-    <Compile Include="NibriClientManager.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Utilities\EmbeddedFiles.cs" />
     <Compile Include="Env.cs" />
     <Compile Include="RippleSpace\RippleSpaceManager.cs" />
-    <Compile Include="HttpEmbeddedFileHandler.cs" />
+    <Compile Include="Client\HttpEmbeddedFileHandler.cs" />
+    <Compile Include="Client\NibriClient.cs" />
+    <Compile Include="Client\NibriClientManager.cs" />
+    <Compile Include="Client\ClientSettings.cs" />
+    <Compile Include="Client\HttpClientSettingsHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />
@@ -78,10 +80,20 @@
     <Folder Include="RippleSpace\" />
     <Folder Include="Utilities\" />
     <Folder Include="ClientFiles\" />
+    <Folder Include="Client\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="ClientFiles\index.js" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="Hierarchical" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>
