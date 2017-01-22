@@ -14,6 +14,11 @@ class BoardWindow extends EventEmitter
 	{
 		super(); // Run the parent constructor
 		
+		this.maxFps = 60;
+		this.renderTimeIndicator = document.createElement("span");
+		this.renderTimeIndicator.innerHTML = "0ms";
+		document.querySelector(".fps").appendChild(this.renderTimeIndicator);
+		
 		this.canvas = canvas;
 		this.context = canvas.getContext("2d");
 		FaviconNotification.init({
@@ -38,8 +43,23 @@ class BoardWindow extends EventEmitter
 	
 	nextFrame()
 	{
-		this.update();
-		this.render(this.canvas, this.context);
+		// The time at which the current frame started rendering.
+		let frameStart = +new Date();
+		
+		if(frameStart - this.lastFrameStart >= (1 / this.maxFps) * 1000)
+		{
+			this.update();
+			this.render(this.canvas, this.context);
+		}
+		
+		// Update the time the last frame started rendering
+		this.lastFrameStart = frameStart;
+		// Update the time we took rendering the last frame
+		this.lastFrameTime = +new Date() - frameStart;
+		
+		this.renderTimeIndicator.innerHTML = `${this.lastFrameTime}ms`;
+		
+		// Limit the maximum fps
 		requestAnimationFrame(this.nextFrame.bind(this));
 	}
 	

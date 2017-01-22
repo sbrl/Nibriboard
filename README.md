@@ -10,5 +10,5 @@ An infinite whiteboard for recording those big ideas.
  - Future reference: Libraries I am considering
 	 - [Paper.js](http://paperjs.org/) - Client-side rendering
 	 - [pan-zoom](https://www.npmjs.com/package/pan-zoom)
-	 - [fps-indicator](https://www.npmjs.com/package/fps-indicator)
+	 - [fps-indicator](https://www.npmjs.com/package/fps-indicator) - The small FPS graph in the top corner
  - [IotWeb](http://sensaura.org/pages/tools/iotweb/) - Underlying HTTP / WebSocket server

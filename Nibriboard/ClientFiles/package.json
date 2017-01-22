@@ -2,10 +2,12 @@
   "name": "nibriboard-client",
   "version": "0.0.1",
   "description": "The client program for nibriboard, an infinite whiteboard.",
+  "homepage": "https://git.starbeamrainbowlabs.com/sbrl/Nibriboard#nibriboard",
   "main": "index.js",
   "dependencies": {
     "rollupify": "^0.3.8"
   },
+  
   "devDependencies": {
     "rollupify": "^0.3.8"
   },
