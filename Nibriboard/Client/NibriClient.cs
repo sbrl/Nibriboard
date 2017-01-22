@@ -1,6 +1,9 @@
 ﻿using System;
-using IotWeb.Common.Http;
 using System.Threading.Tasks;
+using System.Text;
+
+using IotWeb.Common.Http;
+
 namespace Nibriboard.Client
 {
 	public class NibriClient
@@ -28,6 +31,11 @@ namespace Nibriboard.Client
 			};
 
 			
+		}
+
+		public void Send(string message)
+		{
+			client.Send(Encoding.UTF8.GetBytes(message));
 		}
 
 		private async Task onMessage(string frame)
