@@ -15,7 +15,7 @@ namespace Nibriboard.Client
 
 		private Dictionary<string, Type> messageEventTypes = new Dictionary<string, Type>()
 		{
-
+			["handshake"] = 
 		};
 
 		public NibriClient(NibriClientManager inManager, WebSocket inClient)
