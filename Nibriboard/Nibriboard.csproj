@@ -48,6 +48,7 @@
     <Reference Include="MimeSharp">
       <HintPath>..\packages\MimeSharp.1.0.0\lib\MimeSharp.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -69,6 +70,10 @@
     <Compile Include="Client\NibriClientManager.cs" />
     <Compile Include="Client\ClientSettings.cs" />
     <Compile Include="Client\HttpClientSettingsHandler.cs" />
+    <Compile Include="Utilities\PointExtensions.cs" />
+    <Compile Include="Utilities\JsonUtilities.cs" />
+    <Compile Include="Client\Messages\Message.cs" />
+    <Compile Include="Client\Messages\HandshakeRequestMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />
@@ -81,6 +86,7 @@
     <Folder Include="Utilities\" />
     <Folder Include="ClientFiles\" />
     <Folder Include="Client\" />
+    <Folder Include="Client\Messages\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

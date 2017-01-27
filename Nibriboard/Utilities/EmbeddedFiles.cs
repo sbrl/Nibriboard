@@ -5,7 +5,7 @@ using System.Net.Configuration;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace SBRLUtilities
+namespace SBRL.Utilities
 {
 	/// <summary>
 	/// A collection of static methods for manipulating embedded resources.

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using SBRLUtilities;
+using SBRL.Utilities;
 
 namespace Nibriboard
 {

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Text;
+using System.Collections.Generic;
 
 using IotWeb.Common.Http;
+using SBRL.Utilities;
 
 namespace Nibriboard.Client
 {
@@ -10,6 +12,11 @@ namespace Nibriboard.Client
 	{
 		private readonly NibriClientManager manager;
 		private readonly WebSocket client;
+
+		private Dictionary<string, Type> messageEventTypes = new Dictionary<string, Type>()
+		{
+
+		};
 
 		public NibriClient(NibriClientManager inManager, WebSocket inClient)
 		{
@@ -19,7 +26,7 @@ namespace Nibriboard.Client
 			client.DataReceived += async (WebSocket clientSocket, string frame) => {
 				try
 				{
-					await onMessage(frame);
+					await handleMessage(frame);
 				}
 				catch (Exception error)
 				{
@@ -38,8 +45,10 @@ namespace Nibriboard.Client
 			client.Send(Encoding.UTF8.GetBytes(message));
 		}
 
-		private async Task onMessage(string frame)
+		private async Task handleMessage(string frame)
 		{
+			string eventName = JsonUtilities.DeserializeProperty(frame, "event");
+
 
 		}
 	}
