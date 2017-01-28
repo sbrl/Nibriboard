@@ -9,6 +9,10 @@ using Nibriboard.Client;
 
 namespace Nibriboard
 {
+	/// <summary>
+	/// The main Nibriboard server.
+	/// This class manages not only the connected clients, but also holds the master reference to the <see cref="Nibriboard.RippleSpace.RippleSpaceManager"/>.
+	/// </summary>
 	public class NibriboardServer
 	{
 		private HttpServer httpServer;

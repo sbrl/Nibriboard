@@ -6,6 +6,9 @@ using System.Diagnostics;
 
 namespace Nibriboard.Client
 {
+	/// <summary>
+	/// Manages a group of <see cref="Nibriboard.Client.NibriClient"/>s.
+	/// </summary>
 	public class NibriClientManager : IWebSocketRequestHandler
 	{
 		private ClientSettings clientSettings;

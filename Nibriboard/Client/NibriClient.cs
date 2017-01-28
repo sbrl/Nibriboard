@@ -13,6 +13,9 @@ using RippleSpace;
 
 namespace Nibriboard.Client
 {
+	/// <summary>
+	/// Represents a single client connected to the ripple-space on this Nibriboard server.
+	/// </summary>
 	public class NibriClient
 	{
 		private static int nextId = 1;
