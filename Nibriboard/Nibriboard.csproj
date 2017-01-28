@@ -7,7 +7,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Nibriboard</RootNamespace>
     <AssemblyName>Nibriboard</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -74,6 +74,9 @@
     <Compile Include="Utilities\JsonUtilities.cs" />
     <Compile Include="Client\Messages\Message.cs" />
     <Compile Include="Client\Messages\HandshakeRequestMessage.cs" />
+    <Compile Include="Client\Messages\CursorPositionMessage.cs" />
+    <Compile Include="Client\Messages\ClientStateMessage.cs" />
+    <Compile Include="RippleSpace\ClientState.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />
@@ -97,7 +100,7 @@
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="Hierarchical" ResourceNamePolicy="FileFormatDefault" />
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
         </Policies>
       </Properties>
     </MonoDevelop>

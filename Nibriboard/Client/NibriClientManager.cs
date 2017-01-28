@@ -9,14 +9,14 @@ namespace Nibriboard.Client
 	public class NibriClientManager : IWebSocketRequestHandler
 	{
 		private ClientSettings clientSettings;
-		private List<NibriClient> clients = new List<NibriClient>();
+		public List<NibriClient> Clients = new List<NibriClient>();
 
 		/// <summary>
 		/// The number of clients currently connected to this Nibriboard.
 		/// </summary>
 		public int ClientCount {
 			get {
-				return clients.Count;
+				return Clients.Count;
 			}
 		}
 
@@ -45,18 +45,18 @@ namespace Nibriboard.Client
 		public void Connected(WebSocket newSocket)
 		{
 			NibriClient client = new NibriClient(this, newSocket);
-			clients.Add(client);
+			Clients.Add(client);
 		}
 
 		public void Broadcast(NibriClient sendingClient, string message)
 		{
-			foreach(NibriClient client in clients)
+			foreach(NibriClient client in Clients)
 			{
 				// Don't send the message to the sender
 				if (client == sendingClient)
 					continue;
 				
-				client.Send(message);
+				client.SendRaw(message);
 			}
 		}
 	}
