@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Text;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 using IotWeb.Common.Http;
 using SBRL.Utilities;
@@ -88,12 +89,19 @@ namespace Nibriboard.Client
 		{
 			string eventName = JsonUtilities.DeserializeProperty<string>(frame, "event");
 
-			if (!messageEventTypes.ContainsKey(eventName))
-				Log.WriteLine("Received message with invalid event {1} from Client #{0}", Id, eventName);
+			if(eventName == null) {
+				Log.WriteLine("[NibriClient#{0}] Received message that didn't have an event.", Id);
+				return;
+			}
+
+			if (!messageEventTypes.ContainsKey(eventName)) {
+				Log.WriteLine("[NibriClient#{0}] Received message with invalid event {1}.", Id, eventName);
+				return;
+			}
 
 			Type messageType = messageEventTypes[eventName];
 			Type jsonNet = typeof(JsonConvert);
-			MethodInfo deserialiserInfo = jsonNet.GetMethod("DeserailizeObject");
+			MethodInfo deserialiserInfo = jsonNet.GetMethods().First(method => method.Name == "DeserializeObject" && method.IsGenericMethod);
 			MethodInfo genericInfo = deserialiserInfo.MakeGenericMethod(messageType);
 			var decodedMessage = genericInfo.Invoke(null, new object[] { frame });
 
@@ -147,6 +155,7 @@ namespace Nibriboard.Client
 			CurrentViewPort = message.InitialViewport;
 			AbsoluteCursorPosition = message.InitialAbsCursorPosition;
 
+			// Tell everyone else about the new client
 			Send(GenerateClientStateUpdate());
 
 			return Task.CompletedTask;
@@ -157,6 +166,11 @@ namespace Nibriboard.Client
 		/// </summary>
 		protected Task handleCursorPositionMessage(CursorPositionMessage message) {
 			AbsoluteCursorPosition = message.AbsCursorPosition;
+
+			// Send the update to the other clients
+			ClientStateMessage updateMessage = new ClientStateMessage();
+			updateMessage.ClientStates.Add(this.GenerateStateSnapshot());
+			manager.Broadcast(this, updateMessage);
 
 			return Task.CompletedTask;
 		}

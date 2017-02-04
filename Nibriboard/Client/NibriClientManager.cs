@@ -3,6 +3,7 @@ using IotWeb.Common.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Nibriboard.Client.Messages;
 
 namespace Nibriboard.Client
 {
@@ -51,7 +52,8 @@ namespace Nibriboard.Client
 			Clients.Add(client);
 		}
 
-		public void Broadcast(NibriClient sendingClient, string message)
+
+		public void Broadcast(NibriClient sendingClient, Message message)
 		{
 			foreach(NibriClient client in Clients)
 			{
@@ -59,7 +61,7 @@ namespace Nibriboard.Client
 				if (client == sendingClient)
 					continue;
 				
-				client.SendRaw(message);
+				client.Send(message);
 			}
 		}
 	}

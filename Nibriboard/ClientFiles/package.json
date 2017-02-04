@@ -5,9 +5,9 @@
   "homepage": "https://git.starbeamrainbowlabs.com/sbrl/Nibriboard#nibriboard",
   "main": "index.js",
   "dependencies": {
+    "pan-zoom": "^2.0.0",
     "rollupify": "^0.3.8"
   },
-  
   "devDependencies": {
     "rollupify": "^0.3.8"
   },
