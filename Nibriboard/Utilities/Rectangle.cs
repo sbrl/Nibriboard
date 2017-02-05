@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using Newtonsoft.Json;
 
 namespace SBRL.Utilities
 {
@@ -37,6 +38,7 @@ namespace SBRL.Utilities
 		/// <summary>
 		/// The top-left corner of the rectangle.
 		/// </summary>
+		[JsonIgnore]
 		public Point TopLeft {
 			get {
 				return new Point(X, Y);
@@ -45,6 +47,7 @@ namespace SBRL.Utilities
 		/// <summary>
 		/// The top-right corner of the rectangle.
 		/// </summary>
+		[JsonIgnore]
 		public Point TopRight {
 			get {
 				return new Point(X + Width, Y);
@@ -53,6 +56,7 @@ namespace SBRL.Utilities
 		/// <summary>
 		/// The bottom-left corner of the rectangle.
 		/// </summary>
+		[JsonIgnore]
 		public Point BottomLeft {
 			get {
 				return new Point(X, Y + Height);
@@ -61,6 +65,7 @@ namespace SBRL.Utilities
 		/// <summary>
 		/// The bottom-right corner of the rectangle.
 		/// </summary>
+		[JsonIgnore]
 		public Point BottomRight {
 			get {
 				return new Point(X + Width, Y + Height);
@@ -72,6 +77,7 @@ namespace SBRL.Utilities
 		/// <summary>
 		/// The Y coordinate of the top of the rectangle.
 		/// </summary>
+		[JsonIgnore]
 		public int Top {
 			get {
 				return Y;
@@ -80,6 +86,7 @@ namespace SBRL.Utilities
 		/// <summary>
 		/// The Y coordinate of the bottom of the rectangle.
 		/// </summary>
+		[JsonIgnore]
 		public int Bottom {
 			get {
 				return Y + Width;
@@ -88,6 +95,7 @@ namespace SBRL.Utilities
 		/// <summary>
 		/// The X coordinate of the left side of the rectangle.
 		/// </summary>
+		[JsonIgnore]
 		public int Left {
 			get {
 				return X;
@@ -96,6 +104,7 @@ namespace SBRL.Utilities
 		/// <summary>
 		/// The X coordinate of the right side of the rectangle.
 		/// </summary>
+		[JsonIgnore]
 		public int Right {
 			get {
 				return X + Width;
