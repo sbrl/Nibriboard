@@ -4,12 +4,12 @@ using System.Drawing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Nibriboard.Utilities.JsonConverters
+namespace SBRL.Utilities.JsonConverters
 {
 	/// <summary>
 	/// Deserialises objects into rectangles from the System.Drawing namespace.
 	/// </summary>
-	public class RectangleConverter : JsonConverter
+	public class RectangleJsonConverter : JsonConverter
 	{
 		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 		{

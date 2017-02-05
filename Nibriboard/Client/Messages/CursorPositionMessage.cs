@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Drawing;
+
+using SBRL.Utilities;
 
 namespace Nibriboard.Client.Messages
 {
@@ -11,7 +12,7 @@ namespace Nibriboard.Client.Messages
 		/// <summary>
 		/// The absolute cursor position.
 		/// </summary>
-		public Point AbsCursorPosition;
+		public Vector2 AbsCursorPosition;
 
 		public CursorPositionMessage()
 		{

@@ -1,19 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
+using System.Reflection;
 
 using IotWeb.Common.Http;
+using Newtonsoft.Json;
 using SBRL.Utilities;
 using Nibriboard.Client.Messages;
-using Newtonsoft.Json;
-using System.Reflection;
 using RippleSpace;
 
 namespace Nibriboard.Client
 {
+	/// <summary>
+	/// A delegate that is used in the event that is fired when a nibri client disconnects.
+	/// </summary>
+	public delegate void NibriDisconnectedEvent(NibriClient disconnectedClient);
+
 	/// <summary>
 	/// Represents a single client connected to the ripple-space on this Nibriboard server.
 	/// </summary>
@@ -42,6 +46,12 @@ namespace Nibriboard.Client
 		};
 
 		/// <summary>
+		/// Whether this nibri client is still connected.
+		/// </summary>
+		public bool Connected = true;
+		public event NibriDisconnectedEvent Disconnected;
+
+		/// <summary>
 		/// Whether this client has completed the handshake yet or not.
 		/// </summary>
 		public bool HandshakeCompleted = false;
@@ -54,12 +64,12 @@ namespace Nibriboard.Client
 		/// The current area that this client is looking at.
 		/// </summary>
 		/// <value>The current view port.</value>
-		public Rectangle CurrentViewPort { get; private set; } = Rectangle.Empty;
+		public Rectangle CurrentViewPort { get; private set; } = Rectangle.Zero;
 		/// <summary>
 		/// The absolute position in plane-space of this client's cursor.
 		/// </summary>
 		/// <value>The absolute cursor position.</value>
-		public Point AbsoluteCursorPosition { get; private set; } = Point.Empty;
+		public Vector2 AbsoluteCursorPosition { get; private set; } = Vector2.Zero;
 
 		#region Core Setup & Message Routing Logic
 
@@ -81,8 +91,8 @@ namespace Nibriboard.Client
 
 				//Task.Run(async () => await onMessage(frame)).Wait();
 			};
-
-			
+			// Store whether this NibriClient is still connected or not
+			client.ConnectionClosed += (WebSocket socket) => Connected = false;
 		}
 
 		private async Task handleMessage(string frame)
@@ -107,7 +117,7 @@ namespace Nibriboard.Client
 
 			string handlerMethodName = "handle" + decodedMessage.GetType().Name;
 			Type clientType = this.GetType();
-			MethodInfo handlerInfo = clientType.GetMethod(handlerMethodName);
+			MethodInfo handlerInfo = clientType.GetMethod(handlerMethodName, BindingFlags.Instance | BindingFlags.NonPublic);
 			await (Task)handlerInfo.Invoke(this, new object[] { decodedMessage });
 		}
 
@@ -129,7 +139,10 @@ namespace Nibriboard.Client
 		/// <param name="message">The message to send.</param>
 		public void SendRaw(string message)
 		{
-			client.Send(Encoding.UTF8.GetBytes(message));
+			if (!Connected)
+				throw new InvalidOperationException($"[NibriClient]{Id}] Can't send a message as the client has disconnected.");
+			
+			client.Send(message);
 		}
 
 		/// <summary>

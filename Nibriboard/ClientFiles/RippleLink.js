@@ -20,6 +20,10 @@ class RippleLink extends EventEmitter
 		this.websocket.addEventListener("message", this.handleMessage.bind(this));
 		this.websocket.addEventListener("close", this.handleDisconnection.bind(this));
 		
+		// Close the socket correctly
+		window.addEventListener("beforeunload", (function(event) {
+			this.websocket.close();
+		}).bind(this));
 	}
 	
 	handleConnection(event) {

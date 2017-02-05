@@ -4,7 +4,7 @@ using System.Drawing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Nibriboard.Utilities.JsonConverters
+namespace SBRL.Utilities.JsonConverters
 {
 	/// <summary>
 	/// Deserialises objects into points from the System.Drawing namespace.

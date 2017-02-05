@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Drawing;
+
+using SBRL.Utilities;
 
 namespace RippleSpace
 {
@@ -26,11 +27,11 @@ namespace RippleSpace
 		/// <summary>
 		/// The size and position of the client's viewport.
 		/// </summary>
-		public Rectangle Viewport = Rectangle.Empty;
+		public Rectangle Viewport = Rectangle.Zero;
 		/// <summary>
 		/// The absolute position of the client's cursor.
 		/// </summary>
-		public Point AbsCursorPosition = Point.Empty;
+		public Vector2 AbsCursorPosition = Vector2.Zero;
 
 		public ClientState()
 		{

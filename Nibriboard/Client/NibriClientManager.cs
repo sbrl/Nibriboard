@@ -49,10 +49,16 @@ namespace Nibriboard.Client
 		public void Connected(WebSocket newSocket)
 		{
 			NibriClient client = new NibriClient(this, newSocket);
+			client.Disconnected += handleDisconnection; // Clean up when the client disconnects
+
 			Clients.Add(client);
 		}
 
-
+		/// <summary>
+		/// Sends a message to all the connected clients, except the one who's sending it.
+		/// </summary>
+		/// <param name="sendingClient">The client sending the message.</param>
+		/// <param name="message">The message that is to bee sent.</param>
 		public void Broadcast(NibriClient sendingClient, Message message)
 		{
 			foreach(NibriClient client in Clients)
@@ -63,6 +69,15 @@ namespace Nibriboard.Client
 				
 				client.Send(message);
 			}
+		}
+
+		/// <summary>
+		/// Clean up after a client disconnects from the server.
+		/// </summary>
+		/// <param name="disconnectedClient">The client that has disconnected.</param>
+		private void handleDisconnection(NibriClient disconnectedClient)
+		{
+			Clients.Remove(disconnectedClient);
 		}
 	}
 }
