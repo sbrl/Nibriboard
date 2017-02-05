@@ -3,7 +3,6 @@
 using Newtonsoft.Json;
 
 using SBRL.Utilities;
-using SBRL.Utilities.JsonConverters;
 
 namespace Nibriboard.Client.Messages
 {

@@ -77,8 +77,6 @@
     <Compile Include="Client\Messages\CursorPositionMessage.cs" />
     <Compile Include="Client\Messages\ClientStateMessage.cs" />
     <Compile Include="RippleSpace\ClientState.cs" />
-    <Compile Include="Utilities\JsonConverters\PointConverter.cs" />
-    <Compile Include="Utilities\JsonConverters\RectangleJsonConverter.cs" />
     <Compile Include="Utilities\Rectangle.cs" />
     <Compile Include="Utilities\Vector2.cs" />
   </ItemGroup>
@@ -94,7 +92,6 @@
     <Folder Include="ClientFiles\" />
     <Folder Include="Client\" />
     <Folder Include="Client\Messages\" />
-    <Folder Include="Utilities\JsonConverters\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
