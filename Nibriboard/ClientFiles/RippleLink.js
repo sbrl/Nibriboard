@@ -1,6 +1,6 @@
 "use strict";
 
-import WebSocketStates from './Utilities/WebsocketStates';
+import { WebSocketStates, ReverseWebSocketStates } from './Utilities/WebSocketStates';
 
 const EventEmitter = require("event-emitter-es6");
 
@@ -52,7 +52,7 @@ class RippleLink extends EventEmitter
 	send(message) {
 		if(this.websocket.readyState !== WebSocketStates.ready)
 		{
-			console.error(`Attempt to send data on the RippleLine when it is not ready (state ${this.websocket.readyState})`);
+			console.error(`Attempt to send data on the RippleLink when it is not ready (state ${ReverseWebSocketStates[this.websocket.readyState]})`);
 			return false;
 		}
 		

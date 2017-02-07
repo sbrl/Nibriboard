@@ -28,6 +28,17 @@ const WebSocketStates = {
 	closed: 3
 };
 
+const ReverseWebSocketStates = {
+	// The WebSocket is in the process of connecting.
+	0: "connecting",
+	// The WebSocket is connected and ready to exchange data with the remote server.
+	1: "ready",
+	// The WebSocket is in the process of closing.
+	2: "closing",
+	// The WebSocket is closed.
+	3: "closed"
+};
+
 const EventEmitter$1 = require("event-emitter-es6");
 
 class RippleLink extends EventEmitter$1
@@ -78,7 +89,7 @@ class RippleLink extends EventEmitter$1
 	send(message) {
 		if(this.websocket.readyState !== WebSocketStates.ready)
 		{
-			console.error(`Attempt to send data on the RippleLine when it is not ready (state ${this.websocket.readyState})`);
+			console.error(`Attempt to send data on the RippleLink when it is not ready (state ${ReverseWebSocketStates[this.websocket.readyState]})`);
 			return false;
 		}
 		
