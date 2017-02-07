@@ -87,6 +87,59 @@ class RippleLink extends EventEmitter$1
 	}
 }
 
+class CursorSyncer
+{
+	constructor(inRippleLink, syncFrequency)
+	{
+		// The ripple link we should send the cursor updates down
+		this.rippleLink = inRippleLink;
+		// The target frequency in fps at we should send sursor updates.
+		this.cursorUpdateFrequency = syncFrequency;
+		
+		// Register ourselves to start sending cursor updates once the ripple
+		// link connects
+		this.rippleLink.on("connect", this.setup.bind(this));
+	}
+	
+	setup()
+	{
+		// The last time we sent a cursor update to the server.
+		this.lastCursorUpdate = 0;
+		
+		document.addEventListener("mousemove", (function(event) {
+			this.cursorPosition = {
+				X: event.clientX,
+				Y: event.clientY
+			};
+			
+			setTimeout((function() {
+			    // Throttle the cursor updates we send to the server - a high
+			    // update frequency here will just consume bandwidth and is only
+			    // noticable if you have a good connection
+				if(+new Date() - this.lastCursorUpdate < 1 / this.cursorUpdateFrequency)
+					return false;
+					
+				// Update the server on the mouse's position
+				this.sendCursorUpdate();
+				
+				this.lastFrameStart = +new Date();
+			}).bind(this), 1 / this.cursorUpdateFrequency);
+			
+		}).bind(this));
+		
+		this.sendCursorUpdate();
+	}
+	
+	sendCursorUpdate()
+	{
+		// Update the server on the mouse's position
+		this.rippleLink.send({
+			"event": "CursorPosition",
+			"AbsCursorPosition": this.cursorPosition
+		});
+	}
+}
+
 function get(u){return new Promise(function(r,t,a){a=new XMLHttpRequest();a.onload=function(b,c){b=a.status;c=a.response;if(b>199&&b<300){r(c);}else{t(c);}};a.open("GET",u,true);a.send(null);})}
 
 // npm modules
@@ -103,7 +156,9 @@ class BoardWindow extends EventEmitter
 		
 		// The maximum target fps.
 		this.maxFps = 60;
-		// Setup the fps indicator in the corner
+		// The target fps at which we should send sursor updates.
+		this.cursorUpdateFrequency = 5;
+		// Setup the fps indicator in the top right corner
 		this.renderTimeIndicator = document.createElement("span");
 		this.renderTimeIndicator.innerHTML = "0ms";
 		document.querySelector(".fps").appendChild(this.renderTimeIndicator);
@@ -136,8 +191,6 @@ class BoardWindow extends EventEmitter
 		
 		// Make the canvas track the window size
 		this.trackWindowSize();
-		// Track the mouse position
-		this.trackMousePosition();
 	}
 	
 	/**
@@ -149,7 +202,7 @@ class BoardWindow extends EventEmitter
 		this.rippleLink.on("connect", (function(event) {
 			// Send the handshake request
 			this.rippleLink.send({
-				event: "handshakeRequest",
+				event: "HandshakeRequest",
 				InitialViewport: { // TODO: Add support for persisting this between sessions
 					X: 0,
 					Y: 0,
@@ -159,6 +212,9 @@ class BoardWindow extends EventEmitter
 				InitialAbsCursorPosition: this.cursorPosition
 			});
 		}).bind(this));
+		
+		// Track the mouse position
+		this.cursorSyncer = new CursorSyncer(this.rippleLink, this.cursorUpdateFrequency);
 		
 		// RippleLink message bindings
 		
@@ -224,15 +280,6 @@ class BoardWindow extends EventEmitter
 	trackWindowSize() {
 		this.matchWindowSize();
 		window.addEventListener("resize", this.matchWindowSize.bind(this));
-	}
-	
-	trackMousePosition() {
-		document.addEventListener("mousemove", (function(event) {
-			this.cursorPosition = {
-				X: event.clientX,
-				Y: event.clientY
-			};
-		}).bind(this));
 	}
 	
 	/**

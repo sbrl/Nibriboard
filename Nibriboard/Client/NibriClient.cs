@@ -42,7 +42,8 @@ namespace Nibriboard.Client
 
 		private static readonly Dictionary<string, Type> messageEventTypes = new Dictionary<string, Type>()
 		{
-			["handshakeRequest"] = typeof(HandshakeRequestMessage)
+			["HandshakeRequest"] = typeof(HandshakeRequestMessage),
+			["CursorPosition"] = typeof(CursorPositionMessage)
 		};
 
 		/// <summary>
@@ -92,7 +93,10 @@ namespace Nibriboard.Client
 				//Task.Run(async () => await onMessage(frame)).Wait();
 			};
 			// Store whether this NibriClient is still connected or not
-			client.ConnectionClosed += (WebSocket socket) => Connected = false;
+			client.ConnectionClosed += (WebSocket socket) => {
+				Connected = false;
+				Disconnected(this);
+			};
 		}
 
 		private async Task handleMessage(string frame)

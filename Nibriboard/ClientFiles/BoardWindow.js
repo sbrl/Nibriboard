@@ -7,6 +7,7 @@ window.panzoom = require("pan-zoom");
 
 // Our files
 import RippleLink from './RippleLink';
+import CursorSyncer from './CursorSyncer';
 import { get } from './Utilities';
 
 class BoardWindow extends EventEmitter
@@ -17,7 +18,9 @@ class BoardWindow extends EventEmitter
 		
 		// The maximum target fps.
 		this.maxFps = 60;
-		// Setup the fps indicator in the corner
+		// The target fps at which we should send sursor updates.
+		this.cursorUpdateFrequency = 5;
+		// Setup the fps indicator in the top right corner
 		this.renderTimeIndicator = document.createElement("span");
 		this.renderTimeIndicator.innerHTML = "0ms";
 		document.querySelector(".fps").appendChild(this.renderTimeIndicator);
@@ -50,8 +53,6 @@ class BoardWindow extends EventEmitter
 		
 		// Make the canvas track the window size
 		this.trackWindowSize();
-		// Track the mouse position
-		this.trackMousePosition();
 	}
 	
 	/**
@@ -63,7 +64,7 @@ class BoardWindow extends EventEmitter
 		this.rippleLink.on("connect", (function(event) {
 			// Send the handshake request
 			this.rippleLink.send({
-				event: "handshakeRequest",
+				event: "HandshakeRequest",
 				InitialViewport: { // TODO: Add support for persisting this between sessions
 					X: 0,
 					Y: 0,
@@ -73,6 +74,9 @@ class BoardWindow extends EventEmitter
 				InitialAbsCursorPosition: this.cursorPosition
 			});
 		}).bind(this));
+		
+		// Track the mouse position
+		this.cursorSyncer = new CursorSyncer(this.rippleLink, this.cursorUpdateFrequency)
 		
 		// RippleLink message bindings
 		
@@ -138,15 +142,6 @@ class BoardWindow extends EventEmitter
 	trackWindowSize() {
 		this.matchWindowSize();
 		window.addEventListener("resize", this.matchWindowSize.bind(this));
-	}
-	
-	trackMousePosition() {
-		document.addEventListener("mousemove", (function(event) {
-			this.cursorPosition = {
-				X: event.clientX,
-				Y: event.clientY
-			};
-		}).bind(this));
 	}
 	
 	/**
