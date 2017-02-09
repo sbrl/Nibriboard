@@ -185,7 +185,8 @@ namespace Nibriboard.Client
 			AbsoluteCursorPosition = message.AbsCursorPosition;
 
 			// Send the update to the other clients
-			ClientStateMessage updateMessage = new ClientStateMessage();
+			// TODO: Buffer these updates and send them about 5 times a second
+			ClientStatesMessage updateMessage = new ClientStatesMessage();
 			updateMessage.ClientStates.Add(this.GenerateStateSnapshot());
 			manager.Broadcast(this, updateMessage);
 
@@ -198,9 +199,9 @@ namespace Nibriboard.Client
 		/// Automatically omits information about the current client.
 		/// </summary>
 		/// <returns>The client state update message.</returns>
-		protected ClientStateMessage GenerateClientStateUpdate()
+		protected ClientStatesMessage GenerateClientStateUpdate()
 		{
-			ClientStateMessage result = new ClientStateMessage();
+			ClientStatesMessage result = new ClientStatesMessage();
 			foreach (NibriClient client in manager.Clients)
 			{
 				// Don't include ourselves in the update message!

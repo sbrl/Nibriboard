@@ -75,10 +75,12 @@
     <Compile Include="Client\Messages\Message.cs" />
     <Compile Include="Client\Messages\HandshakeRequestMessage.cs" />
     <Compile Include="Client\Messages\CursorPositionMessage.cs" />
-    <Compile Include="Client\Messages\ClientStateMessage.cs" />
     <Compile Include="RippleSpace\ClientState.cs" />
     <Compile Include="Utilities\Rectangle.cs" />
     <Compile Include="Utilities\Vector2.cs" />
+    <Compile Include="Client\Messages\ClientStatesMessage.cs" />
+    <Compile Include="Utilities\ColourHSL.cs" />
+    <Compile Include="Utilities\ToStringJsonConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />

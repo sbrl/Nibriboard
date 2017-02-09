@@ -9,6 +9,8 @@ class CursorSyncer
 		// The target frequency in fps at we should send sursor updates.
 		this.cursorUpdateFrequency = syncFrequency;
 		
+		this.otherClients = [];
+		
 		// Register ourselves to start sending cursor updates once the ripple
 		// link connects
 		this.rippleLink.on("connect", this.setup.bind(this));
