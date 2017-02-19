@@ -2,7 +2,7 @@
 
 namespace SBRL.Utilities
 {
-	class ColourHSL 
+	public class ColourHSL 
 	{
 		/// <summary>
 		/// A random number generator.Used to generate random colours in RandomSaturated().
@@ -139,7 +139,7 @@ namespace SBRL.Utilities
 		/// </summary>
 		public static ColourHSL RandomSaturated()
 		{
-			ColourHSL result = new ColourHSL() {
+			return new ColourHSL() {
 				Hue = random.Next(0, 360),
 				Lightness = random.Next(45, 55),
 				Saturation = random.Next(90, 100)
