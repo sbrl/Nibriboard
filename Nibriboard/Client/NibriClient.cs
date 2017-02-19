@@ -179,7 +179,7 @@ namespace Nibriboard.Client
 			// Tell everyone else about the new client
 			ClientStatesMessage newClientNotification = new ClientStatesMessage();
 			newClientNotification.ClientStates.Add(GenerateStateSnapshot());
-			manager.Broadcast(newClientNotification);
+			manager.Broadcast(this, newClientNotification);
 
 			// Send the new client a response to their handshake request
 			HandshakeResponseMessage handshakeResponse = new HandshakeResponseMessage();
