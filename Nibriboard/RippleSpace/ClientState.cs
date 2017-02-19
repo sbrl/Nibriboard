@@ -25,6 +25,11 @@ namespace RippleSpace
 		public string Name;
 
 		/// <summary>
+		/// The colour associated with the client.
+		/// </summary>
+		public ColourHSL Colour;
+
+		/// <summary>
 		/// The size and position of the client's viewport.
 		/// </summary>
 		public Rectangle Viewport = Rectangle.Zero;

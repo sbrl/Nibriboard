@@ -161,6 +161,7 @@ namespace Nibriboard.Client
 			ClientState result = new ClientState();
 			result.Id = Id;
 			result.Name = Name;
+			result.Colour = Colour;
 			result.AbsCursorPosition = AbsoluteCursorPosition;
 			result.Viewport = CurrentViewPort;
 
