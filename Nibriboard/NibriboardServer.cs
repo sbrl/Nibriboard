@@ -6,6 +6,7 @@ using IotWeb.Common.Http;
 
 using Nibriboard.RippleSpace;
 using Nibriboard.Client;
+using System.Threading;
 
 namespace Nibriboard
 {
@@ -19,6 +20,8 @@ namespace Nibriboard
 
 		private ClientSettings clientSettings;
 		private RippleSpaceManager planeManager = new RippleSpaceManager();
+
+		private readonly CancellationTokenSource clientManagerCanceller = new CancellationTokenSource();
 
 		public readonly int Port = 31586;
 
@@ -51,7 +54,7 @@ namespace Nibriboard
 			// Websocket setup
 			httpServer.AddWebSocketRequestHandler(
 				clientSettings.WebsocketPath,
-				new NibriClientManager(clientSettings)
+				new NibriClientManager(clientSettings, clientManagerCanceller.Token)
 			);
 		}
 

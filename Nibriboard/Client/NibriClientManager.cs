@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Nibriboard.Client.Messages;
+using System.Threading;
 
 namespace Nibriboard.Client
 {
@@ -16,6 +17,16 @@ namespace Nibriboard.Client
 		public List<NibriClient> Clients = new List<NibriClient>();
 
 		/// <summary>
+		/// The cancellation token that's used by the main server to tell us when we should shut down.
+		/// </summary>
+		protected CancellationToken canceller;
+
+		/// <summary>
+		/// The interval at which heatbeats should be sent to the client.
+		/// </summary>
+		public readonly int HeatbeatInterval = 5000;
+
+		/// <summary>
 		/// The number of clients currently connected to this Nibriboard.
 		/// </summary>
 		public int ClientCount {
@@ -24,9 +35,10 @@ namespace Nibriboard.Client
 			}
 		}
 
-		public NibriClientManager(ClientSettings inClientSettings)
+		public NibriClientManager(ClientSettings inClientSettings, CancellationToken inCancellationToken)
 		{
 			clientSettings = inClientSettings;
+			canceller = inCancellationToken;
 		}
 
 		/// <summary>
@@ -69,6 +81,41 @@ namespace Nibriboard.Client
 				
 				client.Send(message);
 			}
+		}
+
+		private async Task ClientMaintenanceMonkey()
+		{
+			while (true) {
+				// Exit if we've been asked to shut down
+				if (canceller.IsCancellationRequested) {
+					close();
+					return;
+				}
+
+				// Disconnect unresponsive clients.
+				foreach (NibriClient client in Clients) {
+					// If we haven't heard from this client in a little while, send a heartbeat message
+					if(client.MillisecondsSinceLastMessage > HeatbeatInterval)
+						client.SendHeartbeat();
+
+					// If the client hasn't sent us a message in a while (even though we sent
+					// them a heartbeat to check on them on the last loop), disconnect them
+					if (client.MillisecondsSinceLastMessage > HeatbeatInterval * 2)
+						client.CloseConnection(new IdleDisconnectMessage());
+				}
+
+				await Task.Delay(HeatbeatInterval);
+			}
+		}
+
+		/// <summary>
+		/// Cleans up this NibriClient manager ready for shutdown.
+		/// </summary>
+		private void close()
+		{
+			// Close the connection to all the remaining nibri clients, telling them that the server is about to shut down
+			foreach (NibriClient client in Clients)
+				client.CloseConnection(new ShutdownMessage());
 		}
 
 		/// <summary>

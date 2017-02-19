@@ -82,6 +82,9 @@
     <Compile Include="Utilities\ColourHSL.cs" />
     <Compile Include="Utilities\ToStringJsonConverter.cs" />
     <Compile Include="Client\Messages\HandshakeResponseMessage.cs" />
+    <Compile Include="Client\Messages\ShutdownMessage.cs" />
+    <Compile Include="Client\Messages\IdleDisconnectMessage.cs" />
+    <Compile Include="Client\Messages\HeartbeatMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />

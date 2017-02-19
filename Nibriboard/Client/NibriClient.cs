@@ -53,9 +53,25 @@ namespace Nibriboard.Client
 		public event NibriDisconnectedEvent Disconnected;
 
 		/// <summary>
+		/// The date and time at which the last message was received from this client.
+		/// </summary>
+		public DateTime LastMessageTime = DateTime.Now;
+		/// <summary>
+		/// The number of milliseconds since we last received a message from this client.
+		/// </summary>
+		/// <value>The milliseconds since last message.</value>
+		public int MillisecondsSinceLastMessage {
+			get {
+				return (int)((DateTime.Now - LastMessageTime).TotalMilliseconds);
+			}
+		}
+
+		/// <summary>
 		/// Whether this client has completed the handshake yet or not.
 		/// </summary>
 		public bool HandshakeCompleted = false;
+
+
 		/// <summary>
 		/// The name this client has assignedto themselves.
 		/// </summary>
@@ -102,18 +118,22 @@ namespace Nibriboard.Client
 			client.ConnectionClosed += (WebSocket socket) => {
 				Connected = false;
 				Disconnected(this);
+				Log.WriteLine("[NibriClient] Client #{0} disconnected.", Id);
 			};
 		}
 
 		private async Task handleMessage(string frame)
 		{
+			// Updatet he last time we received a message from the client
+			LastMessageTime = DateTime.Now;
+
+			// Extract the event name from the message that the client sent.
 			string eventName = JsonUtilities.DeserializeProperty<string>(frame, "Event");
 
 			if(eventName == null) {
 				Log.WriteLine("[NibriClient#{0}] Received message that didn't have an event.", Id);
 				return;
 			}
-
 			if (!messageEventTypes.ContainsKey(eventName)) {
 				Log.WriteLine("[NibriClient#{0}] Received message with invalid event {1}.", Id, eventName);
 				return;
@@ -153,6 +173,28 @@ namespace Nibriboard.Client
 				throw new InvalidOperationException($"[NibriClient]{Id}] Can't send a message as the client has disconnected.");
 			
 			client.Send(message);
+		}
+
+		/// <summary>
+		/// Sends a heartbeat message to this client.
+		/// </summary>
+		public void SendHeartbeat()
+		{
+			Send(new HeartbeatMessage());
+		}
+
+		/// <summary>
+		/// Closes the connection to the client gracefully.
+		/// </summary>
+		public void CloseConnection(Message lastMessage)
+		{
+			if (!Connected)
+				return;
+			
+			// Tell the client that we're shutting down
+			Send(lastMessage);
+
+			client.Close();
 		}
 
 		/// <summary>
