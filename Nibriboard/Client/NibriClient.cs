@@ -71,6 +71,10 @@ namespace Nibriboard.Client
 		/// </summary>
 		/// <value>The absolute cursor position.</value>
 		public Vector2 AbsoluteCursorPosition { get; private set; } = Vector2.Zero;
+		/// <summary>
+		/// This client's colour. Used to tell multiple clients apart visually.
+		/// </summary>
+		public readonly ColourHSL Colour = ColourHSL.RandomSaturated();
 
 		#region Core Setup & Message Routing Logic
 
@@ -173,6 +177,18 @@ namespace Nibriboard.Client
 			AbsoluteCursorPosition = message.InitialAbsCursorPosition;
 
 			// Tell everyone else about the new client
+			ClientStatesMessage newClientNotification = new ClientStatesMessage();
+			newClientNotification.ClientStates.Add(GenerateStateSnapshot());
+			manager.Broadcast(newClientNotification);
+
+			// Send the new client a response to their handshake request
+			HandshakeResponseMessage handshakeResponse = new HandshakeResponseMessage();
+			handshakeResponse.Id = Id;
+			handshakeResponse.Colour = Colour;
+			Send(handshakeResponse);
+
+			// Tell the new client about everyone else who's connected
+			// FUTURE: If we need to handle a large number of connections, we should generate this message based on the chunks surrounding the client
 			Send(GenerateClientStateUpdate());
 
 			return Task.CompletedTask;
