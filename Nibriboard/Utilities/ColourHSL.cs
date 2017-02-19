@@ -2,6 +2,14 @@
 
 namespace SBRL.Utilities
 {
+	/// <summary>
+	/// Represents a single random HSL(A) colour.
+	/// </summary>
+	/// <description>
+	/// Includes a static generator method that generates random saturated colours.
+	/// 
+	/// v0.1, by Starbeamrainbowlabs
+	/// </description>
 	public class ColourHSL 
 	{
 		/// <summary>
