@@ -47,7 +47,7 @@ class CursorSyncer
 	{
 		// Update the server on the mouse's position
 		this.rippleLink.send({
-			"event": "CursorPosition",
+			"Event": "CursorPosition",
 			"AbsCursorPosition": this.cursorPosition
 		});
 	}
