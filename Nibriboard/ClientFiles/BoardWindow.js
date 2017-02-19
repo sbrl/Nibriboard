@@ -60,8 +60,6 @@ class BoardWindow extends EventEmitter
 		
 		// Make the canvas track the window size
 		this.trackWindowSize();
-		
-		this.on("OtherClientUpdate", this.)
 	}
 	
 	/**
@@ -167,7 +165,7 @@ class BoardWindow extends EventEmitter
 	
 	handlePeerUpdates(message) {
 		// Update our knowledge about other clients
-		for (let otherClient of message) {
+		for (let otherClient of message.ClientStates) {
 			// If this client is new, emit an event about it
 			if(!this.otherClients.has(otherClient.Id))
 				this.emit("OtherClientConnect", otherClient);
@@ -176,10 +174,6 @@ class BoardWindow extends EventEmitter
 			// Store the information for later
 			this.otherClients.set(otherClient.Id, otherClient);
 		}
-	}
-	
-	handleOtherClientUpdate(otherClientData) {
-		
 	}
 }
 
