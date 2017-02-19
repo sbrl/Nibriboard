@@ -37,7 +37,7 @@ namespace Nibriboard.Client
 		/// <returns>Whether we want to accept the WebSocket connection attempt or not.</returns>
 		public bool WillAcceptRequest(string uri, string protocol)
 		{
-			Log.WriteLine("[Nibriboard/Websocket] Accepting new {0} connection.", protocol);
+			//Log.WriteLine("[Nibriboard/Websocket] Accepting new {0} connection.", protocol);
 			return clientSettings.WebsocketProtocol == protocol;
 		}
 		/// <summary>

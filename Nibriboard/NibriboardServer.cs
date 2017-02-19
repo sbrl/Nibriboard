@@ -27,7 +27,7 @@ namespace Nibriboard
 			Port = inPort;
 
 			clientSettings = new ClientSettings() {
-				WebsocketHost = "localhost",
+				WebsocketHost = "192.168.0.56",
 				WebsocketPort = Port,
 				WebsocketPath = "/RipplespaceLink"
 			};

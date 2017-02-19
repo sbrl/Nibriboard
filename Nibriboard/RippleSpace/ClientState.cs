@@ -1,6 +1,8 @@
 ﻿using System;
 
 using SBRL.Utilities;
+using Newtonsoft.Json;
+using SBRL.Utilities.Solutions;
 
 namespace RippleSpace
 {
@@ -27,6 +29,7 @@ namespace RippleSpace
 		/// <summary>
 		/// The colour associated with the client.
 		/// </summary>
+		[JsonConverter(typeof(ToStringJsonConverter))]
 		public ColourHSL Colour;
 
 		/// <summary>

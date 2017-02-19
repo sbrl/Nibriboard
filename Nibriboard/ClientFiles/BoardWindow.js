@@ -20,6 +20,14 @@ class BoardWindow extends EventEmitter
 		this.maxFps = 60;
 		// The target fps at which we should send sursor updates.
 		this.cursorUpdateFrequency = 5;
+		
+		// The radius of other clients' cursors.
+		this.otherCursorRadius = 10;
+		// The width of the lines in other clients' cursors.
+		this.otherCursorWidth = 2;
+		
+		// --~~~--
+		
 		// Setup the fps indicator in the top right corner
 		this.renderTimeIndicator = document.createElement("span");
 		this.renderTimeIndicator.innerHTML = "0ms";
@@ -40,6 +48,9 @@ class BoardWindow extends EventEmitter
 		
 		// Grab a reference to the sidebar
 		this.sidebar = document.getElementById("sidebar");
+		
+		// Create a map to store information about other clients in
+		this.otherClients = new Map();
 		
 		// --~~~--
 		
@@ -93,8 +104,6 @@ class BoardWindow extends EventEmitter
 				InitialAbsCursorPosition: this.cursorPosition
 			});
 		}).bind(this));
-		// Create a map to store information about other clients in
-		this.otherClients = new Map();
 		
 		// Keep the server up to date on our viewport and cursor position
 		this.viewportSyncer = new ViewportSyncer(this.rippleLink, this.cursorUpdateFrequency)
@@ -148,8 +157,36 @@ class BoardWindow extends EventEmitter
 	{
 		context.clearRect(0, 0, canvas.width, canvas.height);
 		
-		context.fillStyle = "red";
-		context.fillRect(10, 10, 100, 100);
+		this.renderOthers(canvas, context);
+	}
+	
+	renderOthers(canvas, context)
+	{
+		context.save();
+		
+		for (let [clientId, clientData] of this.otherClients)
+		{
+			// TODO: Filter rendering by working out if this client is actually inside our viewport or not here
+			// TODO: Refactor the other client information out into another class.
+			context.save();
+			context.translate(clientData.AbsCursorPosition.X, clientData.AbsCursorPosition.Y);
+			
+			context.beginPath();
+			// Horizontal line
+			context.moveTo(-this.otherCursorRadius, 0);
+			context.lineTo(this.otherCursorRadius, 0);
+			// Vertical line
+			context.moveTo(0, -this.otherCursorRadius);
+			context.lineTo(0, this.otherCursorRadius);
+			
+			context.strokeStyle = clientData.Colour;
+			context.lineWidth = this.otherCursorWidth
+			context.stroke();
+			
+			context.restore();
+		}
+		
+		context.restore();
 	}
 	
 	/**

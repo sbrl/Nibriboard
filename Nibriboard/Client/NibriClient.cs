@@ -80,6 +80,8 @@ namespace Nibriboard.Client
 
 		public NibriClient(NibriClientManager inManager, WebSocket inClient)
 		{
+			Log.WriteLine("[Nibriboard/WebSocket] New NibriClient connected with id #{0}.", Id);
+
 			manager = inManager;
 			client = inClient;
 
