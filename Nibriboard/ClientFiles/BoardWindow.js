@@ -7,7 +7,7 @@ window.panzoom = require("pan-zoom");
 
 // Our files
 import RippleLink from './RippleLink';
-import CursorSyncer from './CursorSyncer';
+import ViewportSyncer from './ViewportSyncer';
 import { get } from './Utilities';
 
 class BoardWindow extends EventEmitter
@@ -76,7 +76,7 @@ class BoardWindow extends EventEmitter
 		}).bind(this));
 		
 		// Track the mouse position
-		this.cursorSyncer = new CursorSyncer(this.rippleLink, this.cursorUpdateFrequency)
+		this.viewportSyncer = new ViewportSyncer(this.rippleLink, this.cursorUpdateFrequency)
 		
 		// RippleLink message bindings
 		
