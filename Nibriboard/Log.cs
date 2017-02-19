@@ -6,7 +6,7 @@ namespace Nibriboard
 
 		public static int WriteLine(string text, params object[] args)
 		{
-			string outputText = $"[{Env.SecondsSinceStart}] " + string.Format(text, args);
+			string outputText = $"[{Env.SecondsSinceStart.ToString("N3")}] " + string.Format(text, args);
 			Console.WriteLine(outputText);
 			return outputText.Length;
 		}

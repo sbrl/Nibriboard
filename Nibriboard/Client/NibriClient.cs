@@ -105,7 +105,7 @@ namespace Nibriboard.Client
 
 		private async Task handleMessage(string frame)
 		{
-			string eventName = JsonUtilities.DeserializeProperty<string>(frame, "event");
+			string eventName = JsonUtilities.DeserializeProperty<string>(frame, "Event");
 
 			if(eventName == null) {
 				Log.WriteLine("[NibriClient#{0}] Received message that didn't have an event.", Id);

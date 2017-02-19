@@ -40,10 +40,10 @@ class RippleLink extends EventEmitter
 	handleMessage(event) {
 		// Decode the message form the server
 		var message = JSON.parse(event.data);
-		console.debug(message);
+		console.debug(message.Event, message);
 		
 		// Pass it on to the board manager by triggering the appropriate event
-		this.emit(message.event, message);
+		this.emit(message.Event, message);
 	}
 	
 	/**

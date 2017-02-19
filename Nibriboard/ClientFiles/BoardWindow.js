@@ -25,9 +25,21 @@ class BoardWindow extends EventEmitter
 		this.renderTimeIndicator.innerHTML = "0ms";
 		document.querySelector(".fps").appendChild(this.renderTimeIndicator);
 		
+		// --~~~--
+		
+		// Our unique id
+		this.Id = -1;
+		// Our colour
+		this.Colour = "rgba(255, 255, 255, 0.3)";
+		
+		// --~~~--
+		
 		// Setup the canvas
 		this.canvas = canvas;
 		this.context = canvas.getContext("2d");
+		
+		// Grab a reference to the sidebar
+		this.sidebar = document.getElementById("sidebar");
 		
 		// --~~~--
 		
@@ -71,7 +83,7 @@ class BoardWindow extends EventEmitter
 		this.rippleLink.on("connect", (function(event) {
 			// Send the handshake request
 			this.rippleLink.send({
-				event: "HandshakeRequest",
+				Event: "HandshakeRequest",
 				InitialViewport: { // TODO: Add support for persisting this between sessions
 					X: 0,
 					Y: 0,
@@ -88,6 +100,9 @@ class BoardWindow extends EventEmitter
 		this.viewportSyncer = new ViewportSyncer(this.rippleLink, this.cursorUpdateFrequency)
 		
 		// RippleLink message bindings
+		
+		// Handle the HandshakeResponse when it comes in
+		this.rippleLink.on("HandshakeResponse", this.handleHandshakeResponse.bind(this));
 		
 		// Handle other clients' state updates
 		this.rippleLink.on("ClientStates", this.handlePeerUpdates.bind(this));
@@ -161,6 +176,16 @@ class BoardWindow extends EventEmitter
 	 */
 	handleCanvasMovement(event) {
 		this.viewportState = event; // Store the viewport information for later
+	}
+	
+	handleHandshakeResponse(message) {
+		console.log("Received handshake response");
+		
+		// Store the information send by the server
+		this.Id = message.Id;
+		this.Colour = message.Colour;
+		
+		this.sidebar.style.borderTopColor = this.Colour;
 	}
 	
 	handlePeerUpdates(message) {
