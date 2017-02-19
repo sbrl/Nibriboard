@@ -20,8 +20,10 @@ body
     z-index: 2000;
     display: flex;
     
+    padding: 0.3em 0.45em;
+    
     background: rgba(255, 255, 255, 0.3);
-    border-top: 0.2em solid rgba(255, 255, 255 0.3);
+    border-top: 0.2em solid rgba(255, 255, 255, 0.3);
 }
 
 .fps
