@@ -41,6 +41,8 @@ class BoardWindow extends EventEmitter
 		// Setup the input controls
 		window.panzoom(canvas, this.handleCanvasMovement.bind(this));
 		
+		// --~~~--
+		
 		// Fetch the RippleLink connection information and other settings from
 		// the server
 		get("/Settings.json").then(JSON.parse).then((function(settings) {
@@ -51,8 +53,15 @@ class BoardWindow extends EventEmitter
 			console.error(`Error: Failed to fetch settings from server! Response: ${errorMessage}`);
 		});
 		
+		// --~~~--
+		
+		// Setup a bunch of event listeners
+		// The ones that depend on the RippleLink will get setup later
+		
 		// Make the canvas track the window size
 		this.trackWindowSize();
+		
+		this.on("OtherClientUpdate", this.)
 	}
 	
 	/**
@@ -74,12 +83,16 @@ class BoardWindow extends EventEmitter
 				InitialAbsCursorPosition: this.cursorPosition
 			});
 		}).bind(this));
+		// Create a map to store information about other clients in
+		this.otherClients = new Map();
 		
-		// Track the mouse position
+		// Keep the server up to date on our viewport and cursor position
 		this.viewportSyncer = new ViewportSyncer(this.rippleLink, this.cursorUpdateFrequency)
 		
 		// RippleLink message bindings
 		
+		// Handle other clients' state updates
+		this.rippleLink.on("ClientStates", this.handlePeerUpdates.bind(this));
 	}
 	
 	/**
@@ -150,6 +163,23 @@ class BoardWindow extends EventEmitter
 	 */
 	handleCanvasMovement(event) {
 		this.viewportState = event; // Store the viewport information for later
+	}
+	
+	handlePeerUpdates(message) {
+		// Update our knowledge about other clients
+		for (let otherClient of message) {
+			// If this client is new, emit an event about it
+			if(!this.otherClients.has(otherClient.Id))
+				this.emit("OtherClientConnect", otherClient);
+			else // If not, emit a normal update message about it
+				this.emit("OtherClientUpdate", otherClient);
+			// Store the information for later
+			this.otherClients.set(otherClient.Id, otherClient);
+		}
+	}
+	
+	handleOtherClientUpdate(otherClientData) {
+		
 	}
 }
 
