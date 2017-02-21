@@ -206,7 +206,7 @@ namespace Nibriboard.Client
 			result.Id = Id;
 			result.Name = Name;
 			result.Colour = Colour;
-			result.AbsCursorPosition = AbsoluteCursorPosition;
+			result.CursorPosition = AbsoluteCursorPosition;
 			result.Viewport = CurrentViewPort;
 
 			return result;

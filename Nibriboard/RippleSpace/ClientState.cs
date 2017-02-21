@@ -39,7 +39,7 @@ namespace RippleSpace
 		/// <summary>
 		/// The absolute position of the client's cursor.
 		/// </summary>
-		public Vector2 AbsCursorPosition = Vector2.Zero;
+		public Vector2 CursorPosition = Vector2.Zero;
 
 		public ClientState()
 		{
