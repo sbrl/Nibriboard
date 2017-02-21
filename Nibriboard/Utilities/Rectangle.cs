@@ -89,7 +89,7 @@ namespace SBRL.Utilities
 		[JsonIgnore]
 		public int Bottom {
 			get {
-				return Y + Width;
+				return Y + Height;
 			}
 		}
 		/// <summary>
