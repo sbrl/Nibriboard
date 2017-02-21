@@ -5,7 +5,7 @@ import Vector from './Vector';
 /// <summary>
 /// Represents a rectangle in 2D space.
 /// </summary>
-public class Rectangle
+class Rectangle
 {
 	/**
 	 * The top-left corner of the rectangle.
