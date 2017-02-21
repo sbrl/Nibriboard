@@ -8,6 +8,7 @@ window.panzoom = require("pan-zoom");
 // Our files
 import RippleLink from './RippleLink';
 import ViewportSyncer from './ViewportSyncer';
+import OtherClient from './OtherClient';
 import { get } from './Utilities';
 
 class BoardWindow extends EventEmitter
@@ -164,12 +165,11 @@ class BoardWindow extends EventEmitter
 	{
 		context.save();
 		
-		for (let [clientId, clientData] of this.otherClients)
+		for (let [otherClientId, otherClient] of this.otherClients)
 		{
 			// TODO: Filter rendering by working out if this client is actually inside our viewport or not here
-			// TODO: Refactor the other client information out into another class.
 			context.save();
-			context.translate(clientData.AbsCursorPosition.X, clientData.AbsCursorPosition.Y);
+			context.translate(otherClient.CursorPosition.x, otherClient.CursorPosition.y);
 			
 			context.beginPath();
 			// Horizontal line
@@ -179,7 +179,7 @@ class BoardWindow extends EventEmitter
 			context.moveTo(0, -this.otherCursorRadius);
 			context.lineTo(0, this.otherCursorRadius);
 			
-			context.strokeStyle = clientData.Colour;
+			context.strokeStyle = otherClient.Colour;
 			context.lineWidth = this.otherCursorWidth
 			context.stroke();
 			
@@ -225,16 +225,26 @@ class BoardWindow extends EventEmitter
 		this.sidebar.style.borderTopColor = this.Colour;
 	}
 	
+	/**
+	 * Handles peer update messages recieved from the server via the RippleLink.
+	 */
 	handlePeerUpdates(message) {
 		// Update our knowledge about other clients
 		for (let otherClient of message.ClientStates) {
 			// If this client is new, emit an event about it
-			if(!this.otherClients.has(otherClient.Id))
+			if(!this.otherClients.has(otherClient.Id)) {
 				this.emit("OtherClientConnect", otherClient);
-			else // If not, emit a normal update message about it
+				
+				// Convert the raw object into a class instance
+				let otherClientObj = new OtherClient();
+				otherClientObj.Id = otherClient.Id;
+			}
+			else { // If not, emit a normal update message about it
 				this.emit("OtherClientUpdate", otherClient);
-			// Store the information for later
-			this.otherClients.set(otherClient.Id, otherClient);
+			} 
+			
+			// Get the OtherClient instance to pull in the rest of the data
+			this.otherClients.get(otherClient.Id).update(otherClient);
 		}
 	}
 }
