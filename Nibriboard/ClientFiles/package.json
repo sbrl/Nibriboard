@@ -18,6 +18,7 @@
   },
   "scripts": {
     "test": "echo There aren\\'t any tests yet!",
+    "prebuild": "./validate.sh",
     "build": "browserify $npm_package_main -t rollupify -o $npm_package_config_bundle_file"
   },
   "repository": {
