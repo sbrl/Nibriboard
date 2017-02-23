@@ -5,6 +5,9 @@
   "homepage": "https://git.starbeamrainbowlabs.com/sbrl/Nibriboard#nibriboard",
   "main": "index.js",
   "dependencies": {
+    "event-emitter-es6": "^1.1.5",
+    "favicon-notification": "^0.1.4",
+    "fps-indicator": "^1.0.2",
     "pan-zoom": "^2.0.0",
     "rollupify": "^0.3.8"
   },
