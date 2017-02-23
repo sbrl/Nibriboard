@@ -17,6 +17,8 @@ do
 done
 
 error_count=$(cat ${counter_filename});
+
+echo 
 echo Errors: $error_count
 
 # Uncomment to make npm die if this script doesn't work correctly

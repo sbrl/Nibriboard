@@ -42,7 +42,7 @@ class Rectangle
 	 * The Y coordinate of the top of the rectangle.
 	 * @returns {Number}
 	 */
-	get Top {
+	get Top() {
 		return this.y;
 	}
 	
@@ -50,7 +50,7 @@ class Rectangle
 	 * The Y coordinate of the bottom of the rectangle.
 	 * @returns {Number}
 	 */
-	get Bottom {
+	get Bottom() {
 		return this.y + this.height;
 	}
 	
@@ -93,6 +93,6 @@ class Rectangle
  * Don't forget to clone it before editing!
  * @type {Rectangle}
  */
-Rectangle.Zero = new Rectangle(0, 0, 0, 0);)
+Rectangle.Zero = new Rectangle(0, 0, 0, 0);
 
 export default Rectangle;
