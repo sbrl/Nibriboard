@@ -19,8 +19,9 @@ done
 error_count=$(cat ${counter_filename});
 echo Errors: $error_count
 
-if [[ ${error_count} -ne 0 ]]; then
-	exit 1;
-fi
+# Uncomment to make npm die if this script doesn't work correctly
+#if [[ ${error_count} -ne 0 ]]; then
+#	exit 1;
+#fi
 
 exit 0;
