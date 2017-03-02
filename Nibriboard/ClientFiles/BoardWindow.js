@@ -19,7 +19,7 @@ class BoardWindow extends EventEmitter
 		
 		// The maximum target fps.
 		this.maxFps = 60;
-		// The target fps at which we should send sursor updates.
+		// The target fps at which we should send cursor updates.
 		this.cursorUpdateFrequency = 5;
 		
 		// The radius of other clients' cursors.
