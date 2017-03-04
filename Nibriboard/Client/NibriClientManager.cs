@@ -17,7 +17,7 @@ namespace Nibriboard.Client
 		/// <summary>
 		/// The ripple space manager that this client manager is connected to.
 		/// </summary>
-		public RippleSpaceManager SpaceManager;
+		public RippleSpaceManager SpaceManager { get; private set; }
 
 		private ClientSettings clientSettings;
 		public List<NibriClient> Clients = new List<NibriClient>();
@@ -46,7 +46,7 @@ namespace Nibriboard.Client
 			clientSettings = inClientSettings;
 			canceller = inCancellationToken;
 
-			spaceManager = inSpaceManager;
+			SpaceManager = inSpaceManager;
 		}
 
 		/// <summary>

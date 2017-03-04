@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Security.Policy;
+
 namespace Nibriboard.RippleSpace
 {
 	/// <summary>

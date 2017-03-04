@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using RippleSpace;
+using Nibriboard.RippleSpace;
 
 namespace Nibriboard.Client.Messages
 {

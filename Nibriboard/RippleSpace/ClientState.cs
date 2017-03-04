@@ -4,7 +4,7 @@ using SBRL.Utilities;
 using Newtonsoft.Json;
 using SBRL.Utilities.Solutions;
 
-namespace RippleSpace
+namespace Nibriboard.RippleSpace
 {
 	/// <summary>
 	/// Represents a client's state at a particular point in time.

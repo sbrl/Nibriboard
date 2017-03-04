@@ -9,7 +9,7 @@ using IotWeb.Common.Http;
 using Newtonsoft.Json;
 using SBRL.Utilities;
 using Nibriboard.Client.Messages;
-using RippleSpace;
+using Nibriboard.RippleSpace;
 
 namespace Nibriboard.Client
 {
@@ -272,6 +272,14 @@ namespace Nibriboard.Client
 				result.ClientStates.Add(client.GenerateStateSnapshot());
 			}
 			return result;
+		}
+
+		/// <summary>
+		/// Sends variable list of chunks to this client.
+		/// </summary>
+		protected async Task SendChunks(params ChunkReference[] chunkRefs)
+		{
+
 		}
 	}
 }

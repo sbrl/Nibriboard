@@ -55,7 +55,7 @@ namespace Nibriboard
 			// Websocket setup
 			clientManager = new NibriClientManager(
 				clientSettings,
-				
+				planeManager,
 				clientManagerCanceller.Token
 			);
 			httpServer.AddWebSocketRequestHandler(

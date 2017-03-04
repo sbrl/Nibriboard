@@ -2,6 +2,9 @@
 
 namespace Nibriboard.Client.Messages
 {
+	/// <summary>
+	/// Represents a message that is passed between the client and server - in either direction.
+	/// </summary>
 	public class Message
 	{
 		/// <summary>

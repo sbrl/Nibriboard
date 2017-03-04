@@ -85,6 +85,7 @@
     <Compile Include="Client\Messages\ShutdownMessage.cs" />
     <Compile Include="Client\Messages\IdleDisconnectMessage.cs" />
     <Compile Include="Client\Messages\HeartbeatMessage.cs" />
+    <Compile Include="Client\Messages\ChunkUpdateMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />
