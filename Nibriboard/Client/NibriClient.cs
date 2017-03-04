@@ -212,6 +212,16 @@ namespace Nibriboard.Client
 			return result;
 		}
 
+		/// <summary>
+		/// Determines whether this client can see the chunk at the specified chunk reference.
+		/// </summary>
+		/// <param name="chunkRef">The chunk reference to check the visibility of.</param>
+		/// <returns>Whether this client can see the chunk located at the specified chunk reference</returns>
+		public bool CanSee(ChunkReference chunkRef)
+		{
+			throw new NotImplementedException();
+		}
+
 		#region Message Handlers
 		/// <summary>
 		/// Handles an incoming handshake request. We should only receive one of these!
