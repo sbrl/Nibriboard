@@ -22,6 +22,7 @@ namespace Nibriboard
 		private RippleSpaceManager planeManager = new RippleSpaceManager();
 
 		private readonly CancellationTokenSource clientManagerCanceller = new CancellationTokenSource();
+		private NibriClientManager clientManager;
 
 		public readonly int Port = 31586;
 
@@ -52,9 +53,15 @@ namespace Nibriboard
 			);
 
 			// Websocket setup
+			clientManager = new NibriClientManager(
+				clientSettings,
+				
+				clientManagerCanceller.Token
+			);
 			httpServer.AddWebSocketRequestHandler(
 				clientSettings.WebsocketPath,
-				new NibriClientManager(clientSettings, clientManagerCanceller.Token)
+
+				clientManager
 			);
 		}
 

@@ -27,7 +27,22 @@ namespace Nibriboard.RippleSpace
 			Log.WriteLine("[RippleSpace] New blank ripplespace initialised.");
 		}
 
-		public Plane GetById(string targetName)
+		/// <summary>
+		/// Gets the plane with the specified name from this RippleSpace.
+		/// </summary>
+		/// <param name="planeName">The plane name to retrieve.</param>
+		public Plane this[string planeName] {
+			get {
+				return GetById(planeName);
+			}
+		}
+
+		/// <summary>
+		/// Gets the plane with the specified name from this RippleSpace. 
+		/// </summary>
+		/// <param name="targetName">The plane name to retrieve.</param>
+		/// <returns>The plane wwith the specified name.</returns>
+		protected Plane GetById(string targetName)
 		{
 			foreach (Plane plane in Planes)
 			{

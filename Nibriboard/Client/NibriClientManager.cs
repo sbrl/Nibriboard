@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Nibriboard.Client.Messages;
 using System.Threading;
+using Nibriboard.RippleSpace;
 
 namespace Nibriboard.Client
 {
@@ -13,6 +14,11 @@ namespace Nibriboard.Client
 	/// </summary>
 	public class NibriClientManager : IWebSocketRequestHandler
 	{
+		/// <summary>
+		/// The ripple space manager that this client manager is connected to.
+		/// </summary>
+		public RippleSpaceManager SpaceManager;
+
 		private ClientSettings clientSettings;
 		public List<NibriClient> Clients = new List<NibriClient>();
 
@@ -35,10 +41,12 @@ namespace Nibriboard.Client
 			}
 		}
 
-		public NibriClientManager(ClientSettings inClientSettings, CancellationToken inCancellationToken)
+		public NibriClientManager(ClientSettings inClientSettings, RippleSpaceManager inSpaceManager, CancellationToken inCancellationToken)
 		{
 			clientSettings = inClientSettings;
 			canceller = inCancellationToken;
+
+			spaceManager = inSpaceManager;
 		}
 
 		/// <summary>
