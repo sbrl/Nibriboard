@@ -21,7 +21,11 @@
     <PlatformTarget>x86</PlatformTarget>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="npm run build" workingdir="${ProjectDir}/ClientFiles" />
+        <Command>
+          <type>BeforeBuild</type>
+          <command>npm run build</command>
+          <workingdir>${ProjectDir}/ClientFiles</workingdir>
+        </Command>
       </CustomCommands>
     </CustomCommands>
     <Externalconsole>true</Externalconsole>
@@ -86,6 +90,7 @@
     <Compile Include="Client\Messages\IdleDisconnectMessage.cs" />
     <Compile Include="Client\Messages\HeartbeatMessage.cs" />
     <Compile Include="Client\Messages\ChunkUpdateMessage.cs" />
+    <Compile Include="Client\Messages\PlaneChangeMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />

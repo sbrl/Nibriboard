@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 using SBRL.Utilities;
@@ -21,6 +21,11 @@ namespace Nibriboard.Client.Messages
 		/// </summary>
 		[JsonConverter(typeof(ToStringJsonConverter))]
 		public ColourHSL Colour;
+
+		/// <summary>
+		/// A list of planes that this nibriboard server currently has.
+		/// </summary>
+		public List<string> Planes;
 
 		public HandshakeResponseMessage()
 		{

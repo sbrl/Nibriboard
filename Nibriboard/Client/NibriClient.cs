@@ -23,6 +23,8 @@ namespace Nibriboard.Client
 	/// </summary>
 	public class NibriClient
 	{
+		#region Id Generation Logic
+
 		private static int nextId = 1;
 		private static int getNextId() { return nextId++; }
 
@@ -30,10 +32,18 @@ namespace Nibriboard.Client
 		/// This client's unique id.
 		/// </summary>
 		public readonly int Id = getNextId();
+
+		#endregion
+
 		/// <summary>
 		/// The nibri client manager
 		/// </summary>
 		private readonly NibriClientManager manager;
+		/// <summary>
+		/// The plane that this client is currently on.
+		/// </summary>
+		private Plane currentPlane;
+
 		/// <summary>
 		/// The underlying websocket connection to the client.
 		/// Please try not to call the send method on here - use the NibriClient Send() method instead.
@@ -153,6 +163,8 @@ namespace Nibriboard.Client
 
 		#endregion
 
+		#region Message Sending
+
 		/// <summary>
 		/// Sends a <see cref="Nibriboard.Client.Messages.Message"/> to the client.
 		/// If you *really* need to send a raw message to the client, you can do so with the SendRawa() method.
@@ -182,6 +194,8 @@ namespace Nibriboard.Client
 		{
 			Send(new HeartbeatMessage());
 		}
+
+		#endregion
 
 		/// <summary>
 		/// Closes the connection to the client gracefully.
@@ -219,7 +233,7 @@ namespace Nibriboard.Client
 		/// <returns>Whether this client can see the chunk located at the specified chunk reference</returns>
 		public bool CanSee(ChunkReference chunkRef)
 		{
-			throw new NotImplementedException();
+			
 		}
 
 		#region Message Handlers
@@ -240,6 +254,9 @@ namespace Nibriboard.Client
 			HandshakeResponseMessage handshakeResponse = new HandshakeResponseMessage();
 			handshakeResponse.Id = Id;
 			handshakeResponse.Colour = Colour;
+			foreach(Plane plane in manager.SpaceManager.Planes)
+				handshakeResponse.Planes.Add(plane.Name);
+			
 			Send(handshakeResponse);
 
 			// Tell the new client about everyone else who's connected
