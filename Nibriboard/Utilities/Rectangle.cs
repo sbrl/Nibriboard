@@ -119,6 +119,22 @@ namespace SBRL.Utilities
 			Width = width;
 			Height = height;
 		}
+
+		/// <summary>
+		/// Figures out whether this rectangle overlaps another rectangle.
+		/// </summary>
+		/// <param name="otherRectangle">The other rectangle to check the overlap of.</param>
+		/// <returns>Whether this rectangle overlaps another rectangle.</returns>
+		public bool Overlap(Rectangle otherRectangle)
+		{
+			if(Top > otherRectangle.Bottom &&
+			   Bottom < otherRectangle.Top &&
+			   Left > otherRectangle.Right &&
+			   Right < otherRectangle.Left)
+				return false;
+
+			return true;
+		}
 	}
 }
 
