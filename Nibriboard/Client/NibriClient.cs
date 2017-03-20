@@ -42,7 +42,7 @@ namespace Nibriboard.Client
 		/// <summary>
 		/// The plane that this client is currently on.
 		/// </summary>
-		private Plane currentPlane;
+		public Plane CurrentPlane;
 
 		/// <summary>
 		/// The underlying websocket connection to the client.
@@ -304,13 +304,13 @@ namespace Nibriboard.Client
 		protected ClientStatesMessage GenerateClientStateUpdate()
 		{
 			ClientStatesMessage result = new ClientStatesMessage();
-			foreach (NibriClient client in manager.Clients)
+			foreach (NibriClient otherClient in manager.Clients)
 			{
 				// Don't include ourselves in the update message!
-				if (client == this)
+				if (otherClient == this)
 					continue;
 				
-				result.ClientStates.Add(client.GenerateStateSnapshot());
+				result.ClientStates.Add(otherClient.GenerateStateSnapshot());
 			}
 			return result;
 		}
@@ -320,7 +320,12 @@ namespace Nibriboard.Client
 		/// </summary>
 		protected async Task SendChunks(params ChunkReference[] chunkRefs)
 		{
-
+			if(CurrentPlane == default(Plane))
+			{
+				Send(new ExceptionMessage("You're not on a plane yet, so you can't request chunks." +
+				                          "Try joining a plane and sending that request again.");
+				return;
+			}
 		}
 	}
 }

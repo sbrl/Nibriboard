@@ -90,7 +90,29 @@ namespace Nibriboard.Client
 				client.Send(message);
 			}
 		}
+		/// <summary>
+		/// Sends a message to everyone on the same plane as the sender, except the sender themselves.
+		/// </summary>
+		/// <param name="sendingClient">The sending client.</param>
+		/// <param name="message">The message to send.</param>
+		public void BroadcastPlane(NibriClient sendingClient, Message message)
+		{
+			foreach(NibriClient client in Clients)
+			{
+				// Don't send the message to the sender
+				if(client == sendingClient)
+					continue;
+				// Only send the message to others on the same plane
+				if(client.CurrentPlane != sendingClient.CurrentPlane)
+					continue;
 
+				client.Send(message);
+			}
+		}
+
+		/// <summary>
+		/// Periodically tidies up the client list, disconnecting old clients.
+		/// </summary>
 		private async Task ClientMaintenanceMonkey()
 		{
 			while (true) {
