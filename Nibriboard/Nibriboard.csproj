@@ -91,6 +91,7 @@
     <Compile Include="Client\Messages\HeartbeatMessage.cs" />
     <Compile Include="Client\Messages\ChunkUpdateMessage.cs" />
     <Compile Include="Client\Messages\PlaneChangeMessage.cs" />
+    <Compile Include="Client\Messages\ExceptionMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />

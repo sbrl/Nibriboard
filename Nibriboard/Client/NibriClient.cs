@@ -265,6 +265,20 @@ namespace Nibriboard.Client
 
 			return Task.CompletedTask;
 		}
+		/// <summary>
+		/// Handles an incoming plane change request.
+		/// </summary>
+		protected Task handlePlaneChangeMessage(PlaneChangeMessage message)
+		{
+			if(manager.SpaceManager[message.NewPlaneName] == default(Plane))
+				throw new NotImplementedException(); // todo create a new plane here
+
+			message.IsOK = true;
+
+			Send(message);
+
+			return Task.CompletedTask;
+		}
 
 		/// <summary>
 		/// Handles an incoming cursor position message from the client..
