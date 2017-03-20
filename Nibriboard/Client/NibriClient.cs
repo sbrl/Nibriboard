@@ -237,7 +237,9 @@ namespace Nibriboard.Client
 		/// <returns>Whether this client can see the chunk located at the specified chunk reference</returns>
 		public bool CanSee(ChunkReference chunkRef)
 		{
-			
+			LocationReference chunkLocation = chunkRef.InPlanespace();
+			Rectangle chunkArea = chunkRef.InPlanespaceRectangle();
+
 		}
 
 		#region Message Handlers

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Policy;
 using System.IO;
+using SBRL.Utilities;
 
 namespace Nibriboard.RippleSpace
 {
@@ -27,8 +28,21 @@ namespace Nibriboard.RippleSpace
 		{
 			return new LocationReference(
 				Plane,
-				X / Plane.ChunkSize,
-				Y / Plane.ChunkSize
+				X * Plane.ChunkSize,
+				Y * Plane.ChunkSize
+			);
+		}
+		/// <summary>
+		/// Returns a rectangle representing the area of the chunk that this ChunkReference references.
+		/// </summary>
+		/// <returns>A Rectangle representing this ChunkReference's chunk's area.</returns>
+		public Rectangle InPlanespaceRectangle()
+		{
+			return new Rectangle(
+				X * Plane.ChunkSize,
+				Y * Plane.ChunkSize,
+				(X * Plane.ChunkSize) + Plane.ChunkSize,
+				(Y * Plane.ChunkSize) + Plane.ChunkSize
 			);
 		}
 
