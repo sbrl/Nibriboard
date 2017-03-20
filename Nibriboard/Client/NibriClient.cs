@@ -61,6 +61,9 @@ namespace Nibriboard.Client
 		/// Whether this nibri client is still connected.
 		/// </summary>
 		public bool Connected = true;
+		/// <summary>
+		/// Fires when this nibri client disconnects.
+		/// </summary>
 		public event NibriDisconnectedEvent Disconnected;
 
 		/// <summary>
@@ -291,7 +294,7 @@ namespace Nibriboard.Client
 			// TODO: Buffer these updates and send them about 5 times a second
 			ClientStatesMessage updateMessage = new ClientStatesMessage();
 			updateMessage.ClientStates.Add(this.GenerateStateSnapshot());
-			manager.Broadcast(this, updateMessage);
+			manager.BroadcastPlane(this, updateMessage);
 
 			return Task.CompletedTask;
 		}
@@ -299,7 +302,7 @@ namespace Nibriboard.Client
 
 		/// <summary>
 		/// Generates an update message that contains information about the locations and states of all connected clients.
-		/// Automatically omits information about the current client.
+		/// Automatically omits information about the current client, and clients on other planes.
 		/// </summary>
 		/// <returns>The client state update message.</returns>
 		protected ClientStatesMessage GenerateClientStateUpdate()
@@ -310,6 +313,9 @@ namespace Nibriboard.Client
 				// Don't include ourselves in the update message!
 				if (otherClient == this)
 					continue;
+				// Only include other nibri clients on our plane
+				if(otherClient.CurrentPlane != CurrentPlane)
+					continue;
 				
 				result.ClientStates.Add(otherClient.GenerateStateSnapshot());
 			}
@@ -318,15 +324,22 @@ namespace Nibriboard.Client
 
 		/// <summary>
 		/// Sends variable list of chunks to this client.
+		/// Automatically fetches the chunks by reference from the current plane.
 		/// </summary>
 		protected async Task SendChunks(params ChunkReference[] chunkRefs)
 		{
 			if(CurrentPlane == default(Plane))
 			{
 				Send(new ExceptionMessage("You're not on a plane yet, so you can't request chunks." +
-				                          "Try joining a plane and sending that request again.");
+										  "Try joining a plane and sending that request again."));
 				return;
 			}
+
+			ChunkUpdateMessage updateMessage = new ChunkUpdateMessage();
+			foreach(ChunkReference chunkRef in chunkRefs)
+				updateMessage.Chunks.Add(await CurrentPlane.FetchChunk(chunkRef));
+
+			Send(updateMessage);
 		}
 	}
 }

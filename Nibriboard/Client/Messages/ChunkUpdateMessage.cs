@@ -7,7 +7,7 @@ namespace Nibriboard.Client.Messages
 {
 	public class ChunkUpdateMessage : Message
 	{
-		List<Chunk> Chunks = new List<Chunk>();
+		public List<Chunk> Chunks = new List<Chunk>();
 
 		public ChunkUpdateMessage()
 		{
