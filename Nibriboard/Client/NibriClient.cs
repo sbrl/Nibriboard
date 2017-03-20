@@ -53,7 +53,8 @@ namespace Nibriboard.Client
 		private static readonly Dictionary<string, Type> messageEventTypes = new Dictionary<string, Type>()
 		{
 			["HandshakeRequest"] = typeof(HandshakeRequestMessage),
-			["CursorPosition"] = typeof(CursorPositionMessage)
+			["CursorPosition"] = typeof(CursorPositionMessage),
+			["PlaneChange"] = typeof(PlaneChangeMessage)
 		};
 
 		/// <summary>
