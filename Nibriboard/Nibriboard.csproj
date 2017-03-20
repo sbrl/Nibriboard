@@ -46,13 +46,13 @@
     <Reference Include="IotWeb.Server">
       <HintPath>..\packages\IotWeb.0.8.6\lib\net45\IotWeb.Server.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="MimeSharp">
       <HintPath>..\packages\MimeSharp.1.0.0\lib\MimeSharp.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
