@@ -9,6 +9,9 @@ namespace Nibriboard.RippleSpace
 	/// </summary>
 	public class LocationReference : Reference
 	{
+		/// <summary>
+		/// The chunk that this location reference fall inside.
+		/// </summary>
 		public ChunkReference ContainingChunk {
 			get {
 				return new ChunkReference(
@@ -36,7 +39,7 @@ namespace Nibriboard.RippleSpace
 			}
 			return false;
 		}
-		public override int GetHashCode ()
+		public override int GetHashCode()
 		{
 			return $"({Plane.Name})+{X}+{Y}".GetHashCode();
 		}

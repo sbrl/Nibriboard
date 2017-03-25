@@ -39,36 +39,36 @@ namespace SBRL.Utilities
 		/// The top-left corner of the rectangle.
 		/// </summary>
 		[JsonIgnore]
-		public Point TopLeft {
+		public Vector2 TopLeft {
 			get {
-				return new Point(X, Y);
+				return new Vector2(X, Y);
 			}
 		}
 		/// <summary>
 		/// The top-right corner of the rectangle.
 		/// </summary>
 		[JsonIgnore]
-		public Point TopRight {
+		public Vector2 TopRight {
 			get {
-				return new Point(X + Width, Y);
+				return new Vector2(X + Width, Y);
 			}
 		}
 		/// <summary>
 		/// The bottom-left corner of the rectangle.
 		/// </summary>
 		[JsonIgnore]
-		public Point BottomLeft {
+		public Vector2 BottomLeft {
 			get {
-				return new Point(X, Y + Height);
+				return new Vector2(X, Y + Height);
 			}
 		}
 		/// <summary>
 		/// The bottom-right corner of the rectangle.
 		/// </summary>
 		[JsonIgnore]
-		public Point BottomRight {
+		public Vector2 BottomRight {
 			get {
-				return new Point(X + Width, Y + Height);
+				return new Vector2(X + Width, Y + Height);
 			}
 		}
 		#endregion
@@ -82,6 +82,9 @@ namespace SBRL.Utilities
 			get {
 				return Y;
 			}
+			set {
+				Y = value;
+			}
 		}
 		/// <summary>
 		/// The Y coordinate of the bottom of the rectangle.
@@ -90,6 +93,9 @@ namespace SBRL.Utilities
 		public int Bottom {
 			get {
 				return Y + Height;
+			}
+			set {
+				Height = value - Y;
 			}
 		}
 		/// <summary>
@@ -100,6 +106,9 @@ namespace SBRL.Utilities
 			get {
 				return X;
 			}
+			set {
+				X = value;
+			}
 		}
 		/// <summary>
 		/// The X coordinate of the right side of the rectangle.
@@ -108,6 +117,9 @@ namespace SBRL.Utilities
 		public int Right {
 			get {
 				return X + Width;
+			}
+			set {
+				Width = value - X;
 			}
 		}
 		#endregion
@@ -134,6 +146,26 @@ namespace SBRL.Utilities
 				return false;
 
 			return true;
+		}
+
+		/// <summary>
+		/// Returns a Rectangle representing the area that this rectangle overlaps with another.
+		/// Returns an empty rectangle if the two don't overlap at all.
+		/// </summary>
+		/// <param name="otherRectangle">The other rectangle that overlaps this one.</param>
+		/// <returns>The area that this rectanagle overlaps with another.</returns>
+		public Rectangle OverlappingArea(Rectangle otherRectangle)
+		{
+			if(!Overlap(otherRectangle))
+				return Rectangle.Zero;
+
+			Rectangle result = new Rectangle();
+			result.Top = Math.Max(Top, otherRectangle.Top);
+			result.Left = Math.Max(Left, otherRectangle.Left);
+			result.Bottom = Math.Max(Bottom, otherRectangle.Bottom);
+			result.Right = Math.Max(Right, otherRectangle.Right);
+
+			return result;
 		}
 	}
 }

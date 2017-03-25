@@ -49,6 +49,18 @@ namespace Nibriboard.RippleSpace
 
 			StorageDirectory = $"./Planes/{Name}";
 		}
+		/// <summary>
+		/// Fetches a list of chunks by a list of chunk refererences.
+		/// </summary>
+		/// <param name="chunkRefs">The chunk references to fetch the attached chunks for.</param>
+		/// <returns>The chunks attached to the specified chunk references.</returns>
+		public async Task<List<Chunk>> FetchChunks(List<ChunkReference> chunkRefs)
+		{
+			List<Chunk> chunks = new List<Chunk>();
+			foreach(ChunkReference chunkRef in chunkRefs)
+				chunks.Add(await FetchChunk(chunkRef));
+			return chunks;
+		}
 
 		public async Task<Chunk> FetchChunk(ChunkReference chunkLocation)
 		{

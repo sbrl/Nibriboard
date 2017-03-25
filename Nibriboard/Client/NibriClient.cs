@@ -50,11 +50,11 @@ namespace Nibriboard.Client
 		/// </summary>
 		private readonly WebSocket client;
 
-		private static readonly Dictionary<string, Type> messageEventTypes = new Dictionary<string, Type>()
-		{
+		private static readonly Dictionary<string, Type> messageEventTypes = new Dictionary<string, Type>() {
 			["HandshakeRequest"] = typeof(HandshakeRequestMessage),
 			["CursorPosition"] = typeof(CursorPositionMessage),
-			["PlaneChange"] = typeof(PlaneChangeMessage)
+			["PlaneChange"] = typeof(PlaneChangeMessage),
+			["ChunkUpdateRequest"] = typeof(ChunkUpdateRequestMessage)
 		};
 
 		/// <summary>
@@ -105,6 +105,11 @@ namespace Nibriboard.Client
 		/// This client's colour. Used to tell multiple clients apart visually.
 		/// </summary>
 		public readonly ColourHSL Colour = ColourHSL.RandomSaturated();
+		/// <summary>
+		/// The chunk cache. Keeps track of which chunks this client currently has.
+		/// </summary>
+		protected ChunkCache chunkCache = new ChunkCache();
+
 
 		#region Core Setup & Message Routing Logic
 
@@ -166,6 +171,7 @@ namespace Nibriboard.Client
 		}
 
 		#endregion
+
 
 		#region Message Sending
 
@@ -239,11 +245,12 @@ namespace Nibriboard.Client
 		{
 			if(chunkRef.Plane != CurrentPlane)
 				return false;
-			
+
 			Rectangle chunkArea = chunkRef.InPlanespaceRectangle();
 
 			return chunkArea.Overlap(CurrentViewPort);
 		}
+
 
 		#region Message Handlers
 		/// <summary>
@@ -289,6 +296,21 @@ namespace Nibriboard.Client
 			return Task.CompletedTask;
 		}
 
+		protected async Task handleChunkUpdateRequestMessage(ChunkUpdateRequestMessage message)
+		{
+			chunkCache.Remove(message.ForgottenChunks);
+
+			ChunkUpdateMessage response = new ChunkUpdateMessage();
+			List<ChunkReference> missingChunks = ChunkTools.GetContainingChunkReferences(CurrentPlane, CurrentViewPort);
+			missingChunks = chunkCache.FindMissing(missingChunks);
+
+			response.Chunks = await CurrentPlane.FetchChunks(missingChunks);
+
+			Send(response);
+
+			chunkCache.Add(missingChunks);
+		}
+
 		/// <summary>
 		/// Handles an incoming cursor position message from the client..
 		/// </summary>
@@ -303,7 +325,9 @@ namespace Nibriboard.Client
 
 			return Task.CompletedTask;
 		}
+
 		#endregion
+
 
 		/// <summary>
 		/// Generates an update message that contains information about the locations and states of all connected clients.
