@@ -18,6 +18,8 @@ class Pencil
 		 */
 		this.mouse = new Mouse();
 		
+		
+		
 		document.addEventListener("mouseMove", this.handleMouseMove.bind(this));
 	}
 	
