@@ -1,0 +1,23 @@
+{
+  "ecmaVersion": 7,
+  "libs": [
+    "browser"
+  ],
+  "loadEagerly": [
+    "Nibriboard/ClientFiles/*.js",
+    "Nibriboard/ClientFiles/Utilities/*.js",
+    "Nibriboard/ClientFiles/RippleSpace/*.js"
+  ],
+  "dontLoad": [],
+  "plugins": {
+    "doc_comment": true,
+    "node_resolve": {},
+    "modules": {
+      "dontLoad": "",
+      "load": "",
+      "modules": ""
+    },
+    "es_modules": {},
+    "commonjs": {}
+  }
+}
