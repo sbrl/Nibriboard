@@ -1,20 +1,30 @@
 "use strict";
 
+import Vector from '../Utilities/Vector';
+
 /**
  * Represents a point in 2d space that's not tied to a particular plane.
  */
-class LocationReference
+class LocationReference extends Vector
 {
+	
 	/**
-	 * Creates a new location reference
-	 * @param  {number} inX The x coordinate
-	 * @param  {number} inY The y coordinate
-	 * @return {LocationReference}	The new location reference
+	 * Fetches a reference to the chunk that this LocationReference
+	 * falls inside.
+	 * @param {number} chunkSize The chunk size.
 	 */
-	constructor(inX, inY)
+	ContainingChunk(chunkSize) {
+		return new ChunkReference(
+			chunkSize,
+			this.x /= chunkSize,
+			this.y /= chunkSize
+		);
+	}
+	
+	is(otherLocationRef)
 	{
-		this.X = inX;
-		this.Y = inY;
+		return this.x === otherLocationRef.x &&
+			this.y === otherLocationRef.y;
 	}
 	
 	/**
@@ -23,14 +33,14 @@ class LocationReference
 	 */
 	toString()
 	{
-		return `LocationReference: (${this.X}, ${this.Y})`;
+		return `LocationReference: (${this.x}, ${this.y})`;
 	}
 }
 
 /**
  * References a chunk in 2d space, that's not tied to a specific plane.
  */
-class ChunkReference
+class ChunkReference extends Vector
 {
 	/**
 	 * Creates a new ChunkReference instance.
@@ -41,9 +51,8 @@ class ChunkReference
 	 */
 	constructor(inChunkSize, inX, inY)
 	{
+		super(inX, inY);
 		this.ChunkSize = inChunkSize;
-		this.X = inX;
-		this.Y = inY;
 	}
 	
 	/**
@@ -53,9 +62,23 @@ class ChunkReference
 	AsLocationReference()
 	{
 		return new LocationReference(
-			this.X * this.ChunkSize,
-			this.Y * this.ChunkSize
+			this.x * this.ChunkSize,
+			this.y * this.ChunkSize
 		);
+	}
+	
+	/**
+	 * Whether this chunk reference references the same chunk as another
+	 * chunk reference.
+	 * @param  {ChunkReference}  otherChunkRef The other chunk reference to
+	 *                                         compare this chunk reference to.
+	 * @return {boolean}
+	 */
+	is(otherChunkRef)
+	{
+		return this.x === otherChunkRef.x &&
+			this.y === otherChunkRef.y &&
+			this.ChunkSize === otherChunkRef.ChunkSize; // The chunk size should always be the same, but you never know :P
 	}
 	
 	/**
@@ -64,7 +87,7 @@ class ChunkReference
 	 */
 	toString()
 	{
-		return `ChunkReference: ${this.ChunkSize} x (${this.X}, ${this.Y})`;
+		return `ChunkReference: ${this.ChunkSize} x (${this.x}, ${this.y})`;
 	}
 }
 
