@@ -332,7 +332,7 @@ namespace Nibriboard.Client
 			// Forward the line part to everyone on this plane
 			manager.BroadcastPlane(this, message);
 
-
+			throw new NotImplementedException();
 
 			return Task.CompletedTask;
 		}
