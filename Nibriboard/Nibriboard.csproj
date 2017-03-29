@@ -95,6 +95,7 @@
     <Compile Include="Utilities\ChunkTools.cs" />
     <Compile Include="Client\Messages\ChunkUpdateRequestMessage.cs" />
     <Compile Include="Client\ChunkCache.cs" />
+    <Compile Include="Client\Messages\LinePartMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />
