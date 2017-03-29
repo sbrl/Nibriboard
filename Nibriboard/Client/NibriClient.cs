@@ -54,7 +54,8 @@ namespace Nibriboard.Client
 			["HandshakeRequest"] = typeof(HandshakeRequestMessage),
 			["CursorPosition"] = typeof(CursorPositionMessage),
 			["PlaneChange"] = typeof(PlaneChangeMessage),
-			["ChunkUpdateRequest"] = typeof(ChunkUpdateRequestMessage)
+			["ChunkUpdateRequest"] = typeof(ChunkUpdateRequestMessage),
+			["LinePartMessage"] = typeof(LinePartMessage)
 		};
 
 		/// <summary>
@@ -322,6 +323,16 @@ namespace Nibriboard.Client
 			ClientStatesMessage updateMessage = new ClientStatesMessage();
 			updateMessage.ClientStates.Add(this.GenerateStateSnapshot());
 			manager.BroadcastPlane(this, updateMessage);
+
+			return Task.CompletedTask;
+		}
+
+		protected Task handleLinePartMessage(LinePartMessage message)
+		{
+			// Forward the line part to everyone on this plane
+			manager.BroadcastPlane(this, message);
+
+
 
 			return Task.CompletedTask;
 		}
