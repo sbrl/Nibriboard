@@ -33,28 +33,4 @@ class DrawnLine
 		 */
 		this.Points = [];
 	}
-	
-	SplitOnChunks(chunkSize)
-	{
-		var results = [];
-		
-		var nextLine = new DrawnLine(),
-			currentChunk = null;
-		
-		for(let point of this.points)
-		{
-			if(currentChunk != null &&
-				!point.ContainingChunk(chunkSize).is(currentChunk))
-			{
-				// We're heading into a new chunk! Split the line up here.
-				// TODO: Add connecting lines to each DrawnLine instance to prevent gaps
-				results.push(nextLine);
-				nextLine = new DrawnLine(this.LineId);
-			}
-
-			nextLine.Points.push(point);
-		}
-
-		return results;
-	}
 }
