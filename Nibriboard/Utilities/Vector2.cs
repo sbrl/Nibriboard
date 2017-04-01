@@ -6,6 +6,11 @@ namespace SBRL.Utilities
 	/// Represents a single point in 2D space.
 	/// May also be used to represent a direction with a magnitude.
 	/// </summary>
+	/// <version>v0.1</version>
+	/// <changelog>
+	/// v0.1 - 1st April 2017
+	/// 	 - Added this changelog
+	/// </changelog>
 	public struct Vector2
 	{
 		/// <summary>

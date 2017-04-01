@@ -7,6 +7,11 @@ namespace SBRL.Utilities
 	/// <summary>
 	/// Represents a rectangle in 2D space.
 	/// </summary>
+	/// <version>v0.1</version>
+	/// <changelog>
+	/// v0.1 - 1st April 2017
+	/// 	 - Added this changelog!
+	/// </changelog>
 	public struct Rectangle
 	{
 		/// <summary>
