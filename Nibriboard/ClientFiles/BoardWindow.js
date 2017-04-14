@@ -41,6 +41,16 @@ class BoardWindow extends EventEmitter
 		// Our colour
 		this.Colour = "rgba(255, 255, 255, 0.3)";
 		
+		// The current state of the viewport.
+		this.viewport = {
+			// The x coordinate of the viewport.
+			x: 0,
+			// The y coordinate of the viewport.
+			y: 0,
+			// The zoom level of the viewport. 1 = normal.
+			zoomLevel: 1
+		};
+		
 		// --~~~--
 		
 		// Setup the canvas
@@ -214,8 +224,10 @@ class BoardWindow extends EventEmitter
 	handleCanvasMovement(event) {
 		// Store the viewport information for later
 		this.viewportState = event;
-		// Re-emit the movement information for interested parties
-		this.emit("movement", event);
+		
+		this.viewport.x += event.dx;
+		this.viewport.y += event.dy;
+		this.viewport.zoomLevel += event.dz;
 	}
 	
 	handleHandshakeResponse(message) {
