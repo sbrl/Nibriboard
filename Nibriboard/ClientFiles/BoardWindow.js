@@ -212,7 +212,10 @@ class BoardWindow extends EventEmitter
 	 * dragging and zooming of the whiteboard.
 	 */
 	handleCanvasMovement(event) {
-		this.viewportState = event; // Store the viewport information for later
+		// Store the viewport information for later
+		this.viewportState = event;
+		// Re-emit the movement information for interested parties
+		this.emit("movement", event);
 	}
 	
 	handleHandshakeResponse(message) {

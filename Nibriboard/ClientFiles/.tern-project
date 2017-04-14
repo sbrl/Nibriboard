@@ -1,0 +1,30 @@
+{
+  "ecmaVersion": "7",
+  "libs": [
+    "browser"
+  ],
+  "loadEagerly": [
+    "*.js",
+    "Utilities/*.js"
+  ],
+  "dontLoad": [
+    "node_module/**",
+    "NibriClient.js"
+  ],
+  "plugins": {
+    "doc_comment": true,
+    "node_resolve": {},
+    "modules": {
+      "dontLoad": "",
+      "load": "",
+      "modules": ""
+    },
+    "es_modules": {},
+    "requirejs": {
+      "baseURL": "",
+      "paths": "",
+      "override": ""
+    },
+    "commonjs": {}
+  }
+}
