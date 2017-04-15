@@ -113,6 +113,21 @@ namespace Nibriboard.Client
 		}
 
 		/// <summary>
+		/// Sends a message to everyone on a specified plane.
+		/// </summary>
+		/// <param name="plane">The plane to send the message to.</param>
+		/// <param name="message">The message to send.</param>
+		public void ReflectPlane(Plane plane, Message message)
+		{
+			foreach(NibriClient client in Clients)
+			{
+				if(client.CurrentPlane != plane)
+					continue;
+				client.Send(message);
+			}
+		}
+
+		/// <summary>
 		/// Periodically tidies up the client list, disconnecting old clients.
 		/// </summary>
 		private async Task ClientMaintenanceMonkey()
