@@ -22,6 +22,8 @@ namespace Nibriboard.Client
 		private ClientSettings clientSettings;
 		public List<NibriClient> Clients = new List<NibriClient>();
 
+		public LineIncubator LineIncubator = new LineIncubator();
+
 		/// <summary>
 		/// The cancellation token that's used by the main server to tell us when we should shut down.
 		/// </summary>

@@ -55,7 +55,8 @@ namespace Nibriboard.Client
 			["CursorPosition"] = typeof(CursorPositionMessage),
 			["PlaneChange"] = typeof(PlaneChangeMessage),
 			["ChunkUpdateRequest"] = typeof(ChunkUpdateRequestMessage),
-			["LinePartMessage"] = typeof(LinePartMessage)
+			["LinePartMessage"] = typeof(LinePartMessage),
+			["LineCompleteMessage"] = typeof(LineCompleteMessage)
 		};
 
 		/// <summary>
@@ -327,14 +328,35 @@ namespace Nibriboard.Client
 			return Task.CompletedTask;
 		}
 
+		/// <summary>
+		/// Handles messages containing a fragment of a line from the client.
+		/// </summary>
+		/// <param name="message">The message to process.</param>
 		protected Task handleLinePartMessage(LinePartMessage message)
 		{
 			// Forward the line part to everyone on this plane
 			manager.BroadcastPlane(this, message);
 
-			throw new NotImplementedException();
+			List<LocationReference> linePoints = new List<LocationReference>(message.Points.Count);
+			foreach(Vector2 point in message.Points)
+				linePoints.Add(new LocationReference(CurrentPlane, point.X, point.Y));
+			
+			manager.LineIncubator.AddBit(message.LineId, linePoints);
 
 			return Task.CompletedTask;
+		}
+
+		/// <summary>
+		/// Handles notifications from clients telling us that they've finished drawing a line.
+		/// </summary>
+		/// <param name="message">The message to handle.</param>
+		protected async Task handleLineCompleteMessage(LineCompleteMessage message)
+		{
+			DrawnLine line = manager.LineIncubator.CompleteLine(message.LineId);
+			line.LineWidth = message.LineWidth;
+			line.Colour = message.LineColour;
+
+			await CurrentPlane.AddLine(line);
 		}
 
 		#endregion

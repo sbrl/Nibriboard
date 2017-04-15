@@ -21,7 +21,7 @@ namespace Nibriboard.Client
 		public int LinesCompleted { get; private set; } = 0;
 
 		/// <summary>
-		/// The number of liens that are still incubating and haven't been completed yet.
+		/// The number of lines that are still incubating and haven't been completed yet.
 		/// </summary>
 		public int IncompletedLines {
 			get {

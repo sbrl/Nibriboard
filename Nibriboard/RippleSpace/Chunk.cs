@@ -7,6 +7,32 @@ using System.Runtime.Serialization;
 
 namespace Nibriboard.RippleSpace
 {
+	public enum ChunkUpdateType
+	{
+		/// <summary>
+		/// Something was added to the chunk.
+		/// </summary>
+		Addition,
+		/// <summary>
+		/// Something was deleted form the chunk.
+		/// </summary>
+		Deletion,
+		/// <summary>
+		/// A combination of additions and deletions were made to the chunk's contents.
+		/// </summary>
+		Combination
+	}
+
+	public class ChunkUpdateEventArgs : EventArgs
+	{
+		/// <summary>
+		/// The type of update made to the chunk
+		/// </summary>
+		public ChunkUpdateType UpdateType { get; set; }
+	}
+
+	public delegate void ChunkUpdateEvent(object sender, ChunkUpdateEventArgs eventArgs);
+
 	/// <summary>
 	/// Represents a single chunk of an infinite <see cref="NibriboardServer.RippleSpace.Plane" />.
 	/// </summary>
@@ -33,7 +59,10 @@ namespace Nibriboard.RippleSpace
 		/// </summary>
 		public readonly ChunkReference Location;
 
-
+		/// <summary>
+		/// Fired when this chunk is updated.
+		/// </summary>
+		public event ChunkUpdateEvent ChunkUpdateEvent;
 		/// <summary>
 		/// The time at which this chunk was loaded.
 		/// </summary>
@@ -83,9 +112,8 @@ namespace Nibriboard.RippleSpace
 		}
 
 		/// <summary>
-		/// Whether this chunk could, theorectically, be unloaded. Of course,
-		/// the server may decide it doesn't need to unload us even if we're
-		/// inactive.
+		/// Whether this chunk could, theorectically, be unloaded.
+		/// This method takes into account whether this is a primary chunk or not.
 		/// </summary>
 		public bool CouldUnload
 		{
@@ -148,6 +176,8 @@ namespace Nibriboard.RippleSpace
 				lines.Add(newLine);
 				i++;
 			}
+
+			ChunkUpdateEvent(this, new ChunkUpdateEventArgs() { UpdateType = ChunkUpdateType.Addition });
 		}
 
 		public IEnumerator<DrawnLine> GetEnumerator()

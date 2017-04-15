@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 
 namespace Nibriboard.RippleSpace
 {
@@ -38,14 +40,58 @@ namespace Nibriboard.RippleSpace
 		public int PrimaryChunkAreaSize = 10;
 
 		/// <summary>
+		/// The minimum number of potentially unloadable chunks that we should have
+		/// before considering unloading some chunks
+		/// </summary>
+		public int MinUnloadeableChunks = 50;
+
+		/// <summary>
+		/// The soft limit on the number of chunks we can have loaded before we start
+		/// bothering to try and unload any chunks
+		/// </summary>
+		public int SoftLoadedChunkLimit;
+
+		/// <summary>
+		/// Fired when one of the chunks on this plane updates.
+		/// </summary>
+		public event ChunkUpdateEvent OnChunkUpdate;
+
+		/// <summary>
 		/// The chunkspace that holds the currently loaded and active chunks.
 		/// </summary>
 		protected Dictionary<ChunkReference, Chunk> loadedChunkspace = new Dictionary<ChunkReference, Chunk>();
+
+		/// <summary>
+		/// The number of chunks that this plane currently has laoded into active memory.
+		/// </summary>
+		public int LoadedChunks {
+			get {
+				return loadedChunkspace.Count;
+			}
+		}
+		/// <summary>
+		/// The number of potentially unloadable chunks this plane currently has.
+		/// </summary>
+		public int UnloadableChunks {
+			get {
+				int result = 0;
+				foreach(KeyValuePair<ChunkReference, Chunk> chunkEntry in loadedChunkspace) {
+					if(chunkEntry.Value.CouldUnload)
+						result++;
+				}
+				return result;
+			}
+		}
 
 		public Plane(string inName, int inChunkSize)
 		{
 			Name = inName;
 			ChunkSize = inChunkSize;
+
+			// Set the soft loaded chunk limit to double the number of chunks in the
+			// primary chunks area
+			// Note that the primary chunk area is a radius around (0, 0) - not the diameter
+			SoftLoadedChunkLimit = PrimaryChunkAreaSize * PrimaryChunkAreaSize * 4;
 
 			StorageDirectory = $"./Planes/{Name}";
 		}
@@ -74,6 +120,7 @@ namespace Nibriboard.RippleSpace
 			// return it fast.
 			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilename());
 			Chunk loadedChunk = await Chunk.FromFile(this, chunkFilePath);
+			loadedChunk.OnChunkUpdate += HandleChunkUpdate;
 			loadedChunkspace.Add(chunkLocation, loadedChunk);
 
 			return loadedChunk;
@@ -96,9 +143,43 @@ namespace Nibriboard.RippleSpace
 			}
 		}
 
-		public async Task PerformMaintenance()
+		public void PerformMaintenance()
 		{
-			// TODO: Perform maintenance here
+			// Be lazy and don't bother to perform maintenance if it's not needed
+			if(LoadedChunks < SoftLoadedChunkLimit ||
+			   UnloadableChunks < MinUnloadeableChunks)
+				return;
+			
+			foreach(KeyValuePair<ChunkReference, Chunk> chunkEntry in loadedChunkspace)
+			{
+				if(!chunkEntry.Value.CouldUnload)
+					continue;
+
+				// This chunk has been inactive for a while - let's serialise it and save it to disk
+				Stream chunkSerializationSink = new FileStream(
+					Path.Combine(StorageDirectory, chunkEntry.Key.AsFilename()),
+					FileMode.Create,
+					FileAccess.Write,
+					FileShare.None
+				);
+				IFormatter binaryFormatter = new BinaryFormatter();
+				binaryFormatter.Serialize(chunkSerializationSink, chunkEntry.Value);
+
+				// Remove the chunk from the loaded chunkspace
+				loadedChunkspace.Remove(chunkEntry.Key);
+			}
+		}
+
+		/// <summary>
+		/// Handles chunk updates from the individual loaded chunks on this plane.
+		/// Re-emits chunk updates it catches wind of at plane-level.
+		/// </summary>
+		/// <param name="sender">The chunk responsible for the update.</param>
+		/// <param name="eventArgs">The event arguments associated with the chunk update.</param>
+		protected void HandleChunkUpdate(object sender, ChunkUpdateEventArgs eventArgs)
+		{
+			// Make the chunk update bubble up to plane-level
+			OnChunkUpdate(sender, eventArgs);
 		}
 	}
 }
