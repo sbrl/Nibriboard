@@ -14,8 +14,15 @@ class Pencil
 	 */
 	constructor(inRippleLink, inBoardWindow)
 	{
+		this.boardWindow = inBoardWindow;
+		
 		// The time, in milliseconds, between pushes of the line to the server.
 		this.pushDelay = 200;
+		
+		// The current line width
+		this.currentLineWidth = 3;
+		// The current line colour
+		this.currentColour = "black";
 		
 		/**
 		 * The ripple link connection to the server.
@@ -44,12 +51,12 @@ class Pencil
 		document.addEventListener("mouseUp", this.handleMouseUp.bind(this));
 	}
 	
-	handleMouseDown(event) {
-		
-	}
-	
 	handleMouseMove(event) {
-		var nextPoint = new Vector(event.clientX, event.clientY);
+		// todo add zoom support here
+		var nextPoint = new Vector(
+			event.clientX + this.boardWindow.viewport.x,
+			event.clientY + this.boardWindow.viewport.y
+		);
 		this.unsentSegments.push(nextPoint);
 		this.currentLineSegments.push(nextPoint);
 		
@@ -59,7 +66,7 @@ class Pencil
 	
 	handleMouseUp(event) {
 		sendUnsent();
-		// Reset the currently line segments
+		// Reset the current line segments
 		this.currentLineSegments = [];
 		// Regenerate the line id
 		this.currentLineId = cuid();
@@ -81,6 +88,21 @@ class Pencil
 	}
 	
 	render(canvas, context) {
+		if(this.currentLineSegments.length == 0)
+			return;
 		
+		context.save();
+		
+		context.beginPath();
+		context.lineTo(this.currentLineSegments[0].x, this.currentLineSegments[0].y);
+		for(let point of this.currentLineSegments) {
+			context.lineTo(point.x, point.y);
+		}
+		context.lineWidth = this.currentColour;
+		context.strokeStyle = this.currentColour;
+		
+		context.restore();
 	}
 }
+
+export default Pencil;

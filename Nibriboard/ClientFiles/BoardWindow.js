@@ -10,6 +10,7 @@ import RippleLink from './RippleLink';
 import ViewportSyncer from './ViewportSyncer';
 import OtherClient from './OtherClient';
 import { get } from './Utilities';
+import Keyboard from './Utilities/Keyboard';
 
 class BoardWindow extends EventEmitter
 {
@@ -62,6 +63,8 @@ class BoardWindow extends EventEmitter
 		
 		// Create a map to store information about other clients in
 		this.otherClients = new Map();
+		
+		this.keyboard = new Keyboard();
 		
 		// --~~~--
 		
@@ -222,6 +225,10 @@ class BoardWindow extends EventEmitter
 	 * dragging and zooming of the whiteboard.
 	 */
 	handleCanvasMovement(event) {
+		// Don't bother processing it if it's a mouse / touch interaction and
+		// the control key isn't pressed
+		if([ "mouse", "touch" ].contains(event.type) && !this.DownKeys.contains(17))
+			return;
 		// Store the viewport information for later
 		this.viewportState = event;
 		

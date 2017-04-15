@@ -97,6 +97,7 @@
     <Compile Include="Client\ChunkCache.cs" />
     <Compile Include="Client\Messages\LinePartMessage.cs" />
     <Compile Include="Client\LineIncubator.cs" />
+    <Compile Include="Client\Messages\LineCompleteMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />
