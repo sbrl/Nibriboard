@@ -9,6 +9,7 @@ window.panzoom = require("pan-zoom");
 import RippleLink from './RippleLink';
 import ViewportSyncer from './ViewportSyncer';
 import OtherClient from './OtherClient';
+import Pencil from './Pencil';
 import { get } from './Utilities';
 import Keyboard from './Utilities/Keyboard';
 
@@ -51,6 +52,11 @@ class BoardWindow extends EventEmitter
 			// The zoom level of the viewport. 1 = normal.
 			zoomLevel: 1
 		};
+		/**
+		 * The currents tate of the keyboard.
+		 * @type {Keyboard}
+		 */
+		this.keyboard = new Keyboard();
 		
 		// --~~~--
 		
@@ -64,7 +70,7 @@ class BoardWindow extends EventEmitter
 		// Create a map to store information about other clients in
 		this.otherClients = new Map();
 		
-		this.keyboard = new Keyboard();
+		
 		
 		// --~~~--
 		
@@ -172,6 +178,7 @@ class BoardWindow extends EventEmitter
 		context.clearRect(0, 0, canvas.width, canvas.height);
 		
 		this.renderOthers(canvas, context);
+		this.pencil.render(canvas, context);
 	}
 	
 	renderOthers(canvas, context)
@@ -237,6 +244,10 @@ class BoardWindow extends EventEmitter
 		this.viewport.zoomLevel += event.dz;
 	}
 	
+	/**
+	 * Handles the server's response to our handshake request
+	 * @param  {object} message The server's response to our handshake request.
+	 */
 	handleHandshakeResponse(message) {
 		console.log("Received handshake response");
 		
@@ -245,6 +256,9 @@ class BoardWindow extends EventEmitter
 		this.Colour = message.Colour;
 		
 		this.sidebar.style.borderTopColor = this.Colour;
+		
+		// The pencil that draws the lines
+		this.pencil = new Pencil(this.rippleLink, this);
 	}
 	
 	/**

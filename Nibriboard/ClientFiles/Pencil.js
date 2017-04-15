@@ -1,7 +1,8 @@
 "use strict";
 
-import Mouse from './Utilities/Mouse';
 import Vector from './Utilities/Vector';
+
+import Mouse from './Utilities/Mouse';
 
 var cuid = require("cuid");
 
@@ -66,6 +67,13 @@ class Pencil
 	
 	handleMouseUp(event) {
 		sendUnsent();
+		// Tell the server that the line is complete
+		this.rippleLink.send({
+			Event: "LineComplete",
+			LineId: this.currentLineId,
+			LineWidth: this.currentLineWidth,
+			LineColour: this.currentColour
+		});
 		// Reset the current line segments
 		this.currentLineSegments = [];
 		// Regenerate the line id
@@ -87,6 +95,11 @@ class Pencil
 		this.unsentSegments = [];
 	}
 	
+	/**
+	 * Renders the line that is currently being drawn to the screen.
+	 * @param  {HTMLCanvasElement} canvas  The canvas to draw to.
+	 * @param  {CanvasRenderingContext2D} context The rendering context to use to draw to the canvas.
+	 */
 	render(canvas, context) {
 		if(this.currentLineSegments.length == 0)
 			return;
