@@ -55,8 +55,8 @@ namespace Nibriboard.Client
 			["CursorPosition"] = typeof(CursorPositionMessage),
 			["PlaneChange"] = typeof(PlaneChangeMessage),
 			["ChunkUpdateRequest"] = typeof(ChunkUpdateRequestMessage),
-			["LinePartMessage"] = typeof(LinePartMessage),
-			["LineCompleteMessage"] = typeof(LineCompleteMessage)
+			["LinePart"] = typeof(LinePartMessage),
+			["LineComplete"] = typeof(LineCompleteMessage)
 		};
 
 		/// <summary>
