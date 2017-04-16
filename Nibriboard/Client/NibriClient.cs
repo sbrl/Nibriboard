@@ -365,6 +365,12 @@ namespace Nibriboard.Client
 		/// <param name="message">The message to handle.</param>
 		protected async Task handleLineCompleteMessage(LineCompleteMessage message)
 		{
+			// If the line doesn't exist, then ignore it
+			if(!manager.LineIncubator.LineExists(message.LineId))
+			{
+				Log.WriteLine("[NibriClient/handlers] Ignoring LineComplete event for line that doesn't exist");
+				return;
+			}
 			DrawnLine line = manager.LineIncubator.CompleteLine(message.LineId);
 			line.LineWidth = message.LineWidth;
 			line.Colour = message.LineColour;
