@@ -22,7 +22,7 @@ class Keyboard
 	 * @param  {KeyboardEvent} event The keyboard event to handle.
 	 */
 	handleKeyDown(event) {
-		if(!this.DownKeys.contains(event.keyCode))
+		if(!this.DownKeys.includes(event.keyCode))
 			this.DownKeys.push(event.keyCode);
 	}
 	
