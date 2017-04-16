@@ -22,6 +22,8 @@ namespace Nibriboard.RippleSpace
 		/// </summary>
 		public long LastMaintenanceDuration = 0;
 
+		public int DefaultChunkSize { get; set; } = 512;
+
 		public RippleSpaceManager()
 		{
 			Log.WriteLine("[RippleSpace] New blank ripplespace initialised.");
@@ -51,6 +53,21 @@ namespace Nibriboard.RippleSpace
 			}
 
 			return null;
+		}
+
+		/// <summary>
+		/// Creates a new plane, adds it to this RippleSpaceManager, and then returns it.
+		/// </summary>
+		/// <param name="newPlaneName">The name of the new plane to create.</param>
+		/// <returns>The newly created plane.</returns>
+		protected Plane CreatePlane(string newPlaneName)
+		{
+			if(this[newPlaneName] != null)
+				throw new InvalidOperationException($"Error: A plane with the name '{newPlaneName}' already exists in this RippleSpaceManager.");
+			
+			Plane newPlane = new Plane(newPlaneName, DefaultChunkSize);
+			Planes.Add(newPlane);
+			return newPlane;
 		}
 
 		public async Task StartMaintenanceMonkey()
