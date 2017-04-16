@@ -288,16 +288,28 @@ namespace Nibriboard.Client
 		/// </summary>
 		protected Task handlePlaneChangeMessage(PlaneChangeMessage message)
 		{
+			// Create a new plane with the specified name if it doesn't exist already
 			if(manager.SpaceManager[message.NewPlaneName] == default(Plane))
-				throw new NotImplementedException(); // todo create a new plane here
+				throw new NotImplementedException("Plane creation hasn't been implemented yet"); // todo create a new plane here
 
+			// Remove the event listener from the old plane if there is indeed an old plane to remove it from
+			if(CurrentPlane != null)
+				CurrentPlane.OnChunkUpdate -= handleChunkUpdateEvent;
+			// Swap out the current plane
+			CurrentPlane = manager.SpaceManager[message.NewPlaneName];
+			// Attach a listener to the new plane
+			CurrentPlane.OnChunkUpdate += handleChunkUpdateEvent;
+
+			// Tell the client that the switchove  all went according to plan
 			message.IsOK = true;
-
 			Send(message);
 
 			return Task.CompletedTask;
 		}
-
+		/// <summary>
+		/// Handles requests from clients for chunk updates.
+		/// </summary>
+		/// <param name="message">The message to process.</param>
 		protected async Task handleChunkUpdateRequestMessage(ChunkUpdateRequestMessage message)
 		{
 			chunkCache.Remove(message.ForgottenChunks);
@@ -316,6 +328,7 @@ namespace Nibriboard.Client
 		/// <summary>
 		/// Handles an incoming cursor position message from the client..
 		/// </summary>
+		/// <param name="message">The message to process.</param>
 		protected Task handleCursorPositionMessage(CursorPositionMessage message) {
 			AbsoluteCursorPosition = message.AbsCursorPosition;
 
@@ -357,6 +370,18 @@ namespace Nibriboard.Client
 			line.Colour = message.LineColour;
 
 			await CurrentPlane.AddLine(line);
+		}
+
+		#endregion
+
+		#region RippleSpace Event Handlers
+
+		protected void handleChunkUpdateEvent(object sender, ChunkUpdateEventArgs eventArgs)
+		{
+			ChunkUpdateMessage clientNotification = new ChunkUpdateMessage() {
+				Chunks = new List<Chunk>() { sender as Chunk }
+			};
+			Send(clientNotification);
 		}
 
 		#endregion
