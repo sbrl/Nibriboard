@@ -47,13 +47,17 @@ class Pencil
 		// The time of the last push of the line to the server.
 		this.lastServerPush = 0;
 		
-		canvas.addEventListener("mouseDown", this.handleMouseDown.bind(this));
-		canvas.addEventListener("mouseMove", this.handleMouseMove.bind(this));
-		canvas.addEventListener("mouseUp", this.handleMouseUp.bind(this));
+		canvas.addEventListener("mousemove", this.handleMouseMove.bind(this));
+		canvas.addEventListener("mouseup", this.handleMouseUp.bind(this));
 	}
 	
 	handleMouseMove(event) {
 		// todo add zoom support here
+		
+		// Don't draw anything if the left mouse button isn't down
+		if(!this.boardWindow.mouse.leftDown)
+			return;
+		
 		var nextPoint = new Vector(
 			event.clientX + this.boardWindow.viewport.x,
 			event.clientY + this.boardWindow.viewport.y

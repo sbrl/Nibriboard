@@ -70,9 +70,9 @@ class Mouse
 		this.position = new Vector(0, 0);
 		
 		// Register the required event listeners
-		document.addEventListener("mouseup", handleMouseUp.bind(this));
-		document.addEventListener("mousedown", handleMouseDown.bind(this));
-		document.addEventListener("mousemove", handleMouseMove.bind(this));
+		document.addEventListener("mouseup", this.handleMouseUp.bind(this));
+		document.addEventListener("mousedown", this.handleMouseDown.bind(this));
+		document.addEventListener("mousemove", this.handleMouseMove.bind(this));
 	}
 	
 	handleMouseUp(event)
