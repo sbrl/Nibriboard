@@ -258,7 +258,7 @@ class BoardWindow extends EventEmitter
 		this.sidebar.style.borderTopColor = this.Colour;
 		
 		// The pencil that draws the lines
-		this.pencil = new Pencil(this.rippleLink, this);
+		this.pencil = new Pencil(this.rippleLink, this, this.canvas);
 	}
 	
 	/**

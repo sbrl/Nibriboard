@@ -13,7 +13,7 @@ class Pencil
 	 * @param	{RippleLink}	inRippleLink	The connection to the nibri server.
 	 * @return	{Pencil}		A new Pencil class instance.
 	 */
-	constructor(inRippleLink, inBoardWindow)
+	constructor(inRippleLink, inBoardWindow, canvas)
 	{
 		this.boardWindow = inBoardWindow;
 		
@@ -47,9 +47,9 @@ class Pencil
 		// The time of the last push of the line to the server.
 		this.lastServerPush = 0;
 		
-		document.addEventListener("mouseDown", this.handleMouseDown.bind(this));
-		document.addEventListener("mouseMove", this.handleMouseMove.bind(this));
-		document.addEventListener("mouseUp", this.handleMouseUp.bind(this));
+		canvas.addEventListener("mouseDown", this.handleMouseDown.bind(this));
+		canvas.addEventListener("mouseMove", this.handleMouseMove.bind(this));
+		canvas.addEventListener("mouseUp", this.handleMouseUp.bind(this));
 	}
 	
 	handleMouseMove(event) {
