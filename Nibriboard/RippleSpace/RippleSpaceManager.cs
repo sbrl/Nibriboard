@@ -60,7 +60,7 @@ namespace Nibriboard.RippleSpace
 		/// </summary>
 		/// <param name="newPlaneName">The name of the new plane to create.</param>
 		/// <returns>The newly created plane.</returns>
-		protected Plane CreatePlane(string newPlaneName)
+		public Plane CreatePlane(string newPlaneName)
 		{
 			if(this[newPlaneName] != null)
 				throw new InvalidOperationException($"Error: A plane with the name '{newPlaneName}' already exists in this RippleSpaceManager.");

@@ -290,7 +290,7 @@ namespace Nibriboard.Client
 		{
 			// Create a new plane with the specified name if it doesn't exist already
 			if(manager.SpaceManager[message.NewPlaneName] == default(Plane))
-				throw new NotImplementedException("Plane creation hasn't been implemented yet"); // todo create a new plane here
+				manager.SpaceManager.CreatePlane(message.NewPlaneName);
 
 			// Remove the event listener from the old plane if there is indeed an old plane to remove it from
 			if(CurrentPlane != null)
@@ -300,7 +300,7 @@ namespace Nibriboard.Client
 			// Attach a listener to the new plane
 			CurrentPlane.OnChunkUpdate += handleChunkUpdateEvent;
 
-			// Tell the client that the switchove  all went according to plan
+			// Tell the client that the switch over all went according to plan
 			message.IsOK = true;
 			Send(message);
 
