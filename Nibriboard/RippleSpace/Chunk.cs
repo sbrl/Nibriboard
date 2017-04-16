@@ -62,7 +62,7 @@ namespace Nibriboard.RippleSpace
 		/// <summary>
 		/// Fired when this chunk is updated.
 		/// </summary>
-		public event ChunkUpdateEvent ChunkUpdateEvent;
+		public event ChunkUpdateEvent OnChunkUpdate;
 		/// <summary>
 		/// The time at which this chunk was loaded.
 		/// </summary>
@@ -177,7 +177,7 @@ namespace Nibriboard.RippleSpace
 				i++;
 			}
 
-			ChunkUpdateEvent(this, new ChunkUpdateEventArgs() { UpdateType = ChunkUpdateType.Addition });
+			OnChunkUpdate(this, new ChunkUpdateEventArgs() { UpdateType = ChunkUpdateType.Addition });
 		}
 
 		public IEnumerator<DrawnLine> GetEnumerator()
