@@ -55,7 +55,7 @@ class Pencil
 		// todo add zoom support here
 		
 		// Don't draw anything if the left mouse button isn't down
-		if(!this.boardWindow.mouse.leftDown)
+		if(!this.mouse.leftDown)
 			return;
 		
 		var nextPoint = new Vector(
@@ -66,11 +66,11 @@ class Pencil
 		this.currentLineSegments.push(nextPoint);
 		
 		if(new Date() - this.lastServerPush > this.pushDelay)
-			sendUnsent();
+			this.sendUnsent();
 	}
 	
 	handleMouseUp(event) {
-		sendUnsent();
+		this.sendUnsent();
 		// Tell the server that the line is complete
 		this.rippleLink.send({
 			Event: "LineComplete",
