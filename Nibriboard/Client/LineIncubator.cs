@@ -33,6 +33,22 @@ namespace Nibriboard.Client
 		{
 		}
 
+		/// <summary>
+		/// Figures out whether an incomplete line with the given id exists or not.
+		/// </summary>
+		/// <param name="lineId">The line id to check for.</param>
+		public bool LineExists(Guid lineId)
+		{
+			if(currentLines[lineId] != null)
+				return true;
+			return false;
+		}
+
+		/// <summary>
+		/// Adds a series of points to the incomplete line with the specified id.
+		/// </summary>
+		/// <param name="lineId">The line id to add the points to.</param>
+		/// <param name="points">The points to add to the lines.</param>
 		public void AddBit(Guid lineId, List<LocationReference> points)
 		{
 			// Create a new line if one doesn't exist already
