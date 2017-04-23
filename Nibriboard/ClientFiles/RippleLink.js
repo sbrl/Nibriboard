@@ -22,6 +22,7 @@ class RippleLink extends EventEmitter
 		
 		// Respond to heartbeats from the server
 		this.on("Heartbeat", this.handleHeartbeat.bind(this));
+		this.on("Error", this.handleErrorMessage.bind(this));
 		
 		// Close the socket correctly
 		window.addEventListener("beforeunload", (function(event) {
@@ -47,6 +48,10 @@ class RippleLink extends EventEmitter
 		
 		// Pass it on to the board manager by triggering the appropriate event
 		this.emit(message.Event, message);
+	}
+	
+	handleErrorMessage(message) {
+		console.error(message.Message);
 	}
 	
 	/**
