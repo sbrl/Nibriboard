@@ -13,7 +13,7 @@ namespace Nibriboard.Client
 		/// <summary>
 		/// The current lines that haven't been completed yet.
 		/// </summary>
-		private Dictionary<Guid, DrawnLine> currentLines = new Dictionary<Guid, DrawnLine>();
+		private Dictionary<string, DrawnLine> currentLines = new Dictionary<string, DrawnLine>();
 
 		/// <summary>
 		/// The number of lines that this line incubator has completed.
@@ -37,7 +37,7 @@ namespace Nibriboard.Client
 		/// Figures out whether an incomplete line with the given id exists or not.
 		/// </summary>
 		/// <param name="lineId">The line id to check for.</param>
-		public bool LineExists(Guid lineId)
+		public bool LineExists(string lineId)
 		{
 			if(currentLines[lineId] != null)
 				return true;
@@ -49,7 +49,7 @@ namespace Nibriboard.Client
 		/// </summary>
 		/// <param name="lineId">The line id to add the points to.</param>
 		/// <param name="points">The points to add to the lines.</param>
-		public void AddBit(Guid lineId, List<LocationReference> points)
+		public void AddBit(string lineId, List<LocationReference> points)
 		{
 			// Create a new line if one doesn't exist already
 			if(!currentLines.ContainsKey(lineId))
@@ -64,7 +64,7 @@ namespace Nibriboard.Client
 		/// </summary>
 		/// <param name="lineId">The id of the line to complete.</param>
 		/// <returns>The completed line.</returns>
-		public DrawnLine CompleteLine(Guid lineId)
+		public DrawnLine CompleteLine(string lineId)
 		{
 			if(!currentLines.ContainsKey(lineId))
 				throw new KeyNotFoundException("Error: A line with that id wasn't found in this LineIncubator.");

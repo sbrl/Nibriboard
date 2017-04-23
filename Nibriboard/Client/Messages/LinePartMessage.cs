@@ -14,7 +14,7 @@ namespace Nibriboard.Client.Messages
 		/// <summary>
 		/// The id of the line to add the points to.
 		/// </summary>
-		public Guid LineId;
+		public string LineId;
 		/// <summary>
 		/// The points to add to the line
 		/// </summary>

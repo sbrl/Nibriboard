@@ -98,6 +98,7 @@
     <Compile Include="Client\Messages\LinePartMessage.cs" />
     <Compile Include="Client\LineIncubator.cs" />
     <Compile Include="Client\Messages\LineCompleteMessage.cs" />
+    <Compile Include="Client\Messages\ErrorMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />

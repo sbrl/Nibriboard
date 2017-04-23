@@ -14,7 +14,7 @@ namespace Nibriboard.RippleSpace
 		/// drawn at once may also have the same id. This is such that a single
 		/// line that was split across multiple chunks can still be referenced.
 		/// </summary>
-		public readonly Guid LineId;
+		public readonly string LineId;
 
 		/// <summary>
 		/// The width of the line.
@@ -59,10 +59,10 @@ namespace Nibriboard.RippleSpace
 			}
 		}
 
-		public DrawnLine() : this(Guid.NewGuid())
+		public DrawnLine() : this(Guid.NewGuid().ToString("N"))
 		{
 		}
-		protected DrawnLine(Guid inLineId)
+		protected DrawnLine(string inLineId)
 		{
 			LineId = inLineId;
 		}

@@ -6,7 +6,7 @@ namespace Nibriboard.Client.Messages
 		/// <summary>
 		/// The id of the line to complete
 		/// </summary>
-		public Guid LineId;
+		public string LineId;
 		/// <summary>
 		/// The colour of the line. May be any valid colour accepted by the HTML5 Canvas API.
 		/// </summary>
