@@ -120,7 +120,7 @@ namespace Nibriboard.RippleSpace
 			// return it fast.
 			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilename());
 			Chunk loadedChunk = await Chunk.FromFile(this, chunkFilePath);
-			loadedChunk.OnChunkUpdate += HandleChunkUpdate;
+			loadedChunk.OnChunkUpdate += handleChunkUpdate;
 			loadedChunkspace.Add(chunkLocation, loadedChunk);
 
 			return loadedChunk;
@@ -176,7 +176,7 @@ namespace Nibriboard.RippleSpace
 		/// </summary>
 		/// <param name="sender">The chunk responsible for the update.</param>
 		/// <param name="eventArgs">The event arguments associated with the chunk update.</param>
-		protected void HandleChunkUpdate(object sender, ChunkUpdateEventArgs eventArgs)
+		protected void handleChunkUpdate(object sender, ChunkUpdateEventArgs eventArgs)
 		{
 			// Make the chunk update bubble up to plane-level
 			OnChunkUpdate(sender, eventArgs);
