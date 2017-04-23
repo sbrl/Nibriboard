@@ -375,6 +375,14 @@ namespace Nibriboard.Client
 			line.LineWidth = message.LineWidth;
 			line.Colour = message.LineColour;
 
+			if(CurrentPlane == null)
+			{
+				Send(new ErrorMessage() {
+					Message = "Error: You can't complete a line until you've selected a plane" +
+						"to draw it on!"
+				});
+				return;
+			}
 			await CurrentPlane.AddLine(line);
 		}
 
