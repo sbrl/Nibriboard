@@ -69,6 +69,8 @@ namespace Nibriboard.Client
 			if(!currentLines.ContainsKey(lineId))
 				throw new KeyNotFoundException("Error: A line with that id wasn't found in this LineIncubator.");
 
+			Log.WriteLine("[LineIncubator] Completing line #{0}", lineId);
+
 			DrawnLine completedLine = currentLines[lineId];
 			currentLines.Remove(lineId);
 

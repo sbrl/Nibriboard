@@ -64,7 +64,9 @@ namespace Nibriboard.RippleSpace
 		{
 			if(this[newPlaneName] != null)
 				throw new InvalidOperationException($"Error: A plane with the name '{newPlaneName}' already exists in this RippleSpaceManager.");
-			
+
+			Log.WriteLine("[RippleSpace] Creating plane {0}", newPlaneName);
+
 			Plane newPlane = new Plane(newPlaneName, DefaultChunkSize);
 			Planes.Add(newPlane);
 			return newPlane;

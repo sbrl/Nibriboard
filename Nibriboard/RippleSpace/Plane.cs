@@ -178,6 +178,15 @@ namespace Nibriboard.RippleSpace
 		/// <param name="eventArgs">The event arguments associated with the chunk update.</param>
 		protected void handleChunkUpdate(object sender, ChunkUpdateEventArgs eventArgs)
 		{
+			Chunk updatingChunk = sender as Chunk;
+			if(updatingChunk == null)
+			{
+				Log.WriteLine("[Plane {0}] Invalid chunk update event captured - ignoring.");
+				return;
+			}
+
+			Log.WriteLine("[Plane {0}] Chunk at {1} {2} updated", Name, updatingChunk.Location, eventArgs.UpdateType);
+
 			// Make the chunk update bubble up to plane-level
 			OnChunkUpdate(sender, eventArgs);
 		}
