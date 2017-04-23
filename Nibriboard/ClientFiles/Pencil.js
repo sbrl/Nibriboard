@@ -65,7 +65,8 @@ class Pencil
 		this.unsentSegments.push(nextPoint);
 		this.currentLineSegments.push(nextPoint);
 		
-		if(new Date() - this.lastServerPush > this.pushDelay)
+		var timeSinceLastPush = new Date() - this.lastServerPush;
+		if(timeSinceLastPush > this.pushDelay)
 			this.sendUnsent();
 	}
 	
@@ -89,6 +90,10 @@ class Pencil
 	 * unsent segments buffer.
 	 */
 	sendUnsent() {
+		// Don't bother if there aren't any segments to push
+		if(this.unsentSegments.length == 0)
+			return;
+		
 		// It's time for another push of the line to the server
 		this.rippleLink.send({
 			Event: "LinePart",
@@ -97,6 +102,8 @@ class Pencil
 		});
 		// Reset the unsent segments buffer
 		this.unsentSegments = [];
+		// Update the time we last pushed to the server
+		this.lastServerPush = +new Date();
 	}
 	
 	/**
