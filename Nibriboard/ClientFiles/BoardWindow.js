@@ -261,6 +261,13 @@ class BoardWindow extends EventEmitter
 		
 		// The pencil that draws the lines
 		this.pencil = new Pencil(this.rippleLink, this, this.canvas);
+		
+		// Land on a default plane
+		// future ask the user which plane they want to join
+		this.rippleLink.send({
+			"Event": "PlaneChange",
+			"NewPlaneName": "default-plane"
+		});
 	}
 	
 	/**
