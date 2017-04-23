@@ -159,6 +159,8 @@ namespace Nibriboard.Client
 				Log.WriteLine("[NibriClient#{0}] Received message with invalid event {1}.", Id, eventName);
 				return;
 			}
+			if(eventName != "CursorPosition")
+				Log.WriteLine("[NibriClient#{0}] Recieved message with event {1}.", Id, eventName);
 
 			Type messageType = messageEventTypes[eventName];
 			Type jsonNet = typeof(JsonConvert);
@@ -288,6 +290,8 @@ namespace Nibriboard.Client
 		/// </summary>
 		protected Task handlePlaneChangeMessage(PlaneChangeMessage message)
 		{
+			Log.WriteLine("[NibriClient#{0}] Changing to plane {1}.", Id, message.NewPlaneName);
+
 			// Create a new plane with the specified name if it doesn't exist already
 			if(manager.SpaceManager[message.NewPlaneName] == default(Plane))
 				manager.SpaceManager.CreatePlane(message.NewPlaneName);
