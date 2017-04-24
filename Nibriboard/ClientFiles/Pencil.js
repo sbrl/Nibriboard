@@ -57,6 +57,12 @@ class Pencil
 		// Don't draw anything if the left mouse button isn't down
 		if(!this.mouse.leftDown)
 			return;
+		// Oh and don't bother drawing anything if the control key is held down
+		// either - that indicates that we're in panning mode
+		// todo Create a tools systme where you can select a panning tool
+		// too / instead...?
+		if(this.boardWindow.keyboard.DownKeys.includes(17))
+			return;
 		
 		var nextPoint = new Vector(
 			event.clientX + this.boardWindow.viewport.x,
@@ -71,6 +77,10 @@ class Pencil
 	}
 	
 	handleMouseUp(event) {
+		// Ignore it if the ctrl key is held down - see above
+		if(this.boardWindow.keyboard.DownKeys.includes(17))
+			return;
+		
 		this.sendUnsent();
 		// Tell the server that the line is complete
 		this.rippleLink.send({
