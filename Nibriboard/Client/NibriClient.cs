@@ -314,8 +314,10 @@ namespace Nibriboard.Client
 			CurrentPlane.OnChunkUpdate += handleChunkUpdateEvent;
 
 			// Tell the client that the switch over all went according to plan
-			message.IsOK = true;
-			Send(message);
+			Send(new PlaneChangeOkMessage() {
+				NewPlaneName = message.NewPlaneName,
+				GridSize = CurrentPlane.ChunkSize
+			});
 
 			return Task.CompletedTask;
 		}
