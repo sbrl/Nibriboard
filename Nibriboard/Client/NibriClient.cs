@@ -383,7 +383,7 @@ namespace Nibriboard.Client
 			// If the line doesn't exist, then ignore it
 			if(!manager.LineIncubator.LineExists(message.LineId))
 			{
-				Log.WriteLine("[NibriClient/handlers] Ignoring LineComplete event for line that doesn't exist");
+				Log.WriteLine("[NibriClient#{0}/handlers] Ignoring LineComplete event for line that doesn't exist", Id);
 				return;
 			}
 			DrawnLine line = manager.LineIncubator.CompleteLine(message.LineId);
