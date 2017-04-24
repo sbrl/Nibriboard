@@ -1,12 +1,17 @@
 "use strict";
 
+window.EventEmitter = require("event-emitter-es6");
+window.keycode = require("keycode");
+
 /**
  * Makes handling keyboard input just that little bit easier.
  */
-class Keyboard
+class Keyboard extends EventEmitter
 {
 	constructor()
 	{
+		super();
+		
 		/**
 		 * The keyCodes of the keyboard keys that are currently pressed down.
 		 * @type {[number]}
@@ -33,6 +38,9 @@ class Keyboard
 	handleKeyUp(event) {
 		if(this.DownKeys.indexOf(event.keyCode) !== -1)
 			this.DownKeys.splice(this.DownKeys.indexOf(event.keyCode), 1);
+		
+		console.debug("[keyboard] Emitting key up event", `keyup-${keycode(event.keyCode)}`);
+		this.emit(`keyup-${keycode(event.keyCode)}`, event);
 	}
 }
 

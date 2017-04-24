@@ -29,6 +29,13 @@ class BoardWindow extends EventEmitter
 		// The width of the lines in other clients' cursors.
 		this.otherCursorWidth = 2;
 		
+		this.currentPlaneName = "(You haven't landed yet!)";
+		// Whether to display the chunk grid or not
+		this.displayGrid = false;
+		
+		this.gridLineWidth = 2;
+		this.gridLineColour = "rgba(22, 123, 228, 0.53)";
+		
 		// --~~~--
 		
 		// Setup the fps indicator in the top right corner
@@ -52,11 +59,9 @@ class BoardWindow extends EventEmitter
 			// The zoom level of the viewport. 1 = normal.
 			zoomLevel: 1
 		};
-		/**
-		 * The currents tate of the keyboard.
-		 * @type {Keyboard}
-		 */
-		this.keyboard = new Keyboard();
+		
+		// The current grid size
+		this.gridSize = -1;
 		
 		// --~~~--
 		
@@ -70,7 +75,16 @@ class BoardWindow extends EventEmitter
 		// Create a map to store information about other clients in
 		this.otherClients = new Map();
 		
-		
+		/**
+		 * The currents tate of the keyboard.
+		 * @type {Keyboard}
+		 */
+		this.keyboard = new Keyboard();
+		// Toggle the grid display when the g key is released
+		this.keyboard.on("keyup-g", (function(event) {
+		    this.displayGrid = this.displayGrid ? false : true;
+			console.info(`[BoardWindow/KeyboardHandler] Grid display set to ${this.displayGrid ? "on" : "off"}`);
+		}).bind(this))
 		
 		// --~~~--
 		
@@ -132,9 +146,10 @@ class BoardWindow extends EventEmitter
 		
 		// Handle the HandshakeResponse when it comes in
 		this.rippleLink.on("HandshakeResponse", this.handleHandshakeResponse.bind(this));
-		
 		// Handle other clients' state updates
 		this.rippleLink.on("ClientStates", this.handlePeerUpdates.bind(this));
+		// Handle the plane change confirmations
+		this.rippleLink.on("PlaneChangeOk", this.handlePlaneChangeOk.bind(this));
 	}
 	
 	/**
@@ -177,10 +192,43 @@ class BoardWindow extends EventEmitter
 	{
 		context.clearRect(0, 0, canvas.width, canvas.height);
 		
+		context.save();
+		
+		// Draw the grid if it's enabled
+		if(this.displayGrid)
+			this.renderGrid(canvas, context);
+		
 		this.renderOthers(canvas, context);
 		// Render the currently active line
 		if(typeof this.pencil !== "undefined")
 			this.pencil.render(canvas, context);
+		
+		context.restore();
+	}
+	
+	renderGrid(canvas, context)
+	{
+		context.save();
+		context.translate(this.viewport.x, this.viewport.y);
+		context.scale(this.viewport.zoomLevel, this.viewport.zoomLevel);
+		context.translate(-this.viewport.x, -this.viewport.y);
+		
+		context.beginPath();
+		for(let ax = this.viewport.x + (this.viewport.x % this.gridSize); ax < this.viewport.x + canvas.width; ax += this.gridSize)
+		{
+			context.moveTo(ax - this.viewport.x, 0);
+			context.lineTo(ax - this.viewport.x, canvas.height);
+		}
+		for(let ay = this.viewport.y + (this.viewport.y % this.gridSize); ay < this.viewport.y + canvas.height; ay += this.gridSize)
+		{
+			context.moveTo(0, ay - this.viewport.y);
+			context.lineTo(canvas.width, ay - this.viewport.y);
+		}
+		context.lineWidth = this.gridLineWidth;
+		context.strokeStyle = this.gridLineColour;
+		context.stroke();
+		
+		context.restore();
 	}
 	
 	renderOthers(canvas, context)
@@ -268,6 +316,17 @@ class BoardWindow extends EventEmitter
 			"Event": "PlaneChange",
 			"NewPlaneName": "default-plane"
 		});
+	}
+	
+	/**
+	 * Store the details about the new plane we've landed on that the server
+	 * sends us.
+	 * @param  {object} message The plane change confirmation message to handle.
+	 */
+	handlePlaneChangeOk(message) {
+		this.currentPlaneName = message.NewPlaneName;
+		this.gridSize = message.GridSize;
+		console.info(`Plane changed to ${this.currentPlaneName} with a grid size of ${this.gridSize} successfully.`);
 	}
 	
 	/**
