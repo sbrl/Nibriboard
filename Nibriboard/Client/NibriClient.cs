@@ -161,17 +161,26 @@ namespace Nibriboard.Client
 			}
 			if(eventName != "CursorPosition")
 				Log.WriteLine("[NibriClient#{0}] Recieved message with event {1}.", Id, eventName);
+			
+			try
+			{
+				Type messageType = messageEventTypes[eventName];
+				Type jsonNet = typeof(JsonConvert);
+				MethodInfo deserialiserInfo = jsonNet.GetMethods().First(method => method.Name == "DeserializeObject" && method.IsGenericMethod);
+				MethodInfo genericInfo = deserialiserInfo.MakeGenericMethod(messageType);
+				var decodedMessage = genericInfo.Invoke(null, new object[] { frame });
 
-			Type messageType = messageEventTypes[eventName];
-			Type jsonNet = typeof(JsonConvert);
-			MethodInfo deserialiserInfo = jsonNet.GetMethods().First(method => method.Name == "DeserializeObject" && method.IsGenericMethod);
-			MethodInfo genericInfo = deserialiserInfo.MakeGenericMethod(messageType);
-			var decodedMessage = genericInfo.Invoke(null, new object[] { frame });
-
-			string handlerMethodName = "handle" + decodedMessage.GetType().Name;
-			Type clientType = this.GetType();
-			MethodInfo handlerInfo = clientType.GetMethod(handlerMethodName, BindingFlags.Instance | BindingFlags.NonPublic);
-			await (Task)handlerInfo.Invoke(this, new object[] { decodedMessage });
+				string handlerMethodName = "handle" + decodedMessage.GetType().Name;
+				Type clientType = this.GetType();
+				MethodInfo handlerInfo = clientType.GetMethod(handlerMethodName, BindingFlags.Instance | BindingFlags.NonPublic);
+				await (Task)handlerInfo.Invoke(this, new object[] { decodedMessage });
+			}
+			catch(Exception error)
+			{
+				Log.WriteLine("[NibriClient#{0}] Error decoding and / or handling message.", Id);
+				Log.WriteLine("[NibriClient#{0}] Raw frame content: {1}", Id, frame);
+				Log.WriteLine("[NibriClient#{0}] Exception details: {1}", Id, error);
+			}
 		}
 
 		#endregion

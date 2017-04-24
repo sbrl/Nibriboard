@@ -39,7 +39,7 @@ namespace Nibriboard.Client
 		/// <param name="lineId">The line id to check for.</param>
 		public bool LineExists(string lineId)
 		{
-			if(currentLines[lineId] != null)
+			if(currentLines.ContainsKey(lineId))
 				return true;
 			return false;
 		}
