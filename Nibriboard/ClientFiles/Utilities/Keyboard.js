@@ -29,6 +29,10 @@ class Keyboard extends EventEmitter
 	handleKeyDown(event) {
 		if(!this.DownKeys.includes(event.keyCode))
 			this.DownKeys.push(event.keyCode);
+		
+		console.log("DownKeys:", this.DownKeys);
+		console.debug("[keyboard] Emitting key down event", `keydown-${keycode(event.keyCode)}`);
+		this.emit(`keydown-${keycode(event.keyCode)}`, event);
 	}
 	
 	/**
@@ -38,7 +42,8 @@ class Keyboard extends EventEmitter
 	handleKeyUp(event) {
 		if(this.DownKeys.indexOf(event.keyCode) !== -1)
 			this.DownKeys.splice(this.DownKeys.indexOf(event.keyCode), 1);
-		
+			
+		console.log("DownKeys:", this.DownKeys);
 		console.debug("[keyboard] Emitting key up event", `keyup-${keycode(event.keyCode)}`);
 		this.emit(`keyup-${keycode(event.keyCode)}`, event);
 	}
