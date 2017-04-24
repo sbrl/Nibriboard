@@ -35,6 +35,8 @@ class BoardWindow extends EventEmitter
 		
 		this.gridLineWidth = 2;
 		this.gridLineColour = "rgba(22, 123, 228, 0.53)";
+		this.primaryGridLineWidth = 4;
+		this.primaryGridLineColour = "rgba(31, 223, 4, 0.68)";
 		
 		// --~~~--
 		
@@ -56,6 +58,14 @@ class BoardWindow extends EventEmitter
 			x: 0,
 			// The y coordinate of the viewport.
 			y: 0,
+			// The width of the viewport
+			get width() {
+				return canvas.width * 1/this.zoomLevel
+			},
+			// The height of the viewport
+			get height() {
+				return canvas.height * 1/this.zoomLevel
+			},	
 			// The zoom level of the viewport. 1 = normal.
 			zoomLevel: 1
 		};
@@ -209,24 +219,39 @@ class BoardWindow extends EventEmitter
 	renderGrid(canvas, context)
 	{
 		context.save();
-		context.translate(this.viewport.x, this.viewport.y);
 		context.scale(this.viewport.zoomLevel, this.viewport.zoomLevel);
-		context.translate(-this.viewport.x, -this.viewport.y);
 		
-		context.beginPath();
-		for(let ax = this.viewport.x + (this.viewport.x % this.gridSize); ax < this.viewport.x + canvas.width; ax += this.gridSize)
+		
+		for(let ax = (this.viewport.x + (this.gridSize - (this.viewport.x % this.gridSize))) - this.gridSize; ax < (this.viewport.x + this.viewport.width); ax += this.gridSize)
 		{
+			context.beginPath();
 			context.moveTo(ax - this.viewport.x, 0);
-			context.lineTo(ax - this.viewport.x, canvas.height);
+			context.lineTo(ax - this.viewport.x, this.viewport.height);
+			
+			if(Math.round(ax) == 0) {
+				context.lineWidth = this.primaryGridLineWidth;
+				context.strokeStyle = this.primaryGridLineColour;
+			} else {
+				context.lineWidth = this.gridLineWidth;
+				context.strokeStyle = this.gridLineColour;
+			}
+			context.stroke();
 		}
-		for(let ay = this.viewport.y + (this.viewport.y % this.gridSize); ay < this.viewport.y + canvas.height; ay += this.gridSize)
+		for(let ay = (this.viewport.y + (this.gridSize - (this.viewport.y % this.gridSize))) - this.gridSize; ay < (this.viewport.y + this.viewport.height); ay += this.gridSize)
 		{
+			context.beginPath();
 			context.moveTo(0, ay - this.viewport.y);
-			context.lineTo(canvas.width, ay - this.viewport.y);
+			context.lineTo(this.viewport.width, ay - this.viewport.y);
+			
+			if(Math.round(ay) == 0) {
+				context.lineWidth = this.primaryGridLineWidth;
+				context.strokeStyle = this.primaryGridLineColour;
+			} else {
+				context.lineWidth = this.gridLineWidth;
+				context.strokeStyle = this.gridLineColour;
+			}
+			context.stroke();
 		}
-		context.lineWidth = this.gridLineWidth;
-		context.strokeStyle = this.gridLineColour;
-		context.stroke();
 		
 		context.restore();
 	}
@@ -289,9 +314,10 @@ class BoardWindow extends EventEmitter
 		// Store the viewport information for later
 		this.viewportState = event;
 		
-		this.viewport.x += event.dx;
-		this.viewport.y += event.dy;
-		this.viewport.zoomLevel += event.dz;
+		this.viewport.x += event.dx * 1/this.viewport.zoomLevel;
+		this.viewport.y += event.dy * 1/this.viewport.zoomLevel;
+		this.viewport.zoomLevel += event.dz / 1000;
+		console.debug(`Viewport now at (${this.viewport.x}, ${this.viewport.y}) @ ${this.viewport.zoomLevel}x zoom`);
 	}
 	
 	/**
