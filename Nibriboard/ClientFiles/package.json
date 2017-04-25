@@ -11,7 +11,7 @@
     "favicon-notification": "^0.1.4",
     "fps-indicator": "^1.0.2",
     "pan-zoom": "^2.0.0",
-    "keycode": "^2.1.8",
+    "keycode": "^2.1.8"
   },
   "devDependencies": {
     "acorn": "^4.0.11",
