@@ -331,7 +331,8 @@ class BoardWindow extends EventEmitter
 		this.Id = message.Id;
 		this.Colour = message.Colour;
 		
-		this.sidebar.style.borderTopColor = this.Colour;
+		this.sidebar.querySelector(".name").style.borderTopColor = this.Colour;
+		this.sidebar.querySelector(".connection-indicator").dataset.connected = "yes";
 		
 		// The pencil that draws the lines
 		this.pencil = new Pencil(this.rippleLink, this, this.canvas);

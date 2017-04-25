@@ -7,7 +7,27 @@
 	<body>
 		<aside id="sidebar">
 			<img class="logo" src="nibriboard.svg" />
-			<div class="Name">Your name here</div>
+			<div class="top-row">
+				<span class="connection-indicator"></span>
+				<span class="name">Your name here</span>
+			</div>
+			
+			<hr />
+			
+			<section class="brush-settings">
+				<div class="current-brush"></div>
+				
+				<input type="range" min="1" max="30" step="1" id="brush-width" />
+			</section>
+			
+			<section class="tools">
+				<span class="tool-selector" data-tool-name="pencil" title="Draw lines with a brush." data-selected>&#x1f58c;</span>
+				<span class="tool-selector" data-tool-name="pan" title="Pan around the plane.">&harr;</span>
+				<span class="tool-selector" data-tool-name="pointer" title="Point at things, but don't change them.">&#x2739;</span>
+			</section>
+			
+			<hr />
+			
 			<div class="palette">
 				<!-- todo figure out a better colour palette -->
 				<span class="palette-colour" style="background-color: white;"></span>
@@ -21,11 +41,6 @@
 				<span class="palette-colour" style="background-color: saddlebrown;"></span>
 			</div>
 			
-			<section class="tools">
-				<span class="tool-selector" data-tool="pencil"></span>
-				<span class="tool-selector" data-tool="pan"></span>
-				<span class="tool-selector" data-tool="pointer"></span>
-			</section>
 		</aside>
 		
 		<canvas id="canvas-main"></canvas>

@@ -38,6 +38,8 @@ class RippleLink extends EventEmitter
 	
 	handleDisconnection(event) {
 		console.error("[ripple link] Lost connection.");
+		delete this.boardWindow.sidebar.querySelector(".connection-indicator").dataset.connected;
+		
 		this.emit("disconnect", event);
 	}
 	

@@ -106,6 +106,7 @@
     <EmbeddedResource Include="ClientFiles\NibriClient.js" />
     <EmbeddedResource Include="ClientFiles\Nibri.css" />
     <EmbeddedResource Include="ClientFiles\favicon.ico" />
+    <EmbeddedResource Include="ClientFiles\nibriboard.svg" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="RippleSpace\" />

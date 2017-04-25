@@ -18,12 +18,67 @@ body
     position: absolute; 
     top: 0; left: 0; bottom: 0;
     z-index: 2000;
-    display: flex;
+    display: flex; flex-direction: column;
     
     padding: 0.3em 0.45em;
     
-    background: rgba(255, 255, 255, 0.3);
+    background: hsla(27, 91%, 81%, 0.71);
+    box-shadow: 0.5em 0 1em rgba(185, 183, 183, 0.56);
+}
+
+.logo
+{
+    display: block;
+    max-width: 10em;
+}
+
+.top-row
+{
+    display: flex;
+}
+
+.connection-indicator
+{
+    width: 1em; height: 1em;
+    margin: 0.6em 0.2em;
+    
+    border-radius: 50%;
+    background: hsl(8, 100%, 50%);
+    box-shadow: 0 0 0.5em hsl(8, 100%, 50%);
+}
+.connection-indicator[data-connected]
+{
+    background: hsl(100, 100%, 50%);
+    box-shadow: 0 0 0.5em hsl(100, 100%, 50%);
+}
+
+.name
+{
+    padding: 0.3em 0.5em;
     border-top: 0.2em solid rgba(255, 255, 255, 0.3);
+}
+
+.tool-selector
+{
+    display: inline-block;
+    
+    padding: 0.3em;
+    border-radius: 0.1em;
+    border: 0.2em solid transparent;
+    
+    cursor: pointer;
+}
+.tool-selector[data-selected]
+{
+    border: 0.2em dashed hsl(219, 87%, 54%);
+}
+
+.palette-colour
+{
+    float: left;
+    width: 50%; height: 3em;
+    
+    cursor: pointer;
 }
 
 .fps
