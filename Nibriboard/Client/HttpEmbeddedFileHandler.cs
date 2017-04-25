@@ -60,7 +60,7 @@ namespace Nibriboard.Client
 		}
 
 		protected string getEmbeddedFileReference(string uri) {
-			return filePrefix + "." + uri.TrimStart("/".ToCharArray());
+			return filePrefix + "." + uri.TrimStart("/".ToCharArray()).Replace('/', '.');
 		}
 
 		protected string getMimeType(string uri) {
