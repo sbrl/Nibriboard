@@ -10,8 +10,9 @@ class Interface extends EventEmitter
 		
 		this.sidebar = inSidebar;
 		
-		this.currentToolElement = this.sidebar.querySelector(".tools .tool-selector[]")
+		this.currentToolElement = this.sidebar.querySelector(".tools .tool-selector[data-selected]");
 		this.currentTool = "brush";
+		this.setupToolSelectors();
 	}
 	
 	setupToolSelectors()
@@ -33,7 +34,7 @@ class Interface extends EventEmitter
 		this.currentToolElement = event.target;
 		this.currentToolElement.dataset.selected = "yes";
 		this.currentTool = this.currentToolElement.dataset.toolName;
-		
+		console.info("Selected tool", this.currentTool);
 		this.emit("toolchange", { newTool: this.currentTool });
 	}
 	
