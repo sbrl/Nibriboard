@@ -107,6 +107,7 @@
     <EmbeddedResource Include="ClientFiles\Nibri.css" />
     <EmbeddedResource Include="ClientFiles\favicon.ico" />
     <EmbeddedResource Include="ClientFiles\nibriboard.svg" />
+    <EmbeddedResource Include="ClientFiles\images\transparent-square-tiles.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="RippleSpace\" />

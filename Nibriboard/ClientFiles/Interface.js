@@ -2,7 +2,7 @@
 
 window.EventEmitter = require("event-emitter-es6");
 
-class Sidebar extends EventEmitter
+class Interface extends EventEmitter
 {
 	constructor(inSidebar)
 	{
@@ -50,6 +50,23 @@ class Sidebar extends EventEmitter
 	}
 	
 	/**
+	 * Fetches our colour from the ui.
+	 */
+	get OurColour()
+	{
+		return this.sidebar.querySelector(".name").style.borderTopColor;
+	}
+	/**
+	 * Sets the colour displayed just above the name
+	 * @param {HTMLColour} newColour The new colour to display jsut above the
+	 *                               name in the sidebar.
+	 */
+	set OurColour(newColour)
+	{
+		this.sidebar.querySelector(".name").style.borderTopColor = newColour;
+	}
+	
+	/**
 	 * Updates the username displayed.
 	 * @param  {string} newName The new name to display inthe sidebar.
 	 */
@@ -61,4 +78,4 @@ class Sidebar extends EventEmitter
 	
 }
 
-export default Sidebar;
+export default Interface;

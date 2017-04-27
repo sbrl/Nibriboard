@@ -22,7 +22,7 @@ body
     
     padding: 0.3em 0.45em;
     
-    background: hsla(27, 91%, 81%, 0.71);
+    background: url(/images/transparent-square-tiles.png), hsla(27, 100%, 59%, 0.71);
     box-shadow: 0.5em 0 1em rgba(185, 183, 183, 0.56);
 }
 

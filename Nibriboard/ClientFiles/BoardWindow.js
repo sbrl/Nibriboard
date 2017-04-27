@@ -12,6 +12,7 @@ import OtherClient from './OtherClient';
 import Pencil from './Pencil';
 import { get } from './Utilities';
 import Keyboard from './Utilities/Keyboard';
+import Interface from './Interface';
 
 class BoardWindow extends EventEmitter
 {
@@ -79,8 +80,8 @@ class BoardWindow extends EventEmitter
 		this.canvas = canvas;
 		this.context = canvas.getContext("2d");
 		
-		// Grab a reference to the sidebar
-		this.sidebar = document.getElementById("sidebar");
+		// Grab a reference to the sidebar and wrap it in an Interface class instance
+		this.interface = new Interface(document.getElementById("sidebar"));
 		
 		// Create a map to store information about other clients in
 		this.otherClients = new Map();
@@ -331,8 +332,8 @@ class BoardWindow extends EventEmitter
 		this.Id = message.Id;
 		this.Colour = message.Colour;
 		
-		this.sidebar.querySelector(".name").style.borderTopColor = this.Colour;
-		this.sidebar.querySelector(".connection-indicator").dataset.connected = "yes";
+		this.interface.OurColour = this.Colour;
+		this.interface.setConnectedStatus(true);
 		
 		// The pencil that draws the lines
 		this.pencil = new Pencil(this.rippleLink, this, this.canvas);
