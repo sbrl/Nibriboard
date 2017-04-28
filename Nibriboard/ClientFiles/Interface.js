@@ -79,8 +79,18 @@ class Interface extends EventEmitter
 	 */
 	handleSelectColour(event)
 	{
-		delete this.currentColourElement.datasest.selected;
-		this.currentColourElement = event.target;
+		this.switchColourTo(event.target);
+	}
+	
+	/**
+	 * Switches the current colour out to be the colour held by the specified
+	 * colour palette element.
+	 * @param  {HTMLElement} paletteElement The colour palette element to switch to.
+	 */
+	switchColourTo(paletteElement)
+	{
+		delete this.currentColourElement.dataset.selected;
+		this.currentColourElement = paletteElement;
 		this.currentColourElement.dataset.selected = "yes";
 		this.currentColour = this.currentColourElement.style.backgroundColor;
 		
@@ -90,15 +100,46 @@ class Interface extends EventEmitter
 		this.emit("colourchange", { newColour: this.currentColour });
 	}
 	
+	seekColour(direction = "forwards")
+	{
+		var newPaletteElement = null;
+		if(direction == "forwards")
+			newPaletteElement = this.currentColourElement.nextElementSibling || this.currentColourElement.parentElement.firstElementChild;
+		else if(direction == "backwards")
+			newPaletteElement = this.currentColourElement.previousElementSibling || this.currentColourElement.parentElement.lastElementChild;
+		else
+			throw new Error(`Unknown direction ${direction} when switching colour!`);
+		
+		this.switchColourTo(newPaletteElement);
+	}
+	
 	/**
 	 * Handles brush widdth changes requested by the user
 	 */
 	handleBrushWidthChange(event)
 	{
-		this.currentBrushWidth = parseInt(event.target.value);
+		// Update the brush width, but don't update the interface, since that's where we got the new value from :P
+		this.updateBrushWidth(parseInt(event.target.value, false));
+	}
+	
+	/**
+	 * Sets the brush width to the specified value, updating everyone else
+	 * on the change.
+	 * @param  {number} newWidth The new width of the brush.
+	 */
+	updateBrushWidth(newWidth, updateInterface = true)
+	{
+		// Clamp the new width to make sure it's in-bounds
+		if(newWidth < 1) newWidth = 1;
+		if(newWidth > parseInt(this.brushWidthElement.max)) newWidth = parseInt(this.brushWidthElement.max);
 		
+		this.currentBrushWidth = newWidth; // Store the new value
+		if(updateInterface)
+			this.brushWidthElement.value = newWidth; // Update the interface
+		
+		// Update the brush indicator
 		this.updateBrushIndicator();
-		
+		// Emit the brush width change event
 		this.emit("brushwidthchange", { newWidth: this.currentLineWidth });
 	}
 	

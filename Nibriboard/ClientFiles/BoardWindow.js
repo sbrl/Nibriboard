@@ -95,7 +95,19 @@ class BoardWindow extends EventEmitter
 		this.keyboard.on("keyup-g", (function(event) {
 		    this.displayGrid = this.displayGrid ? false : true;
 			console.info(`[BoardWindow/KeyboardHandler] Grid display set to ${this.displayGrid ? "on" : "off"}`);
-		}).bind(this))
+		}).bind(this));
+		this.keyboard.on("keyup-left", (function(event) {
+		    this.interface.seekColour("backwards");
+		}).bind(this));
+		this.keyboard.on("keyup-right", (function(event) {
+		    this.interface.seekColour("forwards");
+		}).bind(this));
+		this.keyboard.on("keyup-up", (function(event) {
+		    this.interface.updateBrushWidth(this.interface.currentBrushWidth + 2, true);
+		}).bind(this));
+		this.keyboard.on("keyup-down", (function(event) {
+		    this.interface.updateBrushWidth(this.interface.currentBrushWidth - 2, true);
+		}).bind(this));
 		
 		// --~~~--
 		
@@ -149,6 +161,9 @@ class BoardWindow extends EventEmitter
 				InitialAbsCursorPosition: this.cursorPosition
 			});
 		}).bind(this));
+		this.rippleLink.on("disconnect", (function(event) {
+		    this.interface.setConnectedStatus(false);
+		}).bind(this))
 		
 		// Keep the server up to date on our viewport and cursor position
 		this.viewportSyncer = new ViewportSyncer(this.rippleLink, this.cursorUpdateFrequency)

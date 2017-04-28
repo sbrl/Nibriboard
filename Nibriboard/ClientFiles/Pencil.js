@@ -69,9 +69,10 @@ class Pencil
 		if(this.boardWindow.keyboard.DownKeys.includes(17))
 			return;
 		
+		// The server only supports ints atm, so we have to round here :-(
 		var nextPoint = new Vector(
-			event.clientX + this.boardWindow.viewport.x,
-			event.clientY + this.boardWindow.viewport.y
+			Math.floor(event.clientX + this.boardWindow.viewport.x),
+			Math.floor(event.clientY + this.boardWindow.viewport.y)
 		);
 		this.unsentSegments.push(nextPoint);
 		this.currentLineSegments.push(nextPoint);
