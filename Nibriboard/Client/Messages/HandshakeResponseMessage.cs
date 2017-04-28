@@ -25,7 +25,7 @@ namespace Nibriboard.Client.Messages
 		/// <summary>
 		/// A list of planes that this nibriboard server currently has.
 		/// </summary>
-		public List<string> Planes;
+		public List<string> Planes = new List<string>();
 
 		public HandshakeResponseMessage()
 		{
