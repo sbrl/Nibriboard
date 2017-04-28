@@ -15,9 +15,9 @@
 			<hr />
 			
 			<section class="brush-settings">
-				<div class="current-brush"></div>
+				<div class="brush-indicator"></div>
 				
-				<input type="range" min="1" max="30" step="1" id="brush-width" />
+				<input type="range" min="1" max="30" step="0.1" class="brush-width-controls" />
 			</section>
 			
 			<section class="tools">
@@ -33,7 +33,7 @@
 				<span class="palette-colour" style="background-color: white;"></span>
 				<span class="palette-colour" style="background-color: black;"></span>
 				<span class="palette-colour" style="background-color: red;"></span>
-				<span class="palette-colour" style="background-color: orange;"></span>
+				<span class="palette-colour" style="background-color: orange;" data-selected></span>
 				<span class="palette-colour" style="background-color: darkgreen;"></span>
 				<span class="palette-colour" style="background-color: blue;"></span>
 				<span class="palette-colour" style="background-color: purple;"></span>

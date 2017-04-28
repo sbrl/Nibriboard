@@ -47,8 +47,13 @@ class Pencil
 		// The time of the last push of the line to the server.
 		this.lastServerPush = 0;
 		
+		// Event Listeners
 		canvas.addEventListener("mousemove", this.handleMouseMove.bind(this));
 		canvas.addEventListener("mouseup", this.handleMouseUp.bind(this));
+		
+		this.boardWindow.interface.on("colourchange", (function(event) {
+		    this.currentColour = event.newColour;
+		}).bind(this))
 	}
 	
 	handleMouseMove(event) {

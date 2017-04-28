@@ -58,6 +58,11 @@ body
     border-top: 0.2em solid rgba(255, 255, 255, 0.3);
 }
 
+.brush-indicator
+{
+    border-radius: 50%;
+}
+
 .tool-selector
 {
     display: inline-block;
@@ -79,6 +84,11 @@ body
     width: 50%; height: 3em;
     
     cursor: pointer;
+}
+
+.palette-colour[data-selected]
+{
+    border: 0.2em dashed hsl(219, 87%, 54%);
 }
 
 .fps
