@@ -41,7 +41,7 @@ namespace Nibriboard.RippleSpace
 				ChunkReference containingChunk = Points[0].ContainingChunk;
 				foreach(LocationReference point in Points)
 				{
-					if (point.ContainingChunk != containingChunk)
+					if (!point.ContainingChunk.Equals(containingChunk))
 						return true;
 				}
 				return false;
@@ -67,7 +67,11 @@ namespace Nibriboard.RippleSpace
 			LineId = inLineId;
 		}
 
-		public List<DrawnLine> SplitOnChunks(int chunkSize)
+		/// <summary>
+		/// Splits this line into a list of lines that don't cross chunk boundaries.
+		/// </summary>
+		/// <returns>A list of lines, that, when stitched together, will produce this line.</returns>
+		public List<DrawnLine> SplitOnChunks()
 		{
 			List<DrawnLine> results = new List<DrawnLine>();
 
@@ -82,7 +86,7 @@ namespace Nibriboard.RippleSpace
 			ChunkReference currentChunk = null;
 			foreach(LocationReference point in Points)
 			{
-				if(currentChunk != null && point.ContainingChunk != currentChunk)
+				if(currentChunk != null && !point.ContainingChunk.Equals(currentChunk))
 				{
 					// We're heading into a new chunk! Split the line up here.
 					// TODO: Add connecting lines to each DrawnLine instance to prevent gaps
@@ -91,7 +95,12 @@ namespace Nibriboard.RippleSpace
 				}
 
 				nextLine.Points.Add(point);
+				if(!point.ContainingChunk.Equals(currentChunk))
+					currentChunk = point.ContainingChunk;
 			}
+
+			if(nextLine.Points.Count > 0)
+				results.Add(nextLine);
 
 			return results;
 		}

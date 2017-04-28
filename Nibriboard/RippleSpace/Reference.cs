@@ -15,6 +15,7 @@ namespace Nibriboard.RippleSpace
 		public Reference(Plane inPlane, int inX, int inY)
 		{
 			Plane = inPlane;
+			X = inX; Y = inY;
 		}
 
 		public override string ToString()

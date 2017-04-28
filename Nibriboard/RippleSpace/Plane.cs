@@ -119,7 +119,11 @@ namespace Nibriboard.RippleSpace
 			// Uh-oh! The chunk isn't loaded at moment. Load it quick & then
 			// return it fast.
 			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilename());
-			Chunk loadedChunk = await Chunk.FromFile(this, chunkFilePath);
+			Chunk loadedChunk;
+			if(File.Exists(chunkFilePath)) // If the chunk exists on disk, load it
+				loadedChunk = await Chunk.FromFile(this, chunkFilePath);
+			else // Ooooh! It's a _new_, never-before-seen one! Create a brand new chunk :D
+				loadedChunk = new Chunk(this, ChunkSize, chunkLocation);
 			loadedChunk.OnChunkUpdate += handleChunkUpdate;
 			loadedChunkspace.Add(chunkLocation, loadedChunk);
 
@@ -128,15 +132,21 @@ namespace Nibriboard.RippleSpace
 
 		public async Task AddLine(DrawnLine newLine)
 		{
-			List<DrawnLine> chunkedLine;
+			List<DrawnLine> chunkedLineParts;
 			// Split the line up into chunked pieces if neccessary
 			if(newLine.SpansMultipleChunks)
-				chunkedLine = newLine.SplitOnChunks(ChunkSize);
+				chunkedLineParts = newLine.SplitOnChunks();
 			else
-				chunkedLine = new List<DrawnLine>() { newLine };
+				chunkedLineParts = new List<DrawnLine>() { newLine };
+
+			foreach(DrawnLine linePart in chunkedLineParts)
+			{
+				if(linePart.Points.Count == 0)
+					Log.WriteLine("[Plane/{0}] Warning: A line part has no points in it O.o", Name);
+			}
 
 			// Add each segment to the appropriate chunk
-			foreach(DrawnLine newLineSegment in chunkedLine)
+			foreach(DrawnLine newLineSegment in chunkedLineParts)
 			{
 				Chunk containingChunk = await FetchChunk(newLineSegment.ContainingChunk);
 				containingChunk.Add(newLineSegment);
