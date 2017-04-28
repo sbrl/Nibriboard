@@ -387,7 +387,7 @@ namespace Nibriboard.Client
 				return;
 			}
 			DrawnLine line = manager.LineIncubator.CompleteLine(message.LineId);
-			line.LineWidth = message.LineWidth;
+			line.Width = message.LineWidth;
 			line.Colour = message.LineColour;
 
 			if(CurrentPlane == null)
@@ -399,6 +399,8 @@ namespace Nibriboard.Client
 				});
 				return;
 			}
+
+			Log.WriteLine("[NibriClient#{0}] Adding {1}px {2} line", Id, line.Width, line.Colour);
 			await CurrentPlane.AddLine(line);
 		}
 

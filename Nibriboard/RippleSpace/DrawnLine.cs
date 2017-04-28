@@ -19,7 +19,7 @@ namespace Nibriboard.RippleSpace
 		/// <summary>
 		/// The width of the line.
 		/// </summary>
-		public int LineWidth;
+		public int Width;
 		/// <summary>
 		/// The colour of the line.
 		/// </summary>

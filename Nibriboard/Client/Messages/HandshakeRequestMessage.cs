@@ -8,7 +8,7 @@ namespace Nibriboard.Client.Messages
 {
 	public class HandshakeRequestMessage : Message
 	{
-		/// <summary>
+			/// <summary>
 		/// The initial visible area on the client's screen.
 		/// Very useful for determining which chunks we should send a client when they first connect.
 		/// </summary>
