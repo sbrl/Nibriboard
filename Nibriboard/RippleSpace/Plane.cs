@@ -195,7 +195,7 @@ namespace Nibriboard.RippleSpace
 				return;
 			}
 
-			Log.WriteLine("[Plane {0}] Chunk at {1} {2} updated", Name, updatingChunk.Location, eventArgs.UpdateType);
+			Log.WriteLine("[Plane {0}] Chunk at {1} updated because {2}", Name, updatingChunk.Location, eventArgs.UpdateType);
 
 			// Make the chunk update bubble up to plane-level
 			OnChunkUpdate(sender, eventArgs);

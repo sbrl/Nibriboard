@@ -55,7 +55,7 @@ namespace Nibriboard.RippleSpace
 		public readonly int Size;
 
 		/// <summary>
-		/// The location of this chunk chunk on the plane.
+		/// The location of this chunk, in chunk-space, on the plane.
 		/// </summary>
 		public readonly ChunkReference Location;
 
@@ -170,7 +170,7 @@ namespace Nibriboard.RippleSpace
 				if (newLine.SpansMultipleChunks == true)
 					throw new ArgumentException("Error: A line you tried to add spans multiple chunks.", $"newLines[{i}]");
 
-				if (newLine.ContainingChunk != Location)
+				if (!newLine.ContainingChunk.Equals(Location))
 					throw new ArgumentException($"Error: A line you tried to add isn't in this chunk ({Location}).", $"newLine[{i}]");
 
 				lines.Add(newLine);
@@ -214,5 +214,15 @@ namespace Nibriboard.RippleSpace
 		}
 
 		#endregion
+
+		public override string ToString()
+		{
+			return string.Format(
+				"Chunk{0} {1} - {2} lines",
+				CouldUnload ? "!" : ":",
+				Location,
+				lines.Count
+			);
+		}
 	}
 }

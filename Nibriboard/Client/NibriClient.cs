@@ -410,8 +410,10 @@ namespace Nibriboard.Client
 
 		protected void handleChunkUpdateEvent(object sender, ChunkUpdateEventArgs eventArgs)
 		{
+			Chunk sendingChunk = sender as Chunk;
+			Log.WriteLine("[NibriClient#{0}] Sending chunk update for {1}", Id, sendingChunk.Location);
 			ChunkUpdateMessage clientNotification = new ChunkUpdateMessage() {
-				Chunks = new List<Chunk>() { sender as Chunk }
+				Chunks = new List<Chunk>() { sendingChunk }
 			};
 			Send(clientNotification);
 		}
