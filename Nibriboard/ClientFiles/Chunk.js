@@ -30,6 +30,38 @@ class Chunk
 			return true;
 		return false;
 	}
+	
+	update(dt)
+	{
+		
+	}
+	
+	render(canvas, context)
+	{
+		context.save();
+		
+		for(let line of this.lines)
+		{
+			context.beginPath();
+			context.moveTo(
+				line.Points[0].x - this.chunkRef.x,
+				line.Points[0].y - this.chunkRef.y
+			);
+			for(let i = 1; i < line.Points.length; i++)
+			{
+				context.lineTo(
+					line.Points[i].x - this.chunkRef.x,
+					line.Points[i].y - this.chunkRef.y
+				);
+			}
+			
+			context.lineWidth = line.Width;
+			context.strokeStyle = line.Colour;
+			context.stroke();
+		}
+		
+		context.restore();
+	}
 }
 
 export default Chunk;

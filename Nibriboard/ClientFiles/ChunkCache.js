@@ -1,9 +1,13 @@
 "use strict";
 
+import ChunkReference from './ChunkReference.js';
+import Rectangle from './Utilities/Rectangle.js';
+
 class ChunkCache
 {
-	constructor()
+	constructor(inBoardWindow)
 	{
+		this.boardWindow = inBoardWindow;
 		this.cache = new Map();
 	}
 	
@@ -16,7 +20,42 @@ class ChunkCache
 		if(this.cache.contains(chunkData.chunkRef.toString()))
 			throw new Error("Error: We already have a chunk at that location stored.");
 		
-		this.cache.set(chunkData.toString(), chunkData);
+		this.cache.set(chunkData.chunkRef.toString(), chunkData);
+	}
+	
+	/**
+	 * Renders the specified area to the given canvas with the given context.
+	 * @param	{Rectangle}					visibleArea	The area to render.
+	 * @param	{number}					chunkSize	The size of the chunks on the current plane.
+	 * @param	{HTMLCanvasElement}			canvas		The canvas to draw on.
+	 * @param	{CanvasRenderingContext2D}	context		The rendering context to
+	 * 												 	use to draw on the canvas.
+	 */
+	renderVisible(visibleArea, chunkSize, canvas, context)
+	{
+		context.save();
+		
+		chunkArea = new Rectangle(
+			Math.floor(visibleArea.x / chunkSize) * chunkSize,
+			Math.floor(visibleArea.y / chunkSize) * chunkSize,
+			Math.floor((visibleArea.x + visibleArea.width) / chunkSize) * chunkSize,
+			Math.floor((visibleArea.y + visibleArea.height) / chunkSize) * chunkSize
+		);
+		
+		for(let cx = chunkArea.x; cx <= chunkArea.x + chunkArea.width; cx += chunkSize)
+		{
+			for(let cy = chunkArea.y; cy <= chunkArea.y + chunkArea.height; cy += chunkSize)
+			{
+				let cChunk = new ChunkReference(
+					this.boardWindow.currentPlaneName,
+					cx, cy
+				);
+				let chunk = this.cache.get(cChunk.toString());
+				chunk.render(canvas, context);
+			}
+		}
+		
+		context.restore();
 	}
 }
 
