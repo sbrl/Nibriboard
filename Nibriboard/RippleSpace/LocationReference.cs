@@ -67,5 +67,14 @@ namespace Nibriboard.RippleSpace
 				y
 			);
 		}
+
+		/// <summary>
+		/// Returns a clone of this LocationReference.
+		/// </summary>
+		/// <returns>The newly-cloned instance.</returns>
+		public override object Clone()
+		{
+			return new LocationReference(Plane, X, Y);
+		}
 	}
 }

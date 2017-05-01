@@ -5,7 +5,7 @@ namespace Nibriboard.RippleSpace
 	/// <summary>
 	/// An abstract class representing a coordinate reference to a location.
 	/// </summary>
-	public abstract class Reference
+	public abstract class Reference : ICloneable
 	{
 		public readonly Plane Plane;
 
@@ -22,5 +22,7 @@ namespace Nibriboard.RippleSpace
 		{
 			return $"({X}, {Y}, {Plane.Name})";
 		}
+
+		public abstract object Clone();
 	}
 }
