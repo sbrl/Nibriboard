@@ -297,7 +297,7 @@ namespace Nibriboard.Client
 		/// <summary>
 		/// Handles an incoming plane change request.
 		/// </summary>
-		protected Task handlePlaneChangeMessage(PlaneChangeMessage message)
+		protected async Task handlePlaneChangeMessage(PlaneChangeMessage message)
 		{
 			Log.WriteLine("[NibriClient#{0}] Changing to plane {1}.", Id, message.NewPlaneName);
 
@@ -319,7 +319,27 @@ namespace Nibriboard.Client
 				GridSize = CurrentPlane.ChunkSize
 			});
 
-			return Task.CompletedTask;
+			// Reset the position to (0, 0) since we've just changed planes
+			Rectangle workingViewport = CurrentViewPort;
+			workingViewport.X = 0;
+			workingViewport.Y = 0;
+			CurrentViewPort = workingViewport;
+
+			List<ChunkReference> initialChunks = new List<ChunkReference>();
+			ChunkReference currentChunkRef = new ChunkReference(CurrentPlane, CurrentViewPort.X, CurrentViewPort.Y);
+			while(CanSee(currentChunkRef))
+			{
+				while(CanSee(currentChunkRef))
+				{
+					initialChunks.Add(currentChunkRef);
+					currentChunkRef = currentChunkRef.Clone() as ChunkReference;
+					currentChunkRef.X += CurrentPlane.ChunkSize;
+				}
+				currentChunkRef.X = CurrentViewPort.X;
+				currentChunkRef.Y += CurrentPlane.ChunkSize;
+			}
+
+			await SendChunks(initialChunks);
 		}
 		/// <summary>
 		/// Handles requests from clients for chunk updates.
@@ -447,7 +467,8 @@ namespace Nibriboard.Client
 		/// Sends variable list of chunks to this client.
 		/// Automatically fetches the chunks by reference from the current plane.
 		/// </summary>
-		protected async Task SendChunks(params ChunkReference[] chunkRefs)
+		/// <param name="chunkRefs">The references of the chunks to send.</param>
+		protected async Task SendChunks(IEnumerable<ChunkReference> chunkRefs)
 		{
 			if(CurrentPlane == default(Plane))
 			{
