@@ -15,3 +15,5 @@ class ChunkReference extends Vector
 		return `ChunkReference: (${this.x}, ${this.y}, ${this.planeName})`;
 	}
 }
+
+export default ChunkReference;

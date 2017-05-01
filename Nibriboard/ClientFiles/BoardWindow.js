@@ -13,6 +13,7 @@ import Pencil from './Pencil';
 import { get } from './Utilities';
 import Keyboard from './Utilities/Keyboard';
 import Interface from './Interface';
+import ChunkCache from './ChunkCache';
 
 class BoardWindow extends EventEmitter
 {
@@ -149,6 +150,7 @@ class BoardWindow extends EventEmitter
 	setup() {
 		this.rippleLink = new RippleLink(this.settings.WebsocketUri, this);
 		this.rippleLink.on("connect", (function(event) {
+			
 			// Send the handshake request
 			this.rippleLink.send({
 				Event: "HandshakeRequest",
@@ -223,6 +225,12 @@ class BoardWindow extends EventEmitter
 		// Draw the grid if it's enabled
 		if(this.displayGrid)
 			this.renderGrid(canvas, context);
+		
+		// Only render the visible chunks if the chunk cache has been created
+		// The chunk cache is only created once the ripple link connects successfully
+		// to the nibriboard server.
+		if(typeof this.chunkCache != "undefined" && this.gridSize != -1)
+			this.chunkCache.renderVisible(this.viewport, canvas, context);
 		
 		this.renderOthers(canvas, context);
 		// Render the currently active line
@@ -352,6 +360,8 @@ class BoardWindow extends EventEmitter
 		
 		// The pencil that draws the lines
 		this.pencil = new Pencil(this.rippleLink, this, this.canvas);
+		// The cache for the chunks
+		this.chunkCache = new ChunkCache(this);
 		
 		// Land on a default plane
 		// future ask the user which plane they want to join

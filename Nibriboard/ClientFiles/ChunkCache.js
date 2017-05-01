@@ -9,6 +9,8 @@ class ChunkCache
 	{
 		this.boardWindow = inBoardWindow;
 		this.cache = new Map();
+		
+		this.boardWindow.rippleLink.on("ChunkUpdate", this.handleChunkUpdate.bind(this));
 	}
 	
 	/**
@@ -31,15 +33,20 @@ class ChunkCache
 	 * @param	{CanvasRenderingContext2D}	context		The rendering context to
 	 * 												 	use to draw on the canvas.
 	 */
-	renderVisible(visibleArea, chunkSize, canvas, context)
+	renderVisible(visibleArea, canvas, context)
 	{
 		context.save();
-		
-		chunkArea = new Rectangle(
+		let chunkSize = this.boardWindow.gridSize;
+		let chunkArea = new Rectangle(
 			Math.floor(visibleArea.x / chunkSize) * chunkSize,
 			Math.floor(visibleArea.y / chunkSize) * chunkSize,
-			Math.floor((visibleArea.x + visibleArea.width) / chunkSize) * chunkSize,
-			Math.floor((visibleArea.y + visibleArea.height) / chunkSize) * chunkSize
+			(Math.floor((visibleArea.x + visibleArea.width) / chunkSize) * chunkSize),
+			(Math.floor((visibleArea.y + visibleArea.height) / chunkSize) * chunkSize)
+		);
+		
+		context.translate(
+			-Math.abs(visibleArea.x - chunkArea.x),
+			-Math.abs(visibleArea.y - chunkArea.y)
 		);
 		
 		for(let cx = chunkArea.x; cx <= chunkArea.x + chunkArea.width; cx += chunkSize)
@@ -51,11 +58,20 @@ class ChunkCache
 					cx, cy
 				);
 				let chunk = this.cache.get(cChunk.toString());
-				chunk.render(canvas, context);
+				if(typeof chunk != "undefined")
+					chunk.render(canvas, context);
 			}
 		}
 		
 		context.restore();
+	}
+	
+	handleChunkUpdate(message)
+	{
+		for (let chunk of message.Chunks) {
+			//let newChunkRef = new ChunkReference();
+			let newChunk = new Chunk(chunk.Location)
+		}
 	}
 }
 
