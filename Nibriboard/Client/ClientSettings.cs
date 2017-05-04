@@ -5,22 +5,25 @@ namespace Nibriboard.Client
 {
 	public class ClientSettings 
 	{
-		[JsonIgnore]
-		public bool SecureWebsocket = false;
-		[JsonIgnore]
-		public int WebsocketPort;
-		[JsonIgnore]
-		public string WebsocketHost = "localhost";
-		[JsonIgnore]
-		public string WebsocketPath;
+		/// <summary>
+		/// Whether the WebSocket is secure.
+		/// </summary>
+		public bool SecureWebSocket = false;
+
+		/// <summary>
+		/// The protocol to use over the WebSocket.
+		/// </summary>
+		public string WebsocketProtocol = "RippleLink";
+
+		public int WebSocketPort;
+		public string WebSocketHost = "localhost";
+		public string WebSocketPath;
 
 		public string WebsocketUri {
 			get {
-				return (SecureWebsocket ? "wss" : "ws") + $"://{WebsocketHost}:{WebsocketPort}{WebsocketPath}";
+				return (SecureWebSocket ? "wss" : "ws") + $"://{WebSocketHost}:{WebSocketPort}{WebSocketPath}";
 			}
 		}
-
-		public string WebsocketProtocol = "RippleLink";
 
 		public ClientSettings()
 		{

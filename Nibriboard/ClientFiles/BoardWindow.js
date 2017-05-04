@@ -148,7 +148,7 @@ class BoardWindow extends EventEmitter
 	 * This mainly consists of establishing the RippleLink connection to the server.
 	 */
 	setup() {
-		this.rippleLink = new RippleLink(this.settings.WebsocketUri, this);
+		this.rippleLink = new RippleLink(`ws${this.settings.SecureWebSocket ? "s" : ""}://${location.host}/${this.settings.WebSocketPath}`, this);
 		this.rippleLink.on("connect", (function(event) {
 			
 			// Send the handshake request

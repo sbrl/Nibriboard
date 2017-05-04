@@ -31,9 +31,10 @@ namespace Nibriboard
 			Port = inPort;
 
 			clientSettings = new ClientSettings() {
-				WebsocketHost = "192.168.0.56",
-				WebsocketPort = Port,
-				WebsocketPath = "/RipplespaceLink"
+				SecureWebSocket = false,
+				WebSocketHost = "192.168.0.56",
+				WebSocketPort = Port,
+				WebSocketPath = "/RipplespaceLink"
 			};
 
 			// HTTP Server setup
@@ -59,7 +60,7 @@ namespace Nibriboard
 				clientManagerCanceller.Token
 			);
 			httpServer.AddWebSocketRequestHandler(
-				clientSettings.WebsocketPath,
+				clientSettings.WebSocketPath,
 
 				clientManager
 			);
