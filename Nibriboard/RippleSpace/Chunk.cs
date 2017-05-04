@@ -45,6 +45,16 @@ namespace Nibriboard.RippleSpace
 		private Plane plane;
 
 		/// <summary>
+		/// The name of the plane that this chunk is on.
+		/// </summary>
+		/// <value>The name of the plane.</value>
+		public string PlaneName {
+			get {
+				return plane.Name;
+			}
+		}
+
+		/// <summary>
 		/// The lines that this chunk currently contains.
 		/// </summary>
 		private List<DrawnLine> lines = new List<DrawnLine>();
