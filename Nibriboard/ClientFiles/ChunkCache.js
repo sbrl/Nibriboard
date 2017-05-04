@@ -1,7 +1,8 @@
 "use strict";
 
-import ChunkReference from './ChunkReference.js';
-import Rectangle from './Utilities/Rectangle.js';
+import ChunkReference from './ChunkReference';
+import Chunk from './Chunk';
+import Rectangle from './Utilities/Rectangle';
 
 class ChunkCache
 {
@@ -70,7 +71,8 @@ class ChunkCache
 	{
 		for (let chunk of message.Chunks) {
 			//let newChunkRef = new ChunkReference();
-			let newChunk = new Chunk(chunk.Location)
+			let newChunk = new Chunk(chunk.Location);
+			
 		}
 	}
 }
