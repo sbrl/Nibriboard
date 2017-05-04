@@ -326,17 +326,21 @@ namespace Nibriboard.Client
 			CurrentViewPort = workingViewport;
 
 			List<ChunkReference> initialChunks = new List<ChunkReference>();
-			ChunkReference currentChunkRef = new ChunkReference(CurrentPlane, CurrentViewPort.X, CurrentViewPort.Y);
+			ChunkReference currentChunkRef = new ChunkReference(
+				CurrentPlane,
+				CurrentViewPort.X / CurrentPlane.ChunkSize,
+				CurrentViewPort.Y / CurrentPlane.ChunkSize
+			);
 			while(CanSee(currentChunkRef))
 			{
 				while(CanSee(currentChunkRef))
 				{
 					initialChunks.Add(currentChunkRef);
 					currentChunkRef = currentChunkRef.Clone() as ChunkReference;
-					currentChunkRef.X += CurrentPlane.ChunkSize;
+					currentChunkRef.X++;
 				}
 				currentChunkRef.X = CurrentViewPort.X;
-				currentChunkRef.Y += CurrentPlane.ChunkSize;
+				currentChunkRef.Y++;
 			}
 
 			await SendChunks(initialChunks);
