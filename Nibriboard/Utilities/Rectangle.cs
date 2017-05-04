@@ -11,6 +11,8 @@ namespace SBRL.Utilities
 	/// <changelog>
 	/// v0.1 - 1st April 2017
 	/// 	 - Added this changelog!
+	/// v0.2 - 4th May 2017
+	/// 	 - Fixed Overlap(Rectangle otherRectangle) method
 	/// </changelog>
 	public struct Rectangle
 	{
@@ -144,9 +146,9 @@ namespace SBRL.Utilities
 		/// <returns>Whether this rectangle overlaps another rectangle.</returns>
 		public bool Overlap(Rectangle otherRectangle)
 		{
-			if(Top > otherRectangle.Bottom &&
-			   Bottom < otherRectangle.Top &&
-			   Left > otherRectangle.Right &&
+			if(Top > otherRectangle.Bottom ||
+			   Bottom < otherRectangle.Top ||
+			   Left > otherRectangle.Right ||
 			   Right < otherRectangle.Left)
 				return false;
 
