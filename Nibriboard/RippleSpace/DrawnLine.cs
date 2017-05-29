@@ -12,7 +12,8 @@ namespace Nibriboard.RippleSpace
 		/// The id of line that this <see cref="NibriboardServer.RippleSpace.DrawnLine" /> is part of.
 		/// Note that this id may not be unique - several lines that were all
 		/// drawn at once may also have the same id. This is such that a single
-		/// line that was split across multiple chunks can still be referenced.
+        /// line that was split across multiple chunks can still be referenced and
+        /// joined together.
 		/// </summary>
 		public readonly string LineId;
 
@@ -82,14 +83,16 @@ namespace Nibriboard.RippleSpace
 				return results;
 			}
 
-			DrawnLine nextLine = new DrawnLine();
+            DrawnLine nextLine = new DrawnLine(LineId);
 			ChunkReference currentChunk = null;
 			foreach(LocationReference point in Points)
 			{
 				if(currentChunk != null && !point.ContainingChunk.Equals(currentChunk))
 				{
-					// We're heading into a new chunk! Split the line up here.
-					// TODO: Add connecting lines to each DrawnLine instance to prevent gaps
+                    // We're heading into a new chunk! Split the line up here.
+                    // TODO: Add connecting lines to each DrawnLine instance to prevent gaps
+                    nextLine.Colour = Colour;
+                    nextLine.Width = Width;
 					results.Add(nextLine);
 					nextLine = new DrawnLine(LineId);
 				}
@@ -100,7 +103,11 @@ namespace Nibriboard.RippleSpace
 			}
 
 			if(nextLine.Points.Count > 0)
+			{
+				nextLine.Colour = Colour;
+				nextLine.Width = Width;
 				results.Add(nextLine);
+            }
 
 			return results;
 		}

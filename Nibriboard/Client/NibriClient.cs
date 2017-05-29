@@ -202,12 +202,15 @@ namespace Nibriboard.Client
 		/// Use the regular Send() method if you can possibly help it.
 		/// </summary>
 		/// <param name="message">The message to send.</param>
-		public void SendRaw(string message)
+		public bool SendRaw(string message)
 		{
-			if (!Connected)
-				throw new InvalidOperationException($"[NibriClient]{Id}] Can't send a message as the client has disconnected.");
+            if (!Connected) {
+				Log.WriteLine($"[NibriClient#{Id}] Can't send a message as the client has disconnected.");
+                return false;
+            }
 			
 			client.Send(message);
+            return true;
 		}
 
 		/// <summary>

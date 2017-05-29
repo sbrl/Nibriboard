@@ -10,7 +10,7 @@ namespace Nibriboard.Client
 	/// </summary>
 	public class ChunkCache
 	{
-		List<ChunkReference> cache;
+		List<ChunkReference> cache = new List<ChunkReference>();
 
 		/// <summary>
 		/// Creates a new empty chunk cache.
