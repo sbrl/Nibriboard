@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace Nibriboard.RippleSpace
 {
@@ -37,6 +38,7 @@ namespace Nibriboard.RippleSpace
 	/// Represents a single chunk of an infinite <see cref="NibriboardServer.RippleSpace.Plane" />.
 	/// </summary>
 	[Serializable]
+    [JsonObject(MemberSerialization.OptIn)]
 	public class Chunk : IEnumerable<DrawnLine>, IDeserializationCallback
 	{
 		/// <summary>
@@ -47,7 +49,8 @@ namespace Nibriboard.RippleSpace
 		/// <summary>
 		/// The name of the plane that this chunk is on.
 		/// </summary>
-		/// <value>The name of the plane.</value>
+        /// <value>The name of the plane.</value>
+        [JsonProperty]
 		public string PlaneName {
 			get {
 				return plane.Name;
@@ -57,16 +60,19 @@ namespace Nibriboard.RippleSpace
 		/// <summary>
 		/// The lines that this chunk currently contains.
 		/// </summary>
+        [JsonProperty]
 		private List<DrawnLine> lines = new List<DrawnLine>();
 
 		/// <summary>
 		/// The size of this chunk.
 		/// </summary>
+		[JsonProperty]
 		public readonly int Size;
 
 		/// <summary>
 		/// The location of this chunk, in chunk-space, on the plane.
 		/// </summary>
+		[JsonProperty]
 		public readonly ChunkReference Location;
 
 		/// <summary>
@@ -86,6 +92,7 @@ namespace Nibriboard.RippleSpace
 		/// Whether this <see cref="T:Nibriboard.RippleSpace.Chunk"/> is primary chunk.
 		/// Primary chunks are always loaded.
 		/// </summary>
+		[JsonProperty]
 		public bool IsPrimaryChunk
 		{
 			get {
