@@ -18,9 +18,9 @@ class ChunkCache
 	 * Adds the given chunk to the chunk cache.
 	 * @param {Chunk} chunkData The chunk to add to the cache.
 	 */
-	add(chunkData)
+	add(chunkData, override = false)
 	{
-		if(this.cache.contains(chunkData.chunkRef.toString()))
+		if(!override && this.cache.contains(chunkData.chunkRef.toString()))
 			throw new Error("Error: We already have a chunk at that location stored.");
 		
 		this.cache.set(chunkData.chunkRef.toString(), chunkData);
@@ -69,10 +69,17 @@ class ChunkCache
 	
 	handleChunkUpdate(message)
 	{
-		for (let chunk of message.Chunks) {
-			//let newChunkRef = new ChunkReference();
-			let newChunk = new Chunk(chunk.Location);
+		for (let chunkData of message.Chunks) {
+			let newChunkRef = new ChunkReference(
+				chunkData.Location.PlaneName,
+				chunkData.Location.X,
+				chunkData.Location.Y
+			);
 			
+			let newChunk = new Chunk(newChunkRef, chunkData.Size);
+			newChunk.lines = newChunk.lines.concat(chunkData.lines);
+			
+			this.add(newChunk);
 		}
 	}
 }

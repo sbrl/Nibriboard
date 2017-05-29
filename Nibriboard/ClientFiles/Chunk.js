@@ -11,9 +11,10 @@ class Chunk
 	 * Creates a new chunk.
 	 * @param  {ChunkReference} inChunkRef The location of the new chunk.
 	 */
-	constructor(inChunkRef)
+	constructor(inChunkRef, inSize)
 	{
 		this.chunkRef = inChunkRef;
+		this.size = inSize;
 		this.lines = [];
 	}
 	
