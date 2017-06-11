@@ -221,6 +221,7 @@ class BoardWindow extends EventEmitter
 		context.clearRect(0, 0, canvas.width, canvas.height);
 		
 		context.save();
+		context.scale(this.viewport.zoomLevel, this.viewport.zoomLevel);
 		
 		// Draw the grid if it's enabled
 		if(this.displayGrid)
@@ -243,7 +244,6 @@ class BoardWindow extends EventEmitter
 	renderGrid(canvas, context)
 	{
 		context.save();
-		context.scale(this.viewport.zoomLevel, this.viewport.zoomLevel);
 		
 		
 		for(let ax = (this.viewport.x + (this.gridSize - (this.viewport.x % this.gridSize))) - this.gridSize; ax < (this.viewport.x + this.viewport.width); ax += this.gridSize)
