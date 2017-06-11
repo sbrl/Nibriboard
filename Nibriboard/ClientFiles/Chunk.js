@@ -9,7 +9,8 @@ class Chunk
 {
 	/**
 	 * Creates a new chunk.
-	 * @param  {ChunkReference} inChunkRef The location of the new chunk.
+	 * @param 	{ChunkReference}	inChunkRef	The location of the new chunk.
+	 * @param	{number}			inSize		The size of this chunk.
 	 */
 	constructor(inChunkRef, inSize)
 	{
@@ -45,14 +46,14 @@ class Chunk
 		{
 			context.beginPath();
 			context.moveTo(
-				line.Points[0].x - this.chunkRef.x,
-				line.Points[0].y - this.chunkRef.y
+				line.Points[0].x - this.chunkRef.inPlaneSpace(this.size).x,
+				line.Points[0].y - this.chunkRef.inPlaneSpace(this.size).y
 			);
 			for(let i = 1; i < line.Points.length; i++)
 			{
 				context.lineTo(
-					line.Points[i].x - this.chunkRef.x,
-					line.Points[i].y - this.chunkRef.y
+					line.Points[i].x - this.chunkRef.inPlaneSpace(this.size).x,
+					line.Points[i].y - this.chunkRef.inPlaneSpace(this.size).y
 				);
 			}
 			

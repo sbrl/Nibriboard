@@ -3,6 +3,7 @@
 import ChunkReference from './ChunkReference';
 import Chunk from './Chunk';
 import Rectangle from './Utilities/Rectangle';
+import Vector from './Utilities/Vector';
 
 class ChunkCache
 {
@@ -16,14 +17,19 @@ class ChunkCache
 	
 	/**
 	 * Adds the given chunk to the chunk cache.
-	 * @param {Chunk} chunkData The chunk to add to the cache.
+	 * @param	{Chunk}	chunkData	The chunk to add to the cache.
+	 * @returns	{bool}	Whether we actually updated an existing chunk in the	
+	 * 					cache instead of adding a new one.
 	 */
 	add(chunkData, override = false)
 	{
-		if(!override && this.cache.contains(chunkData.chunkRef.toString()))
+		var hasChunk = this.cache.has(chunkData.chunkRef.toString());
+		if(!override && hasChunk)
 			throw new Error("Error: We already have a chunk at that location stored.");
 		
 		this.cache.set(chunkData.chunkRef.toString(), chunkData);
+		
+		return !hasChunk;
 	}
 	
 	/**
@@ -56,7 +62,9 @@ class ChunkCache
 			{
 				let cChunk = new ChunkReference(
 					this.boardWindow.currentPlaneName,
-					cx, cy
+					// Translate from plane space to chunk space when creating
+					// a _chunk_ reference
+					cx / chunkSize, cy / chunkSize
 				);
 				let chunk = this.cache.get(cChunk.toString());
 				if(typeof chunk != "undefined")
@@ -76,10 +84,16 @@ class ChunkCache
 				chunkData.Location.Y
 			);
 			
-			let newChunk = new Chunk(newChunkRef, chunkData.Size);
-			newChunk.lines = newChunk.lines.concat(chunkData.lines);
+			console.info(`Chunk Update @ ${newChunkRef}`)
 			
-			this.add(newChunk);
+			let newChunk = new Chunk(newChunkRef, chunkData.Size);
+			let newLines = chunkData.lines.map((line) => {
+				line.Points = line.Points.map((raw) => new Vector(raw.X, raw.Y));
+				return line;
+			});
+			newChunk.lines = newChunk.lines.concat(newLines);
+			
+			this.add(newChunk, true);
 		}
 	}
 }

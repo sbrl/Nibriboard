@@ -10,6 +10,16 @@ class ChunkReference extends Vector
 		this.planeName = inPlaneName;
 	}
 	
+	/**
+	 * Returns a plain Vector of this chunk reference in plane space.
+	 * @param  {number} chunkSize The size of the chunk this ChunkReference refers to.
+	 * @return {Vector}           This ChunkReference in plane space.
+	 */
+	inPlaneSpace(chunkSize)
+	{
+		return this.clone().multiply(chunkSize);
+	}
+	
 	toString()
 	{
 		return `ChunkReference: (${this.x}, ${this.y}, ${this.planeName})`;

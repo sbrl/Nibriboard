@@ -8,7 +8,6 @@
     "Utilities/*.js"
   ],
   "dontLoad": [
-    "node_module/**",
     "NibriClient.js"
   ],
   "plugins": {
