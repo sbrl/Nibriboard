@@ -12,8 +12,8 @@ class ChunkReference extends Vector
 	
 	/**
 	 * Returns a plain Vector of this chunk reference in plane space.
-	 * @param  {number} chunkSize The size of the chunk this ChunkReference refers to.
-	 * @return {Vector}           This ChunkReference in plane space.
+	 * @param  	{number} chunkSize The size of the chunk this ChunkReference refers to.
+	 * @returns	{Vector}           This ChunkReference in plane space.
 	 */
 	inPlaneSpace(chunkSize)
 	{

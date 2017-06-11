@@ -40,20 +40,23 @@ class Chunk
 	
 	render(canvas, context)
 	{
+		var planeSpaceRef = this.chunkRef.inPlaneSpace(this.size);
+		
 		context.save();
+		context.translate(planeSpaceRef.x, planeSpaceRef.y);
 		
 		for(let line of this.lines)
 		{
 			context.beginPath();
 			context.moveTo(
-				line.Points[0].x - this.chunkRef.inPlaneSpace(this.size).x,
-				line.Points[0].y - this.chunkRef.inPlaneSpace(this.size).y
+				line.Points[0].x - planeSpaceRef.x,
+				line.Points[0].y - planeSpaceRef.y
 			);
 			for(let i = 1; i < line.Points.length; i++)
 			{
 				context.lineTo(
-					line.Points[i].x - this.chunkRef.inPlaneSpace(this.size).x,
-					line.Points[i].y - this.chunkRef.inPlaneSpace(this.size).y
+					line.Points[i].x - planeSpaceRef.x,
+					line.Points[i].y - planeSpaceRef.y
 				);
 			}
 			
