@@ -60,6 +60,7 @@ class Chunk
 				);
 			}
 			
+			context.lineCap = "round";
 			context.lineWidth = line.Width;
 			context.strokeStyle = line.Colour;
 			context.stroke();

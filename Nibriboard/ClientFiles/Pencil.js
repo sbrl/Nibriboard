@@ -51,8 +51,24 @@ class Pencil
 		canvas.addEventListener("mousemove", this.handleMouseMove.bind(this));
 		canvas.addEventListener("mouseup", this.handleMouseUp.bind(this));
 		
-		this.boardWindow.interface.on("colourchange", (function(event) {
+		this.setupInterfaceBindings(this.boardWindow.interface);
+		
+	}
+	
+	setupInterfaceBindings(inInterface)
+	{
+		// Snag the initial colour from the interface
+		this.currentColour = inInterface.currentColour;
+		// Listen for future colour updates
+		inInterface.on("colourchange", (function(event) {
 		    this.currentColour = event.newColour;
+		}).bind(this))
+		
+		// Look up the initial line with in the interface
+		this.currentLineWidth = inInterface.currentBrushWidth;
+		// Listen for future updates fromt he interface
+		inInterface.on("brushwidthchange", (function(event) {
+		    this.currentLineWidth = event.newWidth;
 		}).bind(this))
 	}
 	

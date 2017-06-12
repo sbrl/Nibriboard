@@ -41,7 +41,7 @@ class Interface extends EventEmitter
 	setupColourSelectors()
 	{
 		this.currentColourElement = this.sidebar.querySelector(".palette .palette-colour[data-selected]");
-		this.currentColour = this.currentColourElement.style.backgroundColor;
+		this.switchColourTo(this.currentColourElement);
 		
 		var colours = this.sidebar.querySelectorAll(".palette .palette-colour");
 		for (let i = 0; i < colours.length; i++) {
@@ -140,7 +140,7 @@ class Interface extends EventEmitter
 		// Update the brush indicator
 		this.updateBrushIndicator();
 		// Emit the brush width change event
-		this.emit("brushwidthchange", { newWidth: this.currentLineWidth });
+		this.emit("brushwidthchange", { newWidth: this.currentBrushWidth });
 	}
 	
 	updateBrushIndicator()
