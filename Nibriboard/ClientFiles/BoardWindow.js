@@ -236,7 +236,7 @@ class BoardWindow extends EventEmitter
 		this.renderOthers(canvas, context);
 		// Render the currently active line
 		if(typeof this.pencil !== "undefined")
-			this.pencil.render(canvas, context);
+			this.pencil.render(this.viewport, canvas, context);
 		
 		context.restore();
 	}

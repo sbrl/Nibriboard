@@ -143,19 +143,28 @@ class Pencil
 	 * @param  {HTMLCanvasElement} canvas  The canvas to draw to.
 	 * @param  {CanvasRenderingContext2D} context The rendering context to use to draw to the canvas.
 	 */
-	render(canvas, context) {
+	render(visibleArea, canvas, context) {
 		if(this.currentLineSegments.length == 0)
 			return;
 		
 		context.save();
 		
+		context.translate(
+			-visibleArea.x,
+			-visibleArea.y
+		);
+		
 		context.beginPath();
-		context.lineTo(this.currentLineSegments[0].x, this.currentLineSegments[0].y);
-		for(let point of this.currentLineSegments) {
-			context.lineTo(point.x, point.y);
+		context.moveTo(this.currentLineSegments[0].x, this.currentLineSegments[0].y);
+		for(let i = 1; i < this.currentLineSegments.length; i++) {
+			context.lineTo(this.currentLineSegments[i].x, this.currentLineSegments[i].y);
 		}
-		context.lineWidth = this.currentColour;
+		
+		context.lineWidth = this.currentLineWidth;
 		context.strokeStyle = this.currentColour;
+		context.lineCap = "round";
+		context.lineJoin = "round";
+		context.stroke();
 		
 		context.restore();
 	}
