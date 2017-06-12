@@ -227,6 +227,13 @@ class BoardWindow extends EventEmitter
 		if(this.displayGrid)
 			this.renderGrid(canvas, context);
 		
+		
+		context.save();
+		context.translate(
+			-this.viewport.x,
+			-this.viewport.y
+		);
+		
 		// Only render the visible chunks if the chunk cache has been created
 		// The chunk cache is only created once the ripple link connects successfully
 		// to the nibriboard server.
@@ -236,7 +243,9 @@ class BoardWindow extends EventEmitter
 		this.renderOthers(canvas, context);
 		// Render the currently active line
 		if(typeof this.pencil !== "undefined")
-			this.pencil.render(this.viewport, canvas, context);
+			this.pencil.render(canvas, context);
+		
+		context.restore();
 		
 		context.restore();
 	}

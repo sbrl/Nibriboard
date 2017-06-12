@@ -54,14 +54,6 @@ class ChunkCache
 			(Math.floor((visibleArea.y + (visibleArea.height / visibleArea.zoomLevel)) / chunkSize) * chunkSize)
 		);
 		
-		/*context.translate(
-			-Math.abs(visibleArea.x - chunkArea.x),
-			-Math.abs(visibleArea.y - chunkArea.y)
-		);*/
-		context.translate(
-			-visibleArea.x,
-			-visibleArea.y
-		);
 		
 		for(let cx = chunkArea.x; cx <= chunkArea.x + chunkArea.width; cx += chunkSize)
 		{

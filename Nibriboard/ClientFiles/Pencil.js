@@ -143,16 +143,11 @@ class Pencil
 	 * @param  {HTMLCanvasElement} canvas  The canvas to draw to.
 	 * @param  {CanvasRenderingContext2D} context The rendering context to use to draw to the canvas.
 	 */
-	render(visibleArea, canvas, context) {
+	render(canvas, context) {
 		if(this.currentLineSegments.length == 0)
 			return;
 		
 		context.save();
-		
-		context.translate(
-			-visibleArea.x,
-			-visibleArea.y
-		);
 		
 		context.beginPath();
 		context.moveTo(this.currentLineSegments[0].x, this.currentLineSegments[0].y);
