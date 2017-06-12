@@ -87,8 +87,8 @@ class Pencil
 		
 		// The server only supports ints atm, so we have to round here :-(
 		var nextPoint = new Vector(
-			Math.floor(event.clientX + this.boardWindow.viewport.x),
-			Math.floor(event.clientY + this.boardWindow.viewport.y)
+			Math.floor((event.clientX + this.boardWindow.viewport.x) / this.boardWindow.viewport.zoomLevel),
+			Math.floor((event.clientY + this.boardWindow.viewport.y) / this.boardWindow.viewport.zoomLevel)
 		);
 		this.unsentSegments.push(nextPoint);
 		this.currentLineSegments.push(nextPoint);
