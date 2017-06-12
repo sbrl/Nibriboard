@@ -12,6 +12,9 @@ class ChunkCache
 		this.boardWindow = inBoardWindow;
 		this.cache = new Map();
 		
+		// Whether to highlight rendered chunks. Useful for debugging purposes.
+		this.showRenderedChunks = true;
+		
 		this.boardWindow.rippleLink.on("ChunkUpdate", this.handleChunkUpdate.bind(this));
 	}
 	
@@ -47,13 +50,17 @@ class ChunkCache
 		let chunkArea = new Rectangle(
 			Math.floor(visibleArea.x / chunkSize) * chunkSize,
 			Math.floor(visibleArea.y / chunkSize) * chunkSize,
-			(Math.floor((visibleArea.x + visibleArea.width) / chunkSize) * chunkSize),
-			(Math.floor((visibleArea.y + visibleArea.height) / chunkSize) * chunkSize)
+			(Math.floor((visibleArea.x + (visibleArea.width / visibleArea.zoomLevel)) / chunkSize) * chunkSize),
+			(Math.floor((visibleArea.y + (visibleArea.height / visibleArea.zoomLevel)) / chunkSize) * chunkSize)
 		);
 		
-		context.translate(
+		/*context.translate(
 			-Math.abs(visibleArea.x - chunkArea.x),
 			-Math.abs(visibleArea.y - chunkArea.y)
+		);*/
+		context.translate(
+			-visibleArea.x,
+			-visibleArea.y
 		);
 		
 		for(let cx = chunkArea.x; cx <= chunkArea.x + chunkArea.width; cx += chunkSize)
@@ -66,6 +73,13 @@ class ChunkCache
 					// a _chunk_ reference
 					cx / chunkSize, cy / chunkSize
 				);
+				
+				if(this.showRenderedChunks) {
+					context.beginPath();
+					context.fillStyle = "hsla(270.5, 79.6%, 55.9%, 0.5)";
+					context.fillRect(cx, cy, chunkSize, chunkSize);
+				}
+				
 				let chunk = this.cache.get(cChunk.toString());
 				if(typeof chunk != "undefined")
 					chunk.render(canvas, context);
