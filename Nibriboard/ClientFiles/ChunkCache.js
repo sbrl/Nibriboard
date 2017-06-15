@@ -66,6 +66,8 @@ class ChunkCache
 					cx / chunkSize, cy / chunkSize
 				);
 				
+				// todo Render the purple box slightly different if we don't
+				// actually have a chunk form the server to render
 				if(this.showRenderedChunks) {
 					context.beginPath();
 					context.fillStyle = "hsla(270.5, 79.6%, 55.9%, 0.5)";
