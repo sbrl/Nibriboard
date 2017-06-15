@@ -62,11 +62,11 @@ class BoardWindow extends EventEmitter
 			y: 0,
 			// The width of the viewport
 			get width() {
-				return canvas.width * 1/this.zoomLevel
+				return canvas.width * (1/this.zoomLevel)
 			},
 			// The height of the viewport
 			get height() {
-				return canvas.height * 1/this.zoomLevel
+				return canvas.height * (1/this.zoomLevel)
 			},	
 			// The zoom level of the viewport. 1 = normal.
 			zoomLevel: 1,

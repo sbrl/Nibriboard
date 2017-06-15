@@ -126,6 +126,11 @@ hr
     z-index: 5000;
 }
 
+.debug-value
+{
+    font-family: monospace; /* todo: use custom fonts! :D */
+}
+
 
 .fps
 {
