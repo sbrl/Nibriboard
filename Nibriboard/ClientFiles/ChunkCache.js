@@ -50,8 +50,8 @@ class ChunkCache
 		let chunkArea = new Rectangle(
 			Math.floor(visibleArea.x / chunkSize) * chunkSize,
 			Math.floor(visibleArea.y / chunkSize) * chunkSize,
-			(Math.ceil((visibleArea.x + (visibleArea.width)) / chunkSize) * chunkSize),
-			(Math.ceil((visibleArea.y + (visibleArea.height)) / chunkSize) * chunkSize)
+			(Math.ceil((Math.abs(visibleArea.x) + (visibleArea.width)) / chunkSize) * chunkSize),
+			(Math.ceil((Math.abs(visibleArea.y) + (visibleArea.height)) / chunkSize) * chunkSize)
 		);
 		
 		
