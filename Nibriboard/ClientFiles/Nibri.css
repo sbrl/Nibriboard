@@ -114,6 +114,19 @@ hr
     border: 0.2em dashed hsl(219, 87%, 54%);
 }
 
+
+/**************************************/
+
+#debuginfo
+{
+    position: absolute;
+    bottom: 0; right: 0;
+    padding: 0.5em;
+    
+    z-index: 5000;
+}
+
+
 .fps
 {
     top: 0.2em !important; right: 0.2em !important;

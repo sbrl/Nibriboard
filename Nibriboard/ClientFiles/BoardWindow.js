@@ -69,7 +69,11 @@ class BoardWindow extends EventEmitter
 				return canvas.height * 1/this.zoomLevel
 			},	
 			// The zoom level of the viewport. 1 = normal.
-			zoomLevel: 1
+			zoomLevel: 1,
+			
+			toString() {
+				return `${+this.width.toFixed(2)}x${+this.height.toFixed(2)} @ (${+this.x.toFixed(2)}, ${+this.y.toFixed(2)}) @ ${+this.zoomLevel.toFixed(2)}`
+			}
 		};
 		
 		// The current grid size
@@ -82,7 +86,10 @@ class BoardWindow extends EventEmitter
 		this.context = canvas.getContext("2d");
 		
 		// Grab a reference to the sidebar and wrap it in an Interface class instance
-		this.interface = new Interface(document.getElementById("sidebar"));
+		this.interface = new Interface(
+			document.getElementById("sidebar"),
+			document.getElementById("debuginfo")
+		);
 		
 		// Create a map to store information about other clients in
 		this.otherClients = new Map();
@@ -210,7 +217,7 @@ class BoardWindow extends EventEmitter
 	 */
 	update()
 	{
-		
+		this.interface.updateDebugInfo(this);
 	}
 	
 	/**

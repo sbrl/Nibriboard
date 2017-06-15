@@ -4,11 +4,12 @@ window.EventEmitter = require("event-emitter-es6");
 
 class Interface extends EventEmitter
 {
-	constructor(inSidebar)
+	constructor(inSidebar, inDebugDisplay)
 	{
 		super();
 		
 		this.sidebar = inSidebar;
+		this.debugDisplay = inDebugDisplay;
 		
 		this.brushIndicator = this.sidebar.querySelector(".brush-indicator");
 		
@@ -190,7 +191,10 @@ class Interface extends EventEmitter
 		this.sidebar.querySelector(".name").innerHTML = newName;
 	}
 	
-	
+	updateDebugInfo(boardWindow)
+	{
+		this.debugDisplay.querySelector("#debug-viewport").value = boardWindow.viewport;
+	}
 }
 
 export default Interface;
