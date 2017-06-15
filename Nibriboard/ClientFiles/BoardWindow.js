@@ -357,7 +357,6 @@ class BoardWindow extends EventEmitter
 		this.viewport.x -= event.dx * 1/this.viewport.zoomLevel;
 		this.viewport.y -= event.dy * 1/this.viewport.zoomLevel;
 		this.viewport.zoomLevel += event.dz / 1000;
-		console.debug(`Viewport now at (${this.viewport.x}, ${this.viewport.y}) @ ${this.viewport.zoomLevel}x zoom`);
 	}
 	
 	/**
