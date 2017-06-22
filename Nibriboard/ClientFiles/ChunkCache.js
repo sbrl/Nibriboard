@@ -13,7 +13,7 @@ class ChunkCache
 		this.cache = new Map();
 		
 		// Whether to highlight rendered chunks. Useful for debugging purposes.
-		this.showRenderedChunks = true;
+		this.showRenderedChunks = false;
 		
 		this.boardWindow.rippleLink.on("ChunkUpdate", this.handleChunkUpdate.bind(this));
 	}
@@ -66,17 +66,15 @@ class ChunkCache
 					cx / chunkSize, cy / chunkSize
 				);
 				
-				// todo Render the purple box slightly different if we don't
-				// actually have a chunk form the server to render
-				if(this.showRenderedChunks) {
-					context.beginPath();
-					context.fillStyle = "hsla(270.5, 79.6%, 55.9%, 0.5)";
-					context.fillRect(cx, cy, chunkSize, chunkSize);
-				}
-				
 				let chunk = this.cache.get(cChunk.toString());
 				if(typeof chunk != "undefined")
 					chunk.render(canvas, context);
+				
+				if(this.showRenderedChunks) {
+					context.beginPath();
+					context.fillStyle = `hsla(270.5, 79.6%, 55.9%, ${typeof chunk != "undefined" ? 0.3 : 0.1})`;
+					context.fillRect(cx, cy, chunkSize, chunkSize);
+				}
 			}
 		}
 		

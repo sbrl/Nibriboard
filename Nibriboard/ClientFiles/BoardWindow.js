@@ -95,7 +95,7 @@ class BoardWindow extends EventEmitter
 		this.otherClients = new Map();
 		
 		/**
-		 * The currents tate of the keyboard.
+		 * The current state of the keyboard.
 		 * @type {Keyboard}
 		 */
 		this.keyboard = new Keyboard();
@@ -115,6 +115,9 @@ class BoardWindow extends EventEmitter
 		}).bind(this));
 		this.keyboard.on("keyup-down", (function(event) {
 		    this.interface.updateBrushWidth(this.interface.currentBrushWidth - 2, true);
+		}).bind(this));
+		this.keyboard.on("keyup-c", (function(event) {
+		    this.chunkCache.showRenderedChunks = !this.chunkCache.showRenderedChunks;
 		}).bind(this));
 		
 		// --~~~--
