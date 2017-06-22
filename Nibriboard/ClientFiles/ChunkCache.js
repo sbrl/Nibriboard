@@ -35,6 +35,20 @@ class ChunkCache
 		return !hasChunk;
 	}
 	
+	update(dt, visibleArea)
+	{
+		let chunkSize = this.boardWindow.gridSize;
+		let chunkArea = this.CalculateChunkArea(visibleArea, chunkSize);
+		
+		for(let cx = chunkArea.x; cx <= chunkArea.x + chunkArea.width; cx += chunkSize)
+		{
+			for(let cy = chunkArea.y; cy <= chunkArea.y + chunkArea.height; cy += chunkSize)
+			{
+				
+			}
+		}
+	}
+	
 	/**
 	 * Renders the specified area to the given canvas with the given context.
 	 * @param	{Rectangle}					visibleArea	The area to render.
@@ -47,13 +61,7 @@ class ChunkCache
 	{
 		context.save();
 		let chunkSize = this.boardWindow.gridSize;
-		let chunkArea = new Rectangle(
-			Math.floor(visibleArea.x / chunkSize) * chunkSize,
-			Math.floor(visibleArea.y / chunkSize) * chunkSize,
-			(Math.ceil((Math.abs(visibleArea.x) + (visibleArea.width)) / chunkSize) * chunkSize),
-			(Math.ceil((Math.abs(visibleArea.y) + (visibleArea.height)) / chunkSize) * chunkSize)
-		);
-		
+		let chunkArea = this.CalculateChunkArea(visibleArea, chunkSize);
 		
 		for(let cx = chunkArea.x; cx <= chunkArea.x + chunkArea.width; cx += chunkSize)
 		{
@@ -102,6 +110,22 @@ class ChunkCache
 			this.add(newChunk, true);
 		}
 	}
+}
+
+/**
+ * Calculates the area of the chunks that cover a specified box.
+ * @param	{Rectangle}	visibleArea	The box to calculate the covering chunks for.
+ * @param	{number}	chunkSize	The size of the chunks that cover the box.
+ * @return	{Rectangle}	The area of the chunks that cover the box.
+ */
+ChunkCache.CalculateChunkArea = function(visibleArea, chunkSize) {
+	return new Rectangle(
+		Math.floor(visibleArea.x / chunkSize) * chunkSize,
+		Math.floor(visibleArea.y / chunkSize) * chunkSize,
+		(Math.ceil((Math.abs(visibleArea.x) + (visibleArea.width)) / chunkSize) * chunkSize),
+		(Math.ceil((Math.abs(visibleArea.y) + (visibleArea.height)) / chunkSize) * chunkSize)
+	);
+	
 }
 
 export default ChunkCache;
