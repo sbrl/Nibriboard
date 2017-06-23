@@ -40,13 +40,27 @@ class ChunkCache
 		let chunkSize = this.boardWindow.gridSize;
 		let chunkArea = this.CalculateChunkArea(visibleArea, chunkSize);
 		
+		// Collect a list of missing chunks
+		let missingChunks = [];
 		for(let cx = chunkArea.x; cx <= chunkArea.x + chunkArea.width; cx += chunkSize)
 		{
 			for(let cy = chunkArea.y; cy <= chunkArea.y + chunkArea.height; cy += chunkSize)
 			{
-				
+				let cChunk = new ChunkReference(
+					this.boardWindow.currentPlaneName,
+					cx / chunkSize, cy / chunkSize
+				);
+				if(!this.cache.has(cChunk)) {
+					missingChunks.push(cChunk);
+				}
 			}
 		}
+		
+		// Asynchronously request them from the server
+		this.boardWindow.rippleLink.send({
+			"Event": "ChunkUpdateRequest",
+			"ForgottenChunks": missingChunks
+		})
 	}
 	
 	/**
