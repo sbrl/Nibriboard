@@ -26,8 +26,8 @@ namespace SBRL.Utilities
 			{
 				result.Add(new ChunkReference(
 					plane,
-					currentLocation.X,
-					currentLocation.Y
+					currentLocation.X / plane.ChunkSize,
+					currentLocation.Y / plane.ChunkSize
 				));
 
 				currentLocation.X += plane.ChunkSize;
