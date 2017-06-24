@@ -354,12 +354,12 @@ namespace Nibriboard.Client
 		/// <param name="message">The message to process.</param>
 		protected async Task handleChunkUpdateRequestMessage(ChunkUpdateRequestMessage message)
 		{
-			chunkCache.Remove(message.ForgottenChunks);
+			chunkCache.Remove(message.ForgottenChunksAsReferences(this.CurrentPlane));
 
 			ChunkUpdateMessage response = new ChunkUpdateMessage();
 			List<ChunkReference> missingChunks = ChunkTools.GetContainingChunkReferences(CurrentPlane, CurrentViewPort);
 			missingChunks = chunkCache.FindMissing(missingChunks);
-
+			
 			response.Chunks = await CurrentPlane.FetchChunks(missingChunks);
 
 			Send(response);
