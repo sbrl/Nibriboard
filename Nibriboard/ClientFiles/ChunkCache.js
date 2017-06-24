@@ -26,7 +26,9 @@ class ChunkCache
 	 */
 	add(chunkData, override = false)
 	{
-		var hasChunk = this.cache.has(chunkData.chunkRef.toString());
+		var hasChunk = this.cache.has(chunkData.chunkRef.toString()) &&
+			this.cache.get(chunkData.chunkRef.toString()).requestedFromServer;
+		
 		if(!override && hasChunk)
 			throw new Error("Error: We already have a chunk at that location stored.");
 		
@@ -38,7 +40,7 @@ class ChunkCache
 	update(dt, visibleArea)
 	{
 		let chunkSize = this.boardWindow.gridSize;
-		let chunkArea = this.CalculateChunkArea(visibleArea, chunkSize);
+		let chunkArea = ChunkCache.CalculateChunkArea(visibleArea, chunkSize);
 		
 		// Collect a list of missing chunks
 		let missingChunks = [];
@@ -50,17 +52,21 @@ class ChunkCache
 					this.boardWindow.currentPlaneName,
 					cx / chunkSize, cy / chunkSize
 				);
-				if(!this.cache.has(cChunk)) {
+				if(!this.cache.has(cChunk.toString())) {
+					console.info(`Requesting ${cChunk}`);
 					missingChunks.push(cChunk);
+					this.cache.set(cChunk.toString(), { requestedFromServer: true });
 				}
 			}
 		}
 		
-		// Asynchronously request them from the server
-		this.boardWindow.rippleLink.send({
-			"Event": "ChunkUpdateRequest",
-			"ForgottenChunks": missingChunks
-		})
+		if(missingChunks.length > 0) {
+			// Asynchronously request them from the server
+			this.boardWindow.rippleLink.send({
+				"Event": "ChunkUpdateRequest",
+				"ForgottenChunks": missingChunks
+			});
+		}
 	}
 	
 	/**
@@ -75,7 +81,7 @@ class ChunkCache
 	{
 		context.save();
 		let chunkSize = this.boardWindow.gridSize;
-		let chunkArea = this.CalculateChunkArea(visibleArea, chunkSize);
+		let chunkArea = ChunkCache.CalculateChunkArea(visibleArea, chunkSize);
 		
 		for(let cx = chunkArea.x; cx <= chunkArea.x + chunkArea.width; cx += chunkSize)
 		{
@@ -89,7 +95,7 @@ class ChunkCache
 				);
 				
 				let chunk = this.cache.get(cChunk.toString());
-				if(typeof chunk != "undefined")
+				if(typeof chunk != "undefined" && !chunk.requestedFromServer)
 					chunk.render(canvas, context);
 				
 				if(this.showRenderedChunks) {

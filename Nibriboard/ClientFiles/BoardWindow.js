@@ -200,7 +200,7 @@ class BoardWindow extends EventEmitter
 		
 		if(frameStart - this.lastFrameStart >= (1 / this.maxFps) * 1000)
 		{
-			this.update();
+			this.update(frameStart - this.lastFrameStart);
 			this.render(this.canvas, this.context);
 		}
 		
@@ -218,9 +218,12 @@ class BoardWindow extends EventEmitter
 	/**
 	 * Updates everything ready for the next frame to be rendered.
 	 */
-	update()
+	update(dt)
 	{
-		this.interface.updateDebugInfo(this);
+		if(typeof this.chunkCache != "undefined" && this.gridSize != -1)
+			this.chunkCache.update(dt, this.viewport);
+		
+		this.interface.updateDebugInfo(dt, this);
 	}
 	
 	/**

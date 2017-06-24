@@ -191,8 +191,9 @@ class Interface extends EventEmitter
 		this.sidebar.querySelector(".name").innerHTML = newName;
 	}
 	
-	updateDebugInfo(boardWindow)
+	updateDebugInfo(dt, boardWindow)
 	{
+		this.debugDisplay.querySelector("#debug-framespacing").value = `${dt}ms`;
 		this.debugDisplay.querySelector("#debug-viewport").value = boardWindow.viewport;
 	}
 }
