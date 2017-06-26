@@ -359,10 +359,11 @@ namespace Nibriboard.Client
 			ChunkUpdateMessage response = new ChunkUpdateMessage();
 			List<ChunkReference> missingChunks = ChunkTools.GetContainingChunkReferences(CurrentPlane, CurrentViewPort);
 			missingChunks = chunkCache.FindMissing(missingChunks);
-			
-			response.Chunks = await CurrentPlane.FetchChunks(missingChunks);
 
-			Send(response);
+			await SendChunks(missingChunks);
+			/*response.Chunks = await CurrentPlane.FetchChunks(missingChunks);
+			Console.WriteLine(JsonConvert.SerializeObject(response));
+			Send(response);*/
 
 			chunkCache.Add(missingChunks);
 		}
@@ -488,6 +489,7 @@ namespace Nibriboard.Client
 			foreach(ChunkReference chunkRef in chunkRefs)
 				updateMessage.Chunks.Add(await CurrentPlane.FetchChunk(chunkRef));
 
+			Log.WriteLine("[NibriClient#{0}/SendChunks] Sending {1} chunks", Id, updateMessage.Chunks.Count);
 			Send(updateMessage);
 		}
 	}
