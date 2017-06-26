@@ -73,7 +73,9 @@ class Pencil
 	}
 	
 	handleMouseMove(event) {
-		// todo add zoom support here
+		// Don't do anything at all if the brush tool isn't selected
+		if(this.boardWindow.interface.currentTool !== "brush")
+			return;
 		
 		// Don't draw anything if the left mouse button isn't down
 		if(!this.mouse.leftDown)
@@ -99,6 +101,9 @@ class Pencil
 	}
 	
 	handleMouseUp(event) {
+		// Don't do anything at all if the brush tool isn't selected
+		if(this.boardWindow.interface.currentTool !== "brush")
+			return;
 		// Ignore it if the ctrl key is held down - see above
 		if(this.boardWindow.keyboard.DownKeys.includes(17))
 			return;

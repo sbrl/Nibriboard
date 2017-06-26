@@ -355,7 +355,9 @@ class BoardWindow extends EventEmitter
 	handleCanvasMovement(event) {
 		// Don't bother processing it if it's a mouse / touch interaction and
 		// the control key isn't pressed
-		if([ "mouse", "touch" ].includes(event.type) && !this.keyboard.DownKeys.includes(17))
+		if([ "mouse", "touch" ].includes(event.type) &&
+			!this.keyboard.DownKeys.includes(17) &&
+			this.interface.currentTool !== "pan")
 			return;
 		// Store the viewport information for later
 		this.viewportState = event;
