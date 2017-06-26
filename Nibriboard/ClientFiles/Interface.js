@@ -34,6 +34,11 @@ class Interface extends EventEmitter
 			toolSelectors[i].addEventListener("mouseup", this.handleSelectTool.bind(this));
 			toolSelectors[i].addEventListener("touchend", this.handleSelectTool.bind(this));
 		}
+		
+		this.emit("toolchange", {
+			oldTool: this.currentToolElement.dataset.toolName,
+			newTool: this.currentToolElement.dataset.toolName
+		});
 	}
 	
 	/**
@@ -67,12 +72,13 @@ class Interface extends EventEmitter
 	 */
 	handleSelectTool(event)
 	{
+		let oldTool = this.currentToolElement.dataset.toolName;
 		delete this.currentToolElement.dataset.selected;
 		this.currentToolElement = event.target;
 		this.currentToolElement.dataset.selected = "yes";
 		this.currentTool = this.currentToolElement.dataset.toolName;
 		console.info("Selected tool", this.currentTool);
-		this.emit("toolchange", { newTool: this.currentTool });
+		this.emit("toolchange", { oldTool, newTool: this.currentTool });
 	}
 	
 	/**

@@ -90,6 +90,10 @@ class BoardWindow extends EventEmitter
 			document.getElementById("sidebar"),
 			document.getElementById("debuginfo")
 		);
+		this.interface.on("toolchange", (function({oldTool, newTool}) {
+		    this.canvas.classList.remove(oldTool);
+			this.canvas.classList.add(newTool);
+		}).bind(this));
 		
 		// Create a map to store information about other clients in
 		this.otherClients = new Map();

@@ -20,6 +20,11 @@ hr
     cursor: crosshair;
 }
 
+#canvas-main.brush { cursor: crosshair; }
+#canvas-main.pan { cursor: -webkit-grab; cursor: grab; }
+#canvas-main.pan:active { cursor: -webkit-grabbing; cursor: grabbing; }
+#canvas-main.pointer { cursor: default; } /* future: show a laser-pointer-style cursor here */
+
 #sidebar
 {
     position: absolute; 
