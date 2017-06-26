@@ -54,8 +54,16 @@ namespace Nibriboard.Client
 
 			byte[] embeddedFile = EmbeddedFiles.ReadAllBytes(expandedFilePath);
 			response.ContentLength = embeddedFile.Length;
-			response.Content.Write(embeddedFile, 0, embeddedFile.Length);
 
+			try
+			{
+				response.Content.Write(embeddedFile, 0, embeddedFile.Length);
+			}
+			catch(Exception error)
+			{
+				Log.WriteLine($"[Nibriboard/EmbeddedFileHandler] Error: {error.Message} Details:");
+				Log.WriteLine(error.ToString());
+			}
 			logRequest(request, response);
 		}
 
