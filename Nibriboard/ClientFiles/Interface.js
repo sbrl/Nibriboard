@@ -4,10 +4,11 @@ window.EventEmitter = require("event-emitter-es6");
 
 class Interface extends EventEmitter
 {
-	constructor(inSidebar, inDebugDisplay)
+	constructor(inBoardWindow, inSidebar, inDebugDisplay)
 	{
 		super();
 		
+		this.boardWindow = inBoardWindow;
 		this.sidebar = inSidebar;
 		this.debugDisplay = inDebugDisplay;
 		
@@ -33,6 +34,11 @@ class Interface extends EventEmitter
 		{
 			toolSelectors[i].addEventListener("mouseup", this.handleSelectTool.bind(this));
 			toolSelectors[i].addEventListener("touchend", this.handleSelectTool.bind(this));
+			this.boardWindow.keyboard.on(`keyup-${i + 1}`, (function(toolId, event) {
+			    this.handleSelectTool({
+					target: this.sidebar.querySelector(`.tools .tool-selector:nth-child(${toolId})`)
+				});
+			}).bind(this, i + 1));
 		}
 		
 		this.emit("toolchange", {
@@ -197,10 +203,10 @@ class Interface extends EventEmitter
 		this.sidebar.querySelector(".name").innerHTML = newName;
 	}
 	
-	updateDebugInfo(dt, boardWindow)
+	updateDebugInfo(dt)
 	{
 		this.debugDisplay.querySelector("#debug-framespacing").value = `${dt}ms`;
-		this.debugDisplay.querySelector("#debug-viewport").value = boardWindow.viewport;
+		this.debugDisplay.querySelector("#debug-viewport").value = this.boardWindow.viewport;
 	}
 }
 

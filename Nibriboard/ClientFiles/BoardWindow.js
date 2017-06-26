@@ -85,16 +85,6 @@ class BoardWindow extends EventEmitter
 		this.canvas = canvas;
 		this.context = canvas.getContext("2d");
 		
-		// Grab a reference to the sidebar and wrap it in an Interface class instance
-		this.interface = new Interface(
-			document.getElementById("sidebar"),
-			document.getElementById("debuginfo")
-		);
-		this.interface.on("toolchange", (function({oldTool, newTool}) {
-		    this.canvas.classList.remove(oldTool);
-			this.canvas.classList.add(newTool);
-		}).bind(this));
-		
 		// Create a map to store information about other clients in
 		this.otherClients = new Map();
 		
@@ -122,6 +112,17 @@ class BoardWindow extends EventEmitter
 		}).bind(this));
 		this.keyboard.on("keyup-c", (function(event) {
 		    this.chunkCache.showRenderedChunks = !this.chunkCache.showRenderedChunks;
+		}).bind(this));
+		
+		// Grab a reference to the sidebar and wrap it in an Interface class instance
+		this.interface = new Interface(
+			this,
+			document.getElementById("sidebar"),
+			document.getElementById("debuginfo")
+		);
+		this.interface.on("toolchange", (function({oldTool, newTool}) {
+		    this.canvas.classList.remove(oldTool);
+			this.canvas.classList.add(newTool);
 		}).bind(this));
 		
 		// --~~~--
@@ -227,7 +228,7 @@ class BoardWindow extends EventEmitter
 		if(typeof this.chunkCache != "undefined" && this.gridSize != -1)
 			this.chunkCache.update(dt, this.viewport);
 		
-		this.interface.updateDebugInfo(dt, this);
+		this.interface.updateDebugInfo(dt);
 	}
 	
 	/**
