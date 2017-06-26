@@ -10,7 +10,7 @@ import RippleLink from './RippleLink';
 import CursorSyncer from './CursorSyncer';
 import OtherClient from './OtherClient';
 import Pencil from './Pencil';
-import { get } from './Utilities';
+import { get, clamp } from './Utilities';
 import Keyboard from './Utilities/Keyboard';
 import Interface from './Interface';
 import ChunkCache from './ChunkCache';
@@ -72,7 +72,7 @@ class BoardWindow extends EventEmitter
 			zoomLevel: 1,
 			
 			toString() {
-				return `${+this.width.toFixed(2)}x${+this.height.toFixed(2)} @ (${+this.x.toFixed(2)}, ${+this.y.toFixed(2)}) @ ${+this.zoomLevel.toFixed(2)}`
+				return `${+this.width.toFixed(2)}x${+this.height.toFixed(2)} @ (${+this.x.toFixed(2)}, ${+this.y.toFixed(2)}) @ ${+this.zoomLevel.toFixed(2)}x`
 			}
 		};
 		
@@ -369,6 +369,7 @@ class BoardWindow extends EventEmitter
 		this.viewport.x -= event.dx * 1/this.viewport.zoomLevel;
 		this.viewport.y -= event.dy * 1/this.viewport.zoomLevel;
 		this.viewport.zoomLevel += event.dz / 1000;
+		this.viewport.zoomLevel = clamp(this.viewport.zoomLevel, 0.1, 10000);
 	}
 	
 	/**
