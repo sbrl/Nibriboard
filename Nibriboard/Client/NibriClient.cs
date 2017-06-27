@@ -122,6 +122,8 @@ namespace Nibriboard.Client
 			manager = inManager;
 			client = inClient;
 
+			manager.LineIncubator.OnLinePartAddition += handleLinePartAddition;
+
 			client.DataReceived += async (WebSocket clientSocket, string frame) => {
 				try
 				{
@@ -145,7 +147,7 @@ namespace Nibriboard.Client
 
 		private async Task handleMessage(string frame)
 		{
-			// Updatet he last time we received a message from the client
+			// Update the last time we received a message from the client
 			LastMessageTime = DateTime.Now;
 
 			// Extract the event name from the message that the client sent.
@@ -444,6 +446,16 @@ namespace Nibriboard.Client
 				Chunks = new List<Chunk>() { sendingChunk }
 			};
 			Send(clientNotification);
+		}
+
+		protected void handleLinePartAddition(object sender, LinePartEventArgs eventArgs)
+		{
+			// Ignore line part additions for ourselves and for clienst who aren't on the same plane as us
+			if(eventArgs.DrawingClient.Id == Id ||
+			   eventArgs.DrawingClient.CurrentPlane != CurrentPlane)
+				return;
+
+
 		}
 
 		#endregion
