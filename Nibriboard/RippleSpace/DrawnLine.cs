@@ -63,7 +63,7 @@ namespace Nibriboard.RippleSpace
 		public DrawnLine() : this(Guid.NewGuid().ToString("N"))
 		{
 		}
-		protected DrawnLine(string inLineId)
+		public DrawnLine(string inLineId)
 		{
 			LineId = inLineId;
 		}

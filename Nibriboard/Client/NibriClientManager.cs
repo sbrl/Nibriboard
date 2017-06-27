@@ -64,7 +64,7 @@ namespace Nibriboard.Client
 		}
 		/// <summary>
 		/// Handles WebSocket clients when they first connect, wrapping them in
-		/// a <see cref="Nibriboard.NibriClient" /> instance and adding them to
+		/// a <see cref="Nibriboard.Client.NibriClient" /> instance and adding them to
 		/// the client list.
 		/// </summary>
 		/// <param name="newSocket">New socket.</param>

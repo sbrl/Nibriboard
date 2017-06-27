@@ -53,7 +53,7 @@ namespace Nibriboard.Client
 		{
 			// Create a new line if one doesn't exist already
 			if(!currentLines.ContainsKey(lineId))
-				currentLines.Add(lineId, new DrawnLine());
+				currentLines.Add(lineId, new DrawnLine(lineId));
 			
 			// Add these points to the line
 			currentLines[lineId].Points.AddRange(points);
