@@ -5,6 +5,20 @@ using SBRL.Utilities;
 
 namespace Nibriboard.Client
 {
+	public class LinePartEventArgs : EventArgs
+	{
+		/// <summary>
+		/// The id of the line that  justu had some points added to it.
+		/// </summary>
+		public string LineId;
+		/// <summary>
+		/// The new points that got added to the line.
+		/// </summary>
+		public List<DrawnLine> NewLineParts;
+	}
+
+	public delegate void OnLinePartAddition(object sender, LinePartEventArgs eventArgs);
+
 	/// <summary>
 	/// Manages the construction of lines that the clients are drawing bit by bit.
 	/// </summary>
@@ -28,6 +42,11 @@ namespace Nibriboard.Client
 				return currentLines.Count;
 			}
 		}
+
+		/// <summary>
+		/// Fired when points get added to a line in this incubator.
+		/// </summary>
+		public event OnLinePartAddition OnLinePartAddition;
 
 		public LineIncubator()
 		{
