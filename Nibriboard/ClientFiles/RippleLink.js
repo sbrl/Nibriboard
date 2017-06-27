@@ -15,7 +15,12 @@ class RippleLink extends EventEmitter
 		this.settings = this.boardWindow.settings;
 		
 		// Create the websocket and commect to the server
+		
+		// Whether the link ot the nibri server is open or not
+		this.linkOpen = false;
+		// The underlying websocket
 		this.websocket = new WebSocket(this.socketUrl, [ this.settings.WebsocketProtocol ]);
+		// Attach some event listeners
 		this.websocket.addEventListener("open", this.handleConnection.bind(this));
 		this.websocket.addEventListener("message", this.handleMessage.bind(this));
 		this.websocket.addEventListener("close", this.handleDisconnection.bind(this));
@@ -32,11 +37,15 @@ class RippleLink extends EventEmitter
 	
 	handleConnection(event) {
 		console.info("[ripple link] Established connection successfully.");
+		this.linkOpen = true;
 		// Tell everyone about it
 		this.emit("connect", event);
 	}
 	
 	handleDisconnection(event) {
+		// If the link was already down, then ignore this phantom disconnection
+		if(!this.linkOpen)
+			return;
 		console.error("[ripple link] Lost connection.");
 		this.boardWindow.interface.setConnectedStatus(false);
 		
