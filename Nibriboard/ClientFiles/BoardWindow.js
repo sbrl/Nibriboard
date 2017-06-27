@@ -419,11 +419,11 @@ class BoardWindow extends EventEmitter
 		for (let otherClient of message.ClientStates) {
 			// If this client is new, emit an event about it
 			if(!this.otherClients.has(otherClient.Id)) {
-				this.emit("OtherClientConnect", otherClient);
-				
 				// Convert the raw object into a class instance
-				let otherClientObj = new OtherClient();
-				otherClientObj.Id = otherClient.Id;
+				let otherClientObj = OtherClient.FromRaw(otherClient);
+				this.otherClients.set(otherClientObj.Id, otherClientObj);
+				
+				this.emit("OtherClientConnect", otherClient);
 			}
 			else { // If not, emit a normal update message about it
 				this.emit("OtherClientUpdate", otherClient);

@@ -17,6 +17,8 @@ class OtherClient
 		this.CursorPosition = new Vector(0, 0);
 		// The position and dimensions of this client's viewport.
 		this.Viewport = Rectangle.Zero.clone();
+		// The time this other client's information was last updated.
+		this.LastUpdated = new Date();
 	}
 	
 	update(data) {
@@ -32,6 +34,30 @@ class OtherClient
 		this.Viewport.width = data.Viewport.Width;
 		this.Viewport.height = data.Viewport.Height;
 	}
+}
+
+/**
+ * Converts raw NibriClient data sent from the server into an instance of OtherClient.
+ * @param	{object}		raw		The raw data to convert. 
+ * @return	{OtherClient}			The converted data.
+ */
+OtherClient.FromRaw = function(raw) {
+	let newOtherClient = new OtherClient();
+	newOtherClient.Id = raw.Id;
+	newOtherClient.CursorPosition = new Vector(
+		raw.CursorPosition.X,
+		raw.CursorPosition.Y
+	);
+	newOtherClient.Viewport = new Rectangle(
+		raw.Viewport.X,
+		raw.Viewport.Y,
+		raw.Viewport.Width,
+		raw.Viewport.Height
+	);
+	newOtherClient.Colour = raw.Colour;
+	newOtherClient.LastUpdated = new Date();
+	
+	return newOtherClient;
 }
 
 export default OtherClient;
