@@ -45,6 +45,21 @@ namespace Nibriboard.Client
 		}
 
 		/// <summary>
+		/// Creates a new line in the incubator.
+		/// </summary>
+		/// <param name="lineId">The line id to attach to the new line in the incubator.</param>
+		public void CreateLine(string lineId, string newColour, int newWidth)
+		{
+			if(currentLines.ContainsKey(lineId))
+				throw new InvalidOperationException($"Error: A line with the id {lineId} already exists, so you can't recreate it.");
+			
+			currentLines.Add(lineId, new DrawnLine(lineId) {
+				Colour = newColour,
+				Width = newWidth
+			});
+		}
+
+		/// <summary>
 		/// Adds a series of points to the incomplete line with the specified id.
 		/// </summary>
 		/// <param name="lineId">The line id to add the points to.</param>
@@ -53,7 +68,7 @@ namespace Nibriboard.Client
 		{
 			// Create a new line if one doesn't exist already
 			if(!currentLines.ContainsKey(lineId))
-				currentLines.Add(lineId, new DrawnLine(lineId));
+				throw new InvalidOperationException($"Error: A line with the id {lineId} doesn't exist, so you can't add to it.");
 			
 			// Add these points to the line
 			currentLines[lineId].Points.AddRange(points);

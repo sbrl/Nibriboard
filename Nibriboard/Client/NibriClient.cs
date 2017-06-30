@@ -55,6 +55,7 @@ namespace Nibriboard.Client
 			["CursorPosition"] = typeof(CursorPositionMessage),
 			["PlaneChange"] = typeof(PlaneChangeMessage),
 			["ChunkUpdateRequest"] = typeof(ChunkUpdateRequestMessage),
+			["LineStart"] = typeof(LineStartMessage),
 			["LinePart"] = typeof(LinePartMessage),
 			["LineComplete"] = typeof(LineCompleteMessage)
 		};
@@ -385,6 +386,31 @@ namespace Nibriboard.Client
 		}
 
 		/// <summary>
+		/// Handles line start events from the client.
+		/// These messages are currently only required to let other clients know about
+		/// lines that are being drawn and their properties for live display.
+		/// </summary>
+		/// <param name="message">The LineStartMessage to process.</param>
+		protected Task handleLineStartMessage(LineStartMessage message)
+		{
+			// Create a new line
+			manager.LineIncubator.CreateLine(
+				message.LineId,
+				message.LineColour,
+				message.LineWidth
+			);
+
+			manager.BroadcastPlane(this, new LineStartReflectionMessage() {
+				OtherClientId = Id,
+				LineId = message.LineId,
+				LineColour = message.LineColour,
+				LineWidth = message.LineWidth
+			});
+
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
 		/// Handles messages containing a fragment of a line from the client.
 		/// </summary>
 		/// <param name="message">The message to process.</param>
@@ -421,8 +447,6 @@ namespace Nibriboard.Client
 				return;
 			}
 			DrawnLine line = manager.LineIncubator.CompleteLine(message.LineId);
-			line.Width = message.LineWidth;
-			line.Colour = message.LineColour;
 
 			if(CurrentPlane == null)
 			{
@@ -437,9 +461,7 @@ namespace Nibriboard.Client
 			Log.WriteLine("[NibriClient#{0}] Adding {1}px {2} line", Id, line.Width, line.Colour);
 			manager.BroadcastPlane(this, new LineCompleteReflectionMessage() {
 				OtherClientId = Id,
-				LineId = line.LineId,
-				LineColour = line.Colour,
-				LineWidth = line.Width
+				LineId = line.LineId
 			});
 			await CurrentPlane.AddLine(line);
 		}
