@@ -435,6 +435,12 @@ namespace Nibriboard.Client
 			}
 
 			Log.WriteLine("[NibriClient#{0}] Adding {1}px {2} line", Id, line.Width, line.Colour);
+			manager.BroadcastPlane(this, new LineCompleteReflectionMessage() {
+				OtherClientId = Id,
+				LineId = line.LineId,
+				LineColour = line.Colour,
+				LineWidth = line.Width
+			});
 			await CurrentPlane.AddLine(line);
 		}
 

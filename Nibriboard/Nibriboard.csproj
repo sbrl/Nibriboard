@@ -102,6 +102,7 @@
     <Compile Include="Client\Messages\PlaneChangeOkMessage.cs" />
     <Compile Include="Client\RawChunkReference.cs" />
     <Compile Include="Client\Messages\LinePartReflectionMessage.cs" />
+    <Compile Include="Client\Messages\LineCompleteReflectionMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />
