@@ -5,24 +5,6 @@ using SBRL.Utilities;
 
 namespace Nibriboard.Client
 {
-	public class LinePartEventArgs : EventArgs
-	{
-		/// <summary>
-		/// The client who drew the additional points.
-		/// </summary>
-		public NibriClient DrawingClient;
-		/// <summary>
-		/// The id of the line that  justu had some points added to it.
-		/// </summary>
-		public string LineId;
-		/// <summary>
-		/// The new points that got added to the line.
-		/// </summary>
-		public List<LocationReference> NewPoints;
-	}
-
-	public delegate void OnLinePartAddition(object sender, LinePartEventArgs eventArgs);
-
 	/// <summary>
 	/// Manages the construction of lines that the clients are drawing bit by bit.
 	/// </summary>
@@ -47,11 +29,6 @@ namespace Nibriboard.Client
 			}
 		}
 
-		/// <summary>
-		/// Fired when points get added to a line in this incubator.
-		/// </summary>
-		public event OnLinePartAddition OnLinePartAddition;
-
 		public LineIncubator()
 		{
 		}
@@ -72,7 +49,7 @@ namespace Nibriboard.Client
 		/// </summary>
 		/// <param name="lineId">The line id to add the points to.</param>
 		/// <param name="points">The points to add to the lines.</param>
-		public void AddBit(NibriClient drawingClient, string lineId, List<LocationReference> points)
+		public void AddBit(string lineId, List<LocationReference> points)
 		{
 			// Create a new line if one doesn't exist already
 			if(!currentLines.ContainsKey(lineId))
@@ -80,12 +57,6 @@ namespace Nibriboard.Client
 			
 			// Add these points to the line
 			currentLines[lineId].Points.AddRange(points);
-
-			OnLinePartAddition(this, new LinePartEventArgs() {
-				DrawingClient = drawingClient,
-				LineId = lineId,
-				NewPoints = points
-			});
 		}
 
 		/// <summary>

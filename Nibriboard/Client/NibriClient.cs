@@ -122,8 +122,6 @@ namespace Nibriboard.Client
 			manager = inManager;
 			client = inClient;
 
-			manager.LineIncubator.OnLinePartAddition += handleLinePartAddition;
-
 			client.DataReceived += async (WebSocket clientSocket, string frame) => {
 				try
 				{
@@ -401,6 +399,12 @@ namespace Nibriboard.Client
 			
 			manager.LineIncubator.AddBit(message.LineId, linePoints);
 
+			manager.BroadcastPlane(this, new LinePartReflectionMessage() {
+				OtherClientId = Id,
+				LineId = message.LineId,
+				Points = message.Points
+			});
+
 			return Task.CompletedTask;
 		}
 
@@ -446,16 +450,6 @@ namespace Nibriboard.Client
 				Chunks = new List<Chunk>() { sendingChunk }
 			};
 			Send(clientNotification);
-		}
-
-		protected void handleLinePartAddition(object sender, LinePartEventArgs eventArgs)
-		{
-			// Ignore line part additions for ourselves and for clienst who aren't on the same plane as us
-			if(eventArgs.DrawingClient.Id == Id ||
-			   eventArgs.DrawingClient.CurrentPlane != CurrentPlane)
-				return;
-
-
 		}
 
 		#endregion
