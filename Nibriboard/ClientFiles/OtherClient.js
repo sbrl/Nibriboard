@@ -19,6 +19,9 @@ class OtherClient
 		this.Viewport = Rectangle.Zero.clone();
 		// The time this other client's information was last updated.
 		this.LastUpdated = new Date();
+		
+		// The lines that this client is currently drawing.
+		this.currentLines = {};
 	}
 	
 	update(data) {
@@ -33,6 +36,19 @@ class OtherClient
 		this.Viewport.y = data.Viewport.X;
 		this.Viewport.width = data.Viewport.Width;
 		this.Viewport.height = data.Viewport.Height;
+	}
+	
+	/**
+	 * Fetches a line that is currently being drawn by this client with the specified id
+	 * @param  {[type]} lineId [description]
+	 * @return {[type]}        [description]
+	 */
+	fetchLine(lineId)
+	{
+		if(!this.currentLines.hasOwnProperty(lineId))
+			throw new Exception(`Error: A client with the id ${lineId} does not appear to be attached to the OtherClient with the id ${this.Id}`);
+		
+		return this.currentLines[lineId];
 	}
 }
 

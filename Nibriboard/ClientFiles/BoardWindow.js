@@ -189,8 +189,6 @@ class BoardWindow extends EventEmitter
 		
 		// Handle the HandshakeResponse when it comes in
 		this.rippleLink.on("HandshakeResponse", this.handleHandshakeResponse.bind(this));
-		// Handle other clients' state updates
-		this.rippleLink.on("ClientStates", this.handlePeerUpdates.bind(this));
 		// Handle the plane change confirmations
 		this.rippleLink.on("PlaneChangeOk", this.handlePlaneChangeOk.bind(this));
 	}
@@ -307,34 +305,6 @@ class BoardWindow extends EventEmitter
 		context.restore();
 	}
 	
-	renderOthers(canvas, context)
-	{
-		context.save();
-		
-		for (let [otherClientId, otherClient] of this.otherClients)
-		{
-			// TODO: Filter rendering by working out if this client is actually inside our viewport or not here
-			context.save();
-			context.translate(otherClient.CursorPosition.x, otherClient.CursorPosition.y);
-			
-			context.beginPath();
-			// Horizontal line
-			context.moveTo(-this.otherCursorRadius, 0);
-			context.lineTo(this.otherCursorRadius, 0);
-			// Vertical line
-			context.moveTo(0, -this.otherCursorRadius);
-			context.lineTo(0, this.otherCursorRadius);
-			
-			context.strokeStyle = otherClient.Colour;
-			context.lineWidth = this.otherCursorWidth
-			context.stroke();
-			
-			context.restore();
-		}
-		
-		context.restore();
-	}
-	
 	/**
 	 * Updates the canvas size to match the current viewport size.
 	 */
@@ -409,29 +379,6 @@ class BoardWindow extends EventEmitter
 		this.currentPlaneName = message.NewPlaneName;
 		this.gridSize = message.GridSize;
 		console.info(`Plane changed to ${this.currentPlaneName} with a grid size of ${this.gridSize} successfully.`);
-	}
-	
-	/**
-	 * Handles peer update messages recieved from the server via the RippleLink.
-	 */
-	handlePeerUpdates(message) {
-		// Update our knowledge about other clients
-		for (let otherClient of message.ClientStates) {
-			// If this client is new, emit an event about it
-			if(!this.otherClients.has(otherClient.Id)) {
-				// Convert the raw object into a class instance
-				let otherClientObj = OtherClient.FromRaw(otherClient);
-				this.otherClients.set(otherClientObj.Id, otherClientObj);
-				
-				this.emit("OtherClientConnect", otherClient);
-			}
-			else { // If not, emit a normal update message about it
-				this.emit("OtherClientUpdate", otherClient);
-			} 
-			
-			// Get the OtherClient instance to pull in the rest of the data
-			this.otherClients.get(otherClient.Id).update(otherClient);
-		}
 	}
 }
 
