@@ -13,7 +13,7 @@ class Pencil
 	 * @param	{RippleLink}	inRippleLink	The connection to the nibri server.
 	 * @return	{Pencil}		A new Pencil class instance.
 	 */
-	constructor(inRippleLink, inBoardWindow, canvas)
+	constructor(inRippleLink, inBoardWindow, inCanvas)
 	{
 		this.boardWindow = inBoardWindow;
 		
@@ -47,12 +47,17 @@ class Pencil
 		// The time of the last push of the line to the server.
 		this.lastServerPush = 0;
 		
+		this.canvas = inCanvas;
+		
 		// Event Listeners
-		canvas.addEventListener("mousemove", this.handleMouseMove.bind(this));
-		canvas.addEventListener("mouseup", this.handleMouseUp.bind(this));
+		document.addEventListener("mousedown", this.handleMouseDown.bind(this));
+		document.addEventListener("mousemove", this.handleMouseMove.bind(this));
+		document.addEventListener("mouseup", this.handleMouseUp.bind(this));
 		
 		this.setupInterfaceBindings(this.boardWindow.interface);
 		
+		// Whether the pencil is on the board at the moment.
+		this.pencilDown = false;
 	}
 	
 	setupInterfaceBindings(inInterface)
@@ -72,13 +77,31 @@ class Pencil
 		}).bind(this))
 	}
 	
+	handleMouseDown(event) {
+		if(event.target != this.canvas)
+			return;
+		
+		this.pencilDown = true;
+		
+		this.rippleLink.send({
+			Event: "LineStart",
+			LineId: this.currentLineId,
+			LineColour: this.currentColour,
+			LineWidth: this.currentLineWidth
+		});
+	}
+	
 	handleMouseMove(event) {
+		// Don't handle mouse movements on anything other than the canvas itself
+		if(event.target != this.canvas)
+			return;
+		
 		// Don't do anything at all if the brush tool isn't selected
 		if(this.boardWindow.interface.currentTool !== "brush")
 			return;
 		
 		// Don't draw anything if the left mouse button isn't down
-		if(!this.mouse.leftDown)
+		if(!this.mouse.leftDown || !this.pencilDown)
 			return;
 		// Oh and don't bother drawing anything if the control key is held down
 		// either - that indicates that we're in panning mode
@@ -112,10 +135,11 @@ class Pencil
 		// Tell the server that the line is complete
 		this.rippleLink.send({
 			Event: "LineComplete",
-			LineId: this.currentLineId,
-			LineWidth: this.currentLineWidth,
-			LineColour: this.currentColour
+			LineId: this.currentLineId
 		});
+		
+		this.pencilDown = false;
+		
 		// Reset the current line segments
 		this.currentLineSegments = [];
 		// Regenerate the line id

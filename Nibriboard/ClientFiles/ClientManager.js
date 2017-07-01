@@ -8,16 +8,18 @@ class ClientManager extends EventEmitter
 {
 	constructor(inRippleLink)
 	{
+		super();
+		
 		this.otherClients = new Map();
 		
 		// Handle other clients' state updates
-		this.rippleLink.on("ClientStates", this.handlePeerUpdates.bind(this));
+		inRippleLink.on("ClientStates", this.handlePeerUpdates.bind(this));
 		// Handle line start events from other clients
-		this.rippleLink.on("LineStartReflection", this.handleOtherLineStart.bind(this));
+		inRippleLink.on("LineStartReflection", this.handleOtherLineStart.bind(this));
 		// Handle line part events from other clients
-		this.rippleLink.on("LinePartReflection", this.handleOtherLinePart.bind(this));
+		inRippleLink.on("LinePartReflection", this.handleOtherLinePart.bind(this));
 		// Handle line complete events from other clients
-		this.rippleLink.on("LineCompleteReflection", this.handleOtherLineComplete.bind(this));
+		inRippleLink.on("LineCompleteReflection", this.handleOtherLineComplete.bind(this));
 	}
 	
 	render(canvas, context)
@@ -117,3 +119,5 @@ class ClientManager extends EventEmitter
 	}
 	
 }
+
+export default ClientManager;

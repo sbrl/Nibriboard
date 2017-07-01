@@ -8,7 +8,7 @@ window.panzoom = require("pan-zoom");
 // Our files
 import RippleLink from './RippleLink';
 import CursorSyncer from './CursorSyncer';
-import OtherClient from './OtherClient';
+import ClientManager from './ClientManager';
 import Pencil from './Pencil';
 import { get, clamp } from './Utilities';
 import Keyboard from './Utilities/Keyboard';
@@ -85,9 +85,6 @@ class BoardWindow extends EventEmitter
 		this.canvas = canvas;
 		this.context = canvas.getContext("2d");
 		
-		// Create a map to store information about other clients in
-		this.otherClients = new Map();
-		
 		/**
 		 * The current state of the keyboard.
 		 * @type {Keyboard}
@@ -150,9 +147,6 @@ class BoardWindow extends EventEmitter
 		});
 		
 		// --~~~--
-		
-		// Setup a bunch of event listeners
-		// The ones that depend on the RippleLink will get setup later
 		
 		// Make the canvas track the window size
 		this.trackWindowSize();
@@ -256,7 +250,9 @@ class BoardWindow extends EventEmitter
 		if(typeof this.chunkCache != "undefined" && this.gridSize != -1)
 			this.chunkCache.renderVisible(this.viewport, canvas, context);
 		
-		this.renderOthers(canvas, context);
+		if(typeof this.otherClients != "undefined")
+			this.otherClients.render(canvas, context);
+		
 		// Render the currently active line
 		if(typeof this.pencil !== "undefined")
 			this.pencil.render(canvas, context);
@@ -361,6 +357,8 @@ class BoardWindow extends EventEmitter
 		this.pencil = new Pencil(this.rippleLink, this, this.canvas);
 		// The cache for the chunks
 		this.chunkCache = new ChunkCache(this);
+		// Create a new data structure to store client information in
+		this.otherClients = new ClientManager(this.rippleLink);
 		
 		// Land on a default plane
 		// future ask the user which plane they want to join
