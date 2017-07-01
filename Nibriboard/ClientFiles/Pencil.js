@@ -83,6 +83,8 @@ class Pencil
 		
 		this.pencilDown = true;
 		
+		console.log(`Starting line with id ${this.currentLineId}.`);
+		
 		this.rippleLink.send({
 			Event: "LineStart",
 			LineId: this.currentLineId,
