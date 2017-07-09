@@ -10,6 +10,9 @@ class ClientManager extends EventEmitter
 	{
 		super();
 		
+		this.otherClientCursorSize = 25;
+		this.otherClientCursorWidth = 2;
+		
 		this.otherClients = new Map();
 		
 		// Handle other clients' state updates
@@ -26,25 +29,10 @@ class ClientManager extends EventEmitter
 	{
 		context.save();
 		
-		for (let [otherClientId, otherClient] of this.otherClients)
+		for(let [otherClientId, otherClient] of this.otherClients)
 		{
 			// TODO: Filter rendering by working out if this client is actually inside our viewport or not here
-			context.save();
-			context.translate(otherClient.CursorPosition.x, otherClient.CursorPosition.y);
-			
-			context.beginPath();
-			// Horizontal line
-			context.moveTo(-this.otherCursorRadius, 0);
-			context.lineTo(this.otherCursorRadius, 0);
-			// Vertical line
-			context.moveTo(0, -this.otherCursorRadius);
-			context.lineTo(0, this.otherCursorRadius);
-			
-			context.strokeStyle = otherClient.Colour;
-			context.lineWidth = this.otherCursorWidth
-			context.stroke();
-			
-			context.restore();
+			otherClient.render(canvas, context, this);
 		}
 		
 		context.restore();
@@ -94,8 +82,11 @@ class ClientManager extends EventEmitter
 		let fromClient = this.get(message.OtherClientId);
 		
 		fromClient.addLine({
+			/** @type {string} */
 			LineId: message.LineId,
+			/** @type {string} */
 			Colour: message.LineColour,
+			/** @type {number} */
 			Width: message.LineWidth
 		});
 	}
@@ -106,7 +97,9 @@ class ClientManager extends EventEmitter
 	 */
 	handleOtherLinePart(message) {
 		let fromClient = this.get(message.OtherClientId);
-		fromClient.appendLine(message.LineId, message.Points);
+		let vectorPoints = message.Points.map((point) => new Vector(point.X, point.Y));
+		
+		fromClient.appendLine(message.LineId, vectorPoints);
 	}
 	
 	/**
