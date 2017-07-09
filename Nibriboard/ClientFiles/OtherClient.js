@@ -57,7 +57,7 @@ class OtherClient
 		context.lineTo(0, manager.otherClientCursorSize);
 		
 		context.strokeStyle = this.Colour;
-		context.lineWidth = manager.otherCursorWidth;
+		context.lineWidth = manager.otherClientCursorWidth;
 		context.stroke();
 		
 		context.restore();
@@ -79,6 +79,7 @@ class OtherClient
 			for(let point of linePoints)
 				context.lineTo(point.x, point.y);
 			
+			context.lineCap = "round";
 			context.strokeStyle = lineData.Colour;
 			context.lineWidth = lineData.Width;
 			context.stroke();
@@ -104,6 +105,7 @@ class OtherClient
 		if(typeof this.currentLines[lineData.LineId] != "undefined")
 			throw new Error(`Error: The line with the id ${lineData.LineId} already exists.`);
 		
+		lineData.Points = [];
 		this.currentLines[lineData.LineId] = lineData;
 	}
 	

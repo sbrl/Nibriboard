@@ -3,6 +3,7 @@
 window.EventEmitter = require("event-emitter-es6");
 
 import OtherClient from './OtherClient';
+import Vector from './Utilities/Vector';
 
 class ClientManager extends EventEmitter
 {
@@ -10,8 +11,8 @@ class ClientManager extends EventEmitter
 	{
 		super();
 		
-		this.otherClientCursorSize = 25;
-		this.otherClientCursorWidth = 2;
+		this.otherClientCursorSize = 15;
+		this.otherClientCursorWidth = 4;
 		
 		this.otherClients = new Map();
 		
