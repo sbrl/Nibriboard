@@ -1,12 +1,19 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using SharpCompress.Readers;
 
 namespace Nibriboard.RippleSpace
 {
 	public class RippleSpaceManager
 	{
+		/// <summary>
+		/// The temporary directory in which we are currently storing our unpacked planes temporarily.
+		/// </summary>
+		public string UnpackedDirectory;
+
 		/// <summary>
 		/// The master list of planes that this PlaneManager is in charge of. 
 		/// </summary>
@@ -26,6 +33,12 @@ namespace Nibriboard.RippleSpace
 
 		public RippleSpaceManager()
 		{
+			// Create a temporary directory in which to store our unpacked planes
+			UnpackedDirectory = Path.GetTempFileName();
+			File.Delete(UnpackedDirectory);
+			UnpackedDirectory += "/";
+			Directory.CreateDirectory(UnpackedDirectory);
+
 			Log.WriteLine("[RippleSpace] New blank ripplespace initialised.");
 		}
 
@@ -88,6 +101,40 @@ namespace Nibriboard.RippleSpace
 				await Task.Delay(MaintenanceInternal);
 			}
 
+		}
+
+		public async Task<RippleSpaceManager> FromFile(string filename)
+		{
+			if(!File.Exists(filename))
+				throw new FileNotFoundException($"Error: Couldn't find the packed ripplespace at {filename}");
+
+			RippleSpaceManager rippleSpace = new RippleSpaceManager();
+
+			using(Stream packedRippleSpaceStream = File.OpenRead(filename))
+			using(IReader rippleSpaceUnpacker = ReaderFactory.Open(packedRippleSpaceStream))
+			{
+				Log.WriteLine($"[Core] Unpacking ripplespace packed with {rippleSpaceUnpacker.ArchiveType} from {filename}.");
+				rippleSpaceUnpacker.WriteAllToDirectory(UnpackedDirectory);
+			}
+			Log.WriteLine("[Core] done!");
+
+			if(!File.Exists(rippleSpace.UnpackedDirectory + "index.list"))
+				throw new InvalidDataException($"Error: The packed ripplespace at {filename} doesn't appear to contain an index file.");
+
+			Log.WriteLine("[Core] Importing planes");
+
+			StreamReader planes = new StreamReader(rippleSpace.UnpackedDirectory + "index.list");
+			List<Task> planeReaders = new List<Task>();
+			string nextPlane;
+			while((nextPlane = await planes.ReadLineAsync()) != null)
+			{
+				planeReaders.Add(Plane.FromFile(rippleSpace.UnpackedDirectory + nextPlane));
+			}
+			await Task.WhenAll(planeReaders);
+
+			Log.WriteLine("[Core] done!");
+
+			return rippleSpace;
 		}
 	}
 }

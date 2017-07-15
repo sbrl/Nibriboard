@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
+using SharpCompress.Writers;
+using SharpCompress.Common;
+using SharpCompress.Readers;
 
 namespace Nibriboard.RippleSpace
 {
@@ -36,6 +39,7 @@ namespace Nibriboard.RippleSpace
 		/// <summary>
 		/// The number of chunks in a square around (0, 0) that should always be
 		/// loaded.
+		/// Works like a radius.
 		/// </summary>
 		public int PrimaryChunkAreaSize = 10;
 
@@ -83,7 +87,7 @@ namespace Nibriboard.RippleSpace
 			}
 		}
 
-		public Plane(string inName, int inChunkSize)
+		public Plane(string inName, int inChunkSize, string inStorageDirectoryRoot)
 		{
 			Name = inName;
 			ChunkSize = inChunkSize;
@@ -93,8 +97,33 @@ namespace Nibriboard.RippleSpace
 			// Note that the primary chunk area is a radius around (0, 0) - not the diameter
 			SoftLoadedChunkLimit = PrimaryChunkAreaSize * PrimaryChunkAreaSize * 4;
 
-			StorageDirectory = $"./Planes/{Name}";
+			StorageDirectory = inStorageDirectoryRoot + Name;
+			if(File.Exists(StorageDirectory))
+				throw new InvalidOperationException($"Error: The unpacked storage directory {StorageDirectory} already exists!");
+			Directory.CreateDirectory(StorageDirectory);
 		}
+
+		private async Task LoadPrimaryChunks()
+		{
+			List<ChunkReference> primaryChunkRefs = new List<ChunkReference>();
+
+			ChunkReference currentRef = new ChunkReference(this, -PrimaryChunkAreaSize, -PrimaryChunkAreaSize);
+			while(currentRef.Y < PrimaryChunkAreaSize)
+			{
+				primaryChunkRefs.Add(currentRef.Clone() as ChunkReference);
+
+				currentRef.X++;
+
+				if(currentRef.X > PrimaryChunkAreaSize)
+				{
+					currentRef.X = -PrimaryChunkAreaSize;
+					currentRef.Y++;
+				}
+			}
+
+			await FetchChunks(primaryChunkRefs);
+		}
+
 		/// <summary>
 		/// Fetches a list of chunks by a list of chunk refererences.
 		/// </summary>
@@ -102,6 +131,7 @@ namespace Nibriboard.RippleSpace
 		/// <returns>The chunks attached to the specified chunk references.</returns>
 		public async Task<List<Chunk>> FetchChunks(List<ChunkReference> chunkRefs)
 		{
+			// todo Paralellise loading with https://www.nuget.org/packages/AsyncEnumerator
 			List<Chunk> chunks = new List<Chunk>();
 			foreach(ChunkReference chunkRef in chunkRefs)
 				chunks.Add(await FetchChunk(chunkRef));
@@ -180,6 +210,20 @@ namespace Nibriboard.RippleSpace
 			}
 		}
 
+		public void Save(Stream destination)
+		{
+			WriterOptions packingOptions = new WriterOptions(CompressionType.GZip);
+
+			IEnumerable<string> chunkFiles = Directory.GetFiles(StorageDirectory);
+			using(IWriter packer = WriterFactory.Open(destination, ArchiveType.Tar, packingOptions))
+			{
+				foreach(string nextChunkFile in chunkFiles)
+				{
+					packer.Write($"{Name}/{Path.GetFileName(nextChunkFile)}", nextChunkFile);
+				}
+			}
+		}
+
 		/// <summary>
 		/// Handles chunk updates from the individual loaded chunks on this plane.
 		/// Re-emits chunk updates it catches wind of at plane-level.
@@ -200,5 +244,23 @@ namespace Nibriboard.RippleSpace
 			// Make the chunk update bubble up to plane-level
 			OnChunkUpdate(sender, eventArgs);
 		}
-	}
+
+		public static async Task<Plane> FromFile(string inName, int inChunkSize, string inStorageDirectoryRoot, string sourceFilename)
+		{
+			Plane loadedPlane = new Plane(inName, inChunkSize, inStorageDirectoryRoot);
+
+			// Unpack the plane to the temporary directory
+			using(Stream sourceStream = File.OpenRead(sourceFilename))
+			using(IReader unpacker = ReaderFactory.Open(sourceStream))
+			{
+				unpacker.WriteAllToDirectory(loadedPlane.StorageDirectory);
+			}
+
+			// Load the primary chunks from disk inot the plane
+			await loadedPlane.LoadPrimaryChunks();
+
+			return loadedPlane;
+		}
+
+}
 }
