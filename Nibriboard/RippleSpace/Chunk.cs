@@ -6,6 +6,8 @@ using System.Collections;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
+using Nibriboard.Utilities;
+
 namespace Nibriboard.RippleSpace
 {
 	public enum ChunkUpdateType
@@ -219,7 +221,7 @@ namespace Nibriboard.RippleSpace
 		}
 		public static async Task<Chunk> FromStream(Plane plane, Stream chunkSource)
 		{
-			Chunk loadedChunk = await Utilities.DeserialiseBinaryObject<Chunk>(chunkSource);
+			Chunk loadedChunk = await BinaryIO.DeserialiseBinaryObject<Chunk>(chunkSource);
 			loadedChunk.plane = plane;
 
 			return loadedChunk;

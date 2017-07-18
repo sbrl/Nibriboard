@@ -2,9 +2,10 @@
 using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-namespace Nibriboard
+
+namespace Nibriboard.Utilities
 {
-	public static class Utilities
+	public static class BinaryIO
 	{
 		/// <summary>
 		/// Deserialises an object from it's binary representation.

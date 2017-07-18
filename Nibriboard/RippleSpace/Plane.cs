@@ -7,6 +7,8 @@ using System.Runtime.Serialization;
 using SharpCompress.Writers;
 using SharpCompress.Common;
 using SharpCompress.Readers;
+using Nibriboard.Utilities;
+using Newtonsoft.Json;
 
 namespace Nibriboard.RippleSpace
 {
@@ -79,7 +81,8 @@ namespace Nibriboard.RippleSpace
 		public int UnloadableChunks {
 			get {
 				int result = 0;
-				foreach(KeyValuePair<ChunkReference, Chunk> chunkEntry in loadedChunkspace) {
+				foreach(KeyValuePair<ChunkReference, Chunk> chunkEntry in loadedChunkspace)
+				{
 					if(chunkEntry.Value.CouldUnload)
 						result++;
 				}
@@ -87,20 +90,21 @@ namespace Nibriboard.RippleSpace
 			}
 		}
 
-		public Plane(string inName, int inChunkSize, string inStorageDirectoryRoot)
+		/// <summary>
+		/// Initialises a new plane.
+		/// </summary>
+		/// <param name="inInfo">The settings to use to initialise the new plane.</param>
+		/// <param name="inStorageDirectory">The storage directory in which we should store the plane's chunks (may be prepopulated).</param>
+		public Plane(PlaneInfo inInfo, string inStorageDirectory)
 		{
-			Name = inName;
-			ChunkSize = inChunkSize;
+			Name = inInfo.Name;
+			ChunkSize = inInfo.ChunkSize;
+			StorageDirectory = inStorageDirectory;
 
 			// Set the soft loaded chunk limit to double the number of chunks in the
 			// primary chunks area
 			// Note that the primary chunk area is a radius around (0, 0) - not the diameter
 			SoftLoadedChunkLimit = PrimaryChunkAreaSize * PrimaryChunkAreaSize * 4;
-
-			StorageDirectory = inStorageDirectoryRoot + Name;
-			if(File.Exists(StorageDirectory))
-				throw new InvalidOperationException($"Error: The unpacked storage directory {StorageDirectory} already exists!");
-			Directory.CreateDirectory(StorageDirectory);
 		}
 
 		private async Task LoadPrimaryChunks()
@@ -189,7 +193,7 @@ namespace Nibriboard.RippleSpace
 			if(LoadedChunks < SoftLoadedChunkLimit ||
 			   UnloadableChunks < MinUnloadeableChunks)
 				return;
-			
+
 			foreach(KeyValuePair<ChunkReference, Chunk> chunkEntry in loadedChunkspace)
 			{
 				if(!chunkEntry.Value.CouldUnload)
@@ -245,22 +249,39 @@ namespace Nibriboard.RippleSpace
 			OnChunkUpdate(sender, eventArgs);
 		}
 
-		public static async Task<Plane> FromFile(string inName, int inChunkSize, string inStorageDirectoryRoot, string sourceFilename)
+		/// <summary>
+		/// Loads a plane form a given nplane file.
+		/// </summary>
+		/// <param name="planeName">The name of the plane to load.</param>
+		/// <param name="storageDirectoryRoot">The directory to which the plane should be unpacked.</param>
+		/// <param name="sourceFilename">The path to the nplane file to load.</param>
+		/// <param name="deleteSource">Whether the source file should be deleted once the plane has been loaded.</param>
+		/// <returns>The loaded plane.</returns>
+		public static async Task<Plane> FromFile(string planeName, string storageDirectoryRoot, string sourceFilename, bool deleteSource)
 		{
-			Plane loadedPlane = new Plane(inName, inChunkSize, inStorageDirectoryRoot);
+			string targetUnpackingPath = CalcPaths.UnpackedPlaneDir(storageDirectoryRoot, planeName);
 
 			// Unpack the plane to the temporary directory
 			using(Stream sourceStream = File.OpenRead(sourceFilename))
 			using(IReader unpacker = ReaderFactory.Open(sourceStream))
 			{
-				unpacker.WriteAllToDirectory(loadedPlane.StorageDirectory);
+				unpacker.WriteAllToDirectory(targetUnpackingPath);
 			}
+
+			PlaneInfo planeInfo = JsonConvert.DeserializeObject<PlaneInfo>(
+				File.ReadAllText(CalcPaths.UnpackedPlaneIndex(targetUnpackingPath))
+			);
+			planeInfo.Name = planeName;
+
+			Plane loadedPlane = new Plane(planeInfo, targetUnpackingPath);
 
 			// Load the primary chunks from disk inot the plane
 			await loadedPlane.LoadPrimaryChunks();
 
+			if(deleteSource)
+				File.Delete(sourceFilename);
+
 			return loadedPlane;
 		}
-
-}
+	}
 }

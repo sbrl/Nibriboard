@@ -3,7 +3,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Linq;
 using SharpCompress.Readers;
+using Nibriboard.Utilities;
 
 namespace Nibriboard.RippleSpace
 {
@@ -71,16 +73,19 @@ namespace Nibriboard.RippleSpace
 		/// <summary>
 		/// Creates a new plane, adds it to this RippleSpaceManager, and then returns it.
 		/// </summary>
-		/// <param name="newPlaneName">The name of the new plane to create.</param>
+		/// <param name="newPlaneInfo">The settings for the new plane to create.</param>
 		/// <returns>The newly created plane.</returns>
-		public Plane CreatePlane(string newPlaneName)
+		public Plane CreatePlane(PlaneInfo newPlaneInfo)
 		{
-			if(this[newPlaneName] != null)
-				throw new InvalidOperationException($"Error: A plane with the name '{newPlaneName}' already exists in this RippleSpaceManager.");
+			if(this[newPlaneInfo.Name] != null)
+				throw new InvalidOperationException($"Error: A plane with the name '{newPlaneInfo.Name}' already exists in this RippleSpaceManager.");
 
-			Log.WriteLine("[RippleSpace] Creating plane {0}", newPlaneName);
+			Log.WriteLine("[RippleSpace] Creating plane {0}", newPlaneInfo.Name);
 
-			Plane newPlane = new Plane(newPlaneName, DefaultChunkSize);
+			Plane newPlane = new Plane(
+				newPlaneInfo,
+				CalcPaths.UnpackedPlaneDir(UnpackedDirectory, newPlaneInfo.Name)
+			);
 			Planes.Add(newPlane);
 			return newPlane;
 		}
@@ -124,17 +129,29 @@ namespace Nibriboard.RippleSpace
 			Log.WriteLine("[Core] Importing planes");
 
 			StreamReader planes = new StreamReader(rippleSpace.UnpackedDirectory + "index.list");
-			List<Task> planeReaders = new List<Task>();
+			List<Task<Plane>> planeReaders = new List<Task<Plane>>();
 			string nextPlane;
+			int planeCount = 0;
 			while((nextPlane = await planes.ReadLineAsync()) != null)
 			{
-				planeReaders.Add(Plane.FromFile(rippleSpace.UnpackedDirectory + nextPlane));
+				planeReaders.Add(Plane.FromFile(
+					planeName: nextPlane,
+					storageDirectoryRoot: rippleSpace.UnpackedDirectory,
+					sourceFilename: CalcPaths.UnpackedPlaneFile(rippleSpace.UnpackedDirectory, nextPlane),
+					deleteSource: true
+				));
+				planeCount++;
 			}
 			await Task.WhenAll(planeReaders);
 
-			Log.WriteLine("[Core] done!");
+			rippleSpace.Planes.AddRange(
+				planeReaders.Select((Task<Plane> planeReader) => planeReader.Result)
+			);
+
+			Log.WriteLine("[Core] done! {0} planes loaded.", planeCount);
 
 			return rippleSpace;
 		}
-	}
+
+}
 }

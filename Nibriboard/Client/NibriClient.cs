@@ -306,8 +306,9 @@ namespace Nibriboard.Client
 			Log.WriteLine("[NibriClient#{0}] Changing to plane {1}.", Id, message.NewPlaneName);
 
 			// Create a new plane with the specified name if it doesn't exist already
+			// future we might want to allow the user to specify the chunk size
 			if(manager.SpaceManager[message.NewPlaneName] == default(Plane))
-				manager.SpaceManager.CreatePlane(message.NewPlaneName);
+				manager.SpaceManager.CreatePlane(new PlaneInfo(message.NewPlaneName));
 
 			// Remove the event listener from the old plane if there is indeed an old plane to remove it from
 			if(CurrentPlane != null)
