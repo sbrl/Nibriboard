@@ -16,7 +16,8 @@ namespace Nibriboard
 
 			NibriboardServer server = new NibriboardServer();
 			Task.WaitAll(
-				server.Start()
+				server.Start(),
+				server.StartCommandListener()
 			);
 		}
 	}

@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Threading;
 
 using IotWeb.Server;
 using IotWeb.Common.Http;
 
 using Nibriboard.RippleSpace;
 using Nibriboard.Client;
-using System.Threading;
+using System.Net.Sockets;
+using System.Net;
+using System.IO;
 
 namespace Nibriboard
 {
@@ -16,6 +19,7 @@ namespace Nibriboard
 	/// </summary>
 	public class NibriboardServer
 	{
+		private TcpListener commandServer;
 		private HttpServer httpServer;
 
 		private ClientSettings clientSettings;
@@ -24,6 +28,7 @@ namespace Nibriboard
 		private readonly CancellationTokenSource clientManagerCanceller = new CancellationTokenSource();
 		private NibriClientManager clientManager;
 
+		public readonly int CommandPort = 31587;
 		public readonly int Port = 31586;
 
 		public NibriboardServer(int inPort = 31586)
@@ -72,6 +77,53 @@ namespace Nibriboard
 			Log.WriteLine("[NibriboardServer] Started on port {0}", Port);
 
 			await planeManager.StartMaintenanceMonkey();
+		}
+
+		/// <summary>
+		/// Starts the command listener.
+		/// The command listener is a light tcp-based command console that allows control
+		/// of the Nibriboard server, since C# doesn't currently have support for signal handling.
+		/// It listeners on [::1] _only_, to avoid security issues.
+		/// In the future, a simple secret might be required to use it to aid security further.
+		/// </summary>
+		public async Task StartCommandListener()
+		{
+			commandServer = new TcpListener(IPAddress.IPv6Loopback, CommandPort);
+			commandServer.Start();
+			Log.WriteLine("[CommandConsole] Listening on {0}.", new IPEndPoint(IPAddress.IPv6Loopback, CommandPort));
+			while(true)
+			{
+				TcpClient nextClient = await commandServer.AcceptTcpClientAsync();
+
+				StreamReader source = new StreamReader(nextClient.GetStream());
+				StreamWriter destination = new StreamWriter(nextClient.GetStream()) { AutoFlush = true };
+
+				string rawCommand = await source.ReadLineAsync();
+				string[] commandParts = rawCommand.Split(" \t".ToCharArray());
+				Console.WriteLine("[CommandConsole] Client executing {0}", rawCommand);
+
+				try
+				{
+					switch(commandParts[0].Trim())
+					{
+						case "help":
+							await destination.WriteLineAsync("NibriboardServer Command Console");
+							await destination.WriteLineAsync("================================");
+							await destination.WriteLineAsync("Available commands:");
+							await destination.WriteLineAsync("    help     Show this message");
+							await destination.WriteLineAsync("    save     Save the ripplespace to disk");
+							break;
+						case "save":
+							await planeManager.Save();
+							break;
+					}
+				}
+				catch(Exception error)
+				{
+					await destination.WriteLineAsync(error.ToString());
+				}
+				nextClient.Close();
+			}
 		}
 	}
 }

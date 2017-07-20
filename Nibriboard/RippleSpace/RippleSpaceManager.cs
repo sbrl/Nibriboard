@@ -108,6 +108,11 @@ namespace Nibriboard.RippleSpace
 
 		}
 
+		public async Task Save()
+		{
+			throw new NotImplementedException();
+		}
+
 		public async Task<RippleSpaceManager> FromFile(string filename)
 		{
 			if(!File.Exists(filename))
