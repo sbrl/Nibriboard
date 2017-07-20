@@ -216,20 +216,25 @@ namespace Nibriboard.RippleSpace
 
 		public static async Task<Chunk> FromFile(Plane plane, string filename)
 		{
-			FileStream chunkSource = new FileStream(filename, FileMode.Open);
+			StreamReader chunkSource = new StreamReader(filename);
 			return await FromStream(plane, chunkSource);
 		}
-		public static async Task<Chunk> FromStream(Plane plane, Stream chunkSource)
+		public static async Task<Chunk> FromStream(Plane plane, StreamReader chunkSource)
 		{
-			Chunk loadedChunk = await BinaryIO.DeserialiseBinaryObject<Chunk>(chunkSource);
+			Chunk loadedChunk = JsonConvert.DeserializeObject<Chunk>(await chunkSource.ReadToEndAsync());
 			loadedChunk.plane = plane;
+			loadedChunk.OnChunkUpdate += plane.HandleChunkUpdate;
 
 			return loadedChunk;
 		}
 
-		public async Task SaveTo(Stream destination)
+		/// <summary>
+		/// Saves this chunk to the specified stream.
+		/// </summary>
+		/// <param name="destination">The destination stream to save the chunk to.</param>
+		public async Task SaveTo(StreamWriter destination)
 		{
-			throw new NotImplementedException("Error:  Chunk saving hasn't been implemented yet!");
+			await destination.WriteLineAsync(JsonConvert.SerializeObject(this));
 		}
 
 		public void OnDeserialization(object sender)

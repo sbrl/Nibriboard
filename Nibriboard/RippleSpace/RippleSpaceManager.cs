@@ -6,15 +6,23 @@ using System.Diagnostics;
 using System.Linq;
 using SharpCompress.Readers;
 using Nibriboard.Utilities;
+using SharpCompress.Writers;
+using SharpCompress.Common;
 
 namespace Nibriboard.RippleSpace
 {
 	public class RippleSpaceManager
 	{
 		/// <summary>
+		/// The filename from which this ripplespace was loaded, and the filename to which it should be saved again.
+		/// </summary>
+		/// <value>The source filename.</value>
+		public string SourceFilename { get; set; }
+		
+		/// <summary>
 		/// The temporary directory in which we are currently storing our unpacked planes temporarily.
 		/// </summary>
-		public string UnpackedDirectory;
+		public string UnpackedDirectory { get; set; }
 
 		/// <summary>
 		/// The master list of planes that this PlaneManager is in charge of. 
@@ -38,10 +46,14 @@ namespace Nibriboard.RippleSpace
 			// Create a temporary directory in which to store our unpacked planes
 			UnpackedDirectory = Path.GetTempFileName();
 			File.Delete(UnpackedDirectory);
-			UnpackedDirectory += "/";
+			UnpackedDirectory = Path.GetDirectoryName(UnpackedDirectory) + "/ripplespace-" + Path.GetFileName(UnpackedDirectory) + "/";
 			Directory.CreateDirectory(UnpackedDirectory);
 
 			Log.WriteLine("[RippleSpace] New blank ripplespace initialised.");
+		}
+		~RippleSpaceManager()
+		{
+			Directory.Delete(UnpackedDirectory, true);
 		}
 
 		/// <summary>
@@ -110,7 +122,30 @@ namespace Nibriboard.RippleSpace
 
 		public async Task Save()
 		{
-			throw new NotImplementedException();
+			// Save the planes to disk
+			List<Task> planeSavers = new List<Task>();
+			foreach(Plane item in Planes)
+			{
+				// Figure out where the plane should save itself to and create the appropriate directories
+				string planeSavePath = CalcPaths.UnpackedPlaneFile(UnpackedDirectory, item.Name);
+				Directory.CreateDirectory(Path.GetDirectoryName(planeSavePath));
+
+				// Ask the plane to save to the directory
+				planeSavers.Add(item.Save(File.OpenWrite(planeSavePath)));
+			}
+			await Task.WhenAll(planeSavers);
+
+			// Pack the planes into the ripplespace archive
+			Stream destination = File.OpenWrite(SourceFilename);
+			string[] planeFiles = Directory.GetFiles(UnpackedDirectory, "*.nplane.tar.gz", SearchOption.TopDirectoryOnly);
+
+			using(IWriter rippleSpacePacker = WriterFactory.Open(destination, ArchiveType.Tar, new WriterOptions(CompressionType.GZip)))
+			{
+				foreach(string planeFilename in planeFiles)
+				{
+					rippleSpacePacker.Write(Path.GetFileName(planeFilename), planeFilename);
+				}
+			}
 		}
 
 		public async Task<RippleSpaceManager> FromFile(string filename)
@@ -119,6 +154,7 @@ namespace Nibriboard.RippleSpace
 				throw new FileNotFoundException($"Error: Couldn't find the packed ripplespace at {filename}");
 
 			RippleSpaceManager rippleSpace = new RippleSpaceManager();
+			rippleSpace.SourceFilename = filename;
 
 			using(Stream packedRippleSpaceStream = File.OpenRead(filename))
 			using(IReader rippleSpaceUnpacker = ReaderFactory.Open(packedRippleSpaceStream))

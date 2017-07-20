@@ -158,7 +158,7 @@ namespace Nibriboard.RippleSpace
 				loadedChunk = await Chunk.FromFile(this, chunkFilePath);
 			else // Ooooh! It's a _new_, never-before-seen one! Create a brand new chunk :D
 				loadedChunk = new Chunk(this, ChunkSize, chunkLocation);
-			loadedChunk.OnChunkUpdate += handleChunkUpdate;
+			loadedChunk.OnChunkUpdate += HandleChunkUpdate;
 			loadedChunkspace.Add(chunkLocation, loadedChunk);
 
 			return loadedChunk;
@@ -189,7 +189,11 @@ namespace Nibriboard.RippleSpace
 
 			Chunk chunk = loadedChunkspace[chunkLocation];
 			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilename());
-			await chunk.SaveTo(File.OpenWrite(chunkFilePath));
+
+			using(StreamWriter chunkDestination = new StreamWriter(chunkFilePath))
+			{
+				await chunk.SaveTo(chunkDestination);
+			}
 		}
 
 		public async Task AddLine(DrawnLine newLine)
@@ -242,10 +246,24 @@ namespace Nibriboard.RippleSpace
 			}
 		}
 
-		public void Save(Stream destination)
+		public async Task Save(Stream destination)
 		{
+			// Save all the chunks to disk
+			List<Task> chunkSavers = new List<Task>();
+			foreach(KeyValuePair<ChunkReference, Chunk> loadedChunkItem in loadedChunkspace)
+			{
+				// Figure out where to put the chunk and create the relevant directories
+				string chunkDestinationFilename = CalcPaths.ChunkFilepath(StorageDirectory, loadedChunkItem.Key);
+				Directory.CreateDirectory(Path.GetDirectoryName(chunkDestinationFilename));
+				// Ask the chunk to save itself
+				using(StreamWriter chunkDestination = new StreamWriter(chunkDestinationFilename))
+				{
+					chunkSavers.Add(loadedChunkItem.Value.SaveTo(chunkDestination));
+				}
+			}
+			await Task.WhenAll(chunkSavers);
 
-
+			// Pack the chunks into an nplane file
 			WriterOptions packingOptions = new WriterOptions(CompressionType.GZip);
 
 			IEnumerable<string> chunkFiles = Directory.GetFiles(StorageDirectory);
@@ -264,7 +282,7 @@ namespace Nibriboard.RippleSpace
 		/// </summary>
 		/// <param name="sender">The chunk responsible for the update.</param>
 		/// <param name="eventArgs">The event arguments associated with the chunk update.</param>
-		protected void handleChunkUpdate(object sender, ChunkUpdateEventArgs eventArgs)
+		public void HandleChunkUpdate(object sender, ChunkUpdateEventArgs eventArgs)
 		{
 			Chunk updatingChunk = sender as Chunk;
 			if(updatingChunk == null)

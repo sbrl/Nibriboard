@@ -1,4 +1,5 @@
 ﻿using System;
+using Nibriboard.RippleSpace;
 
 namespace Nibriboard.Utilities
 {
@@ -34,7 +35,13 @@ namespace Nibriboard.Utilities
 		/// <returns>The path to the packed plane file.</returns>
 		public static string UnpackedPlaneFile(string unpackingDir, string planeName)
 		{
-			return $"{unpackingDir}/{planeName}.nplane";
+			return $"{unpackingDir}/{planeName}.nplane.tar.gz";
+		}
+
+
+		public static string ChunkFilepath(string planeStorageDirectory, ChunkReference chunkRef)
+		{
+			return $"{planeStorageDirectory}/{chunkRef.AsFilename()}";
 		}
 	}
 }
