@@ -164,6 +164,34 @@ namespace Nibriboard.RippleSpace
 			return loadedChunk;
 		}
 
+		/// <summary>
+		/// Works out whether a chunk currently exists.
+		/// </summary>
+		/// <param name="chunkLocation">The chunk location to check.</param>
+		/// <returns>Whether the chunk at specified location exists or not.</returns>
+		public bool HasChunk(ChunkReference chunkLocation)
+		{
+			if(loadedChunkspace.ContainsKey(chunkLocation))
+				return true;
+
+			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilename());
+			if(File.Exists(chunkFilePath))
+				return true;
+
+			return false;
+		}
+
+		public async Task SaveChunk(ChunkReference chunkLocation)
+		{
+			// It doesn't exist, so we can't save it :P
+			if(!loadedChunkspace.ContainsKey(chunkLocation))
+				return;
+
+			Chunk chunk = loadedChunkspace[chunkLocation];
+			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilename());
+			await chunk.SaveTo(File.OpenWrite(chunkFilePath));
+		}
+
 		public async Task AddLine(DrawnLine newLine)
 		{
 			List<DrawnLine> chunkedLineParts;
@@ -216,6 +244,8 @@ namespace Nibriboard.RippleSpace
 
 		public void Save(Stream destination)
 		{
+
+
 			WriterOptions packingOptions = new WriterOptions(CompressionType.GZip);
 
 			IEnumerable<string> chunkFiles = Directory.GetFiles(StorageDirectory);

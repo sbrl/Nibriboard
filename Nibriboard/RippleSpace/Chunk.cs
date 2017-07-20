@@ -227,6 +227,11 @@ namespace Nibriboard.RippleSpace
 			return loadedChunk;
 		}
 
+		public async Task SaveTo(Stream destination)
+		{
+			throw new NotImplementedException("Error:  Chunk saving hasn't been implemented yet!");
+		}
+
 		public void OnDeserialization(object sender)
 		{
 			UpdateAccessTime();
