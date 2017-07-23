@@ -23,7 +23,7 @@ namespace Nibriboard
 		private HttpServer httpServer;
 
 		private ClientSettings clientSettings;
-		private RippleSpaceManager planeManager = new RippleSpaceManager() { SourceFilename = "./test.ripplespace.tar.gz" };
+		private RippleSpaceManager planeManager = new RippleSpaceManager() { SourceFilename = "./test.ripplespace.zip" };
 
 		private readonly CancellationTokenSource clientManagerCanceller = new CancellationTokenSource();
 		private NibriClientManager clientManager;

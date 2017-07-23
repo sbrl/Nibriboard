@@ -137,15 +137,16 @@ namespace Nibriboard.RippleSpace
 
 			// Pack the planes into the ripplespace archive
 			Stream destination = File.OpenWrite(SourceFilename);
-			string[] planeFiles = Directory.GetFiles(UnpackedDirectory, "*.nplane.tar.gz", SearchOption.TopDirectoryOnly);
+			string[] planeFiles = Directory.GetFiles(UnpackedDirectory, "*.nplane.zip", SearchOption.TopDirectoryOnly);
 
-			using(IWriter rippleSpacePacker = WriterFactory.Open(destination, ArchiveType.Tar, new WriterOptions(CompressionType.GZip)))
+			using(IWriter rippleSpacePacker = WriterFactory.Open(destination, ArchiveType.Zip, new WriterOptions(CompressionType.Deflate)))
 			{
 				foreach(string planeFilename in planeFiles)
 				{
 					rippleSpacePacker.Write(Path.GetFileName(planeFilename), planeFilename);
 				}
 			}
+			destination.Close();
 		}
 
 		public async Task<RippleSpaceManager> FromFile(string filename)

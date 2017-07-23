@@ -235,6 +235,7 @@ namespace Nibriboard.RippleSpace
 		public async Task SaveTo(StreamWriter destination)
 		{
 			await destination.WriteLineAsync(JsonConvert.SerializeObject(this));
+			destination.Close();
 		}
 
 		public void OnDeserialization(object sender)

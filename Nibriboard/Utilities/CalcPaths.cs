@@ -13,7 +13,7 @@ namespace Nibriboard.Utilities
 		/// <returns>The directory to which a plane should unpack it's data to.</returns>
 		public static string UnpackedPlaneDir(string unpackingRoot, string planeName)
 		{
-			string result = $"{unpackingRoot}/Planes/{planeName}/";
+			string result = $"{unpackingRoot}Planes/{planeName}/";
 			return result;
 		}
 
@@ -35,13 +35,13 @@ namespace Nibriboard.Utilities
 		/// <returns>The path to the packed plane file.</returns>
 		public static string UnpackedPlaneFile(string unpackingDir, string planeName)
 		{
-			return $"{unpackingDir}/{planeName}.nplane.tar.gz";
+			return $"{unpackingDir}{planeName}.nplane.zip";
 		}
 
 
 		public static string ChunkFilepath(string planeStorageDirectory, ChunkReference chunkRef)
 		{
-			return $"{planeStorageDirectory}/{chunkRef.AsFilename()}";
+			return $"{planeStorageDirectory}{chunkRef.AsFilename()}";
 		}
 	}
 }

@@ -256,24 +256,28 @@ namespace Nibriboard.RippleSpace
 				string chunkDestinationFilename = CalcPaths.ChunkFilepath(StorageDirectory, loadedChunkItem.Key);
 				Directory.CreateDirectory(Path.GetDirectoryName(chunkDestinationFilename));
 				// Ask the chunk to save itself
-				using(StreamWriter chunkDestination = new StreamWriter(chunkDestinationFilename))
-				{
-					chunkSavers.Add(loadedChunkItem.Value.SaveTo(chunkDestination));
-				}
+				StreamWriter chunkDestination = new StreamWriter(chunkDestinationFilename);
+				chunkSavers.Add(loadedChunkItem.Value.SaveTo(chunkDestination));
 			}
 			await Task.WhenAll(chunkSavers);
 
 			// Pack the chunks into an nplane file
-			WriterOptions packingOptions = new WriterOptions(CompressionType.GZip);
+			WriterOptions packingOptions = new WriterOptions(CompressionType.Deflate);
 
-			IEnumerable<string> chunkFiles = Directory.GetFiles(StorageDirectory);
-			using(IWriter packer = WriterFactory.Open(destination, ArchiveType.Tar, packingOptions))
+			IEnumerable<string> chunkFiles = Directory.GetFiles(StorageDirectory.TrimEnd("/".ToCharArray()));
+			using(IWriter packer = WriterFactory.Open(destination, ArchiveType.Zip, packingOptions))
 			{
 				foreach(string nextChunkFile in chunkFiles)
 				{
+					Console.WriteLine("[Command/Save] Packing {0} as {1}",
+						nextChunkFile, 
+						$"{Name}/{Path.GetFileName(nextChunkFile)}"
+					);
 					packer.Write($"{Name}/{Path.GetFileName(nextChunkFile)}", nextChunkFile);
 				}
 			}
+			destination.Flush();
+			destination.Close();
 		}
 
 		/// <summary>
