@@ -23,7 +23,7 @@ namespace Nibriboard
 		private HttpServer httpServer;
 
 		private ClientSettings clientSettings;
-		private RippleSpaceManager planeManager = new RippleSpaceManager() { SourceFilename = "./test.ripplespace.zip" };
+		private RippleSpaceManager planeManager;
 
 		private readonly CancellationTokenSource clientManagerCanceller = new CancellationTokenSource();
 		private NibriClientManager clientManager;
@@ -31,9 +31,17 @@ namespace Nibriboard
 		public readonly int CommandPort = 31587;
 		public readonly int Port = 31586;
 
-		public NibriboardServer(int inPort = 31586)
+		public NibriboardServer(string pathToRippleSpace, int inPort = 31586)
 		{
 			Port = inPort;
+
+			// Load the specified packed ripple space file if it exists - otherwise save it to disk
+			if(File.Exists(pathToRippleSpace)) {
+				planeManager = RippleSpaceManager.FromFile(pathToRippleSpace).Result;
+			} else {
+				Log.WriteLine("[NibriboardServer] Couldn't find packed ripple space at {0} - creating new ripple space instead.", pathToRippleSpace);
+				planeManager = new RippleSpaceManager() { SourceFilename = pathToRippleSpace };
+			}
 
 			clientSettings = new ClientSettings() {
 				SecureWebSocket = false,

@@ -153,7 +153,7 @@ namespace Nibriboard.RippleSpace
 			Log.WriteLine("[Command/Save] Save complete in {0}ms", timer.ElapsedMilliseconds);
 		}
 
-		public async Task<RippleSpaceManager> FromFile(string filename)
+		public static async Task<RippleSpaceManager> FromFile(string filename)
 		{
 			if(!File.Exists(filename))
 				throw new FileNotFoundException($"Error: Couldn't find the packed ripplespace at {filename}");
@@ -165,7 +165,7 @@ namespace Nibriboard.RippleSpace
 			using(IReader rippleSpaceUnpacker = ReaderFactory.Open(packedRippleSpaceStream))
 			{
 				Log.WriteLine($"[Core] Unpacking ripplespace packed with {rippleSpaceUnpacker.ArchiveType} from {filename}.");
-				rippleSpaceUnpacker.WriteAllToDirectory(UnpackedDirectory);
+				rippleSpaceUnpacker.WriteAllToDirectory(rippleSpace.UnpackedDirectory);
 			}
 			Log.WriteLine("[Core] done!");
 

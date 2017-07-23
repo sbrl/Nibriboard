@@ -9,12 +9,41 @@ namespace Nibriboard
 	{
 		public static void Main(string[] args)
 		{
+			string packedRippleSpaceFile = "./default.ripplespace.zip";
+
+			for(int i = 0; i < args.Length; i++)
+			{
+				switch(args[i])
+				{
+					case "-h":
+					case "--help":
+						Console.WriteLine("Nibriboard Server");
+						Console.WriteLine("By Starbeamrainbowlabs");
+						Console.WriteLine();
+						Console.WriteLine("Usage:");
+						Console.WriteLine("    ./Nibriboard.exe [options]");
+						Console.WriteLine();
+						Console.WriteLine("Options:");
+						Console.WriteLine("    -h  --help             Shows this message");
+						Console.WriteLine("    -f  --file [filepath]  Specify the path to the packed ripplespace file to load. Defaults to '{0}'.", packedRippleSpaceFile);
+						Console.WriteLine();
+						return;
+
+					case "-f":
+					case "--file":
+						packedRippleSpaceFile = args[++i];
+						break;
+				}
+			}
+
 			Log.WriteLine("[core] Starting Nibriboard.");
 
 			Log.WriteLine("[core] Detected embedded files: ");
 			EmbeddedFiles.WriteResourceList();
 
-			NibriboardServer server = new NibriboardServer();
+			Log.WriteLine("[core] Loading ripple space from \"{0}\".", packedRippleSpaceFile);
+
+			NibriboardServer server = new NibriboardServer(packedRippleSpaceFile);
 			Task.WaitAll(
 				server.Start(),
 				server.StartCommandListener()
