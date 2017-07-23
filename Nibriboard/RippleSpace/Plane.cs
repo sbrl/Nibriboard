@@ -269,10 +269,6 @@ namespace Nibriboard.RippleSpace
 			{
 				foreach(string nextChunkFile in chunkFiles)
 				{
-					Console.WriteLine("[Command/Save] Packing {0} as {1}",
-						nextChunkFile, 
-						$"{Name}/{Path.GetFileName(nextChunkFile)}"
-					);
 					packer.Write($"{Name}/{Path.GetFileName(nextChunkFile)}", nextChunkFile);
 				}
 			}

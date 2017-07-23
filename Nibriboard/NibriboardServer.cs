@@ -100,7 +100,7 @@ namespace Nibriboard
 
 				string rawCommand = await source.ReadLineAsync();
 				string[] commandParts = rawCommand.Split(" \t".ToCharArray());
-				Console.WriteLine("[CommandConsole] Client executing {0}", rawCommand);
+				Log.WriteLine("[CommandConsole] Client executing {0}", rawCommand);
 
 				try
 				{

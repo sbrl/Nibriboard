@@ -122,6 +122,8 @@ namespace Nibriboard.RippleSpace
 
 		public async Task Save()
 		{
+			Stopwatch timer = Stopwatch.StartNew();
+
 			// Save the planes to disk
 			List<Task> planeSavers = new List<Task>();
 			foreach(Plane item in Planes)
@@ -147,6 +149,8 @@ namespace Nibriboard.RippleSpace
 				}
 			}
 			destination.Close();
+
+			Log.WriteLine("[Command/Save] Save complete in {0}ms", timer.ElapsedMilliseconds);
 		}
 
 		public async Task<RippleSpaceManager> FromFile(string filename)
