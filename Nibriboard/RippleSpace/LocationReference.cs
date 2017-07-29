@@ -25,6 +25,14 @@ namespace Nibriboard.RippleSpace
 		{
 			
 		}
+		/// <summary>
+		/// Creates a new blank <see cref="Nibriboard.RippleSpace.LocationReference" />.
+		/// Don't use this yourself! This is only for Newtonsoft.Json to use when deserialising references.
+		/// </summary>
+		public LocationReference() : base()
+		{
+
+		}
 
 		public override bool Equals(object obj)
 		{

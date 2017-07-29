@@ -126,8 +126,12 @@ namespace Nibriboard.RippleSpace
 
 			// Save the planes to disk
 			List<Task> planeSavers = new List<Task>();
+			StreamWriter indexWriter = new StreamWriter(UnpackedDirectory + "index.list");
 			foreach(Plane item in Planes)
 			{
+				// Add the plane to the index
+				await indexWriter.WriteLineAsync(item.Name);
+
 				// Figure out where the plane should save itself to and create the appropriate directories
 				string planeSavePath = CalcPaths.UnpackedPlaneFile(UnpackedDirectory, item.Name);
 				Directory.CreateDirectory(Path.GetDirectoryName(planeSavePath));
@@ -135,7 +139,9 @@ namespace Nibriboard.RippleSpace
 				// Ask the plane to save to the directory
 				planeSavers.Add(item.Save(File.OpenWrite(planeSavePath)));
 			}
+			indexWriter.Close();
 			await Task.WhenAll(planeSavers);
+
 
 			// Pack the planes into the ripplespace archive
 			Stream destination = File.OpenWrite(SourceFilename);
@@ -143,6 +149,7 @@ namespace Nibriboard.RippleSpace
 
 			using(IWriter rippleSpacePacker = WriterFactory.Open(destination, ArchiveType.Zip, new WriterOptions(CompressionType.Deflate)))
 			{
+				rippleSpacePacker.Write("index.list", UnpackedDirectory + "index.list");
 				foreach(string planeFilename in planeFiles)
 				{
 					rippleSpacePacker.Write(Path.GetFileName(planeFilename), planeFilename);

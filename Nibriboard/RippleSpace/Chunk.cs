@@ -75,7 +75,7 @@ namespace Nibriboard.RippleSpace
 		/// The location of this chunk, in chunk-space, on the plane.
 		/// </summary>
 		[JsonProperty]
-		public readonly ChunkReference Location;
+		public ChunkReference Location { get; private set; }
 
 		/// <summary>
 		/// Fired when this chunk is updated.
@@ -223,6 +223,15 @@ namespace Nibriboard.RippleSpace
 		{
 			Chunk loadedChunk = JsonConvert.DeserializeObject<Chunk>(await chunkSource.ReadToEndAsync());
 			loadedChunk.plane = plane;
+			loadedChunk.Location.Plane = plane;
+			foreach(DrawnLine line in loadedChunk.lines)
+			{
+				foreach(LocationReference point in line.Points)
+				{
+					point.Plane = plane;
+				}
+			}
+
 			loadedChunk.OnChunkUpdate += plane.HandleChunkUpdate;
 
 			return loadedChunk;

@@ -10,7 +10,7 @@ namespace Nibriboard.RippleSpace
 	[JsonObject(MemberSerialization.OptIn)]
 	public abstract class Reference : ICloneable
 	{
-		public readonly Plane Plane;
+		public Plane Plane { get; set; }
 
         /// <summary>
         /// The name of the plane that this reference is located on.
@@ -39,6 +39,14 @@ namespace Nibriboard.RippleSpace
 		{
 			Plane = inPlane;
 			X = inX; Y = inY;
+		}
+		/// <summary>
+		/// Creates a new blank <see cref="Nibriboard.RippleSpace.Reference" />.
+		/// Don't use this yourself! This is only for Newtonsoft.Json to use when deserialising references.
+		/// </summary>
+		public Reference()
+		{
+
 		}
 
 		public override string ToString()

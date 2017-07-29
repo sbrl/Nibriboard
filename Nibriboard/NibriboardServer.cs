@@ -122,7 +122,9 @@ namespace Nibriboard
 							await destination.WriteLineAsync("    save     Save the ripplespace to disk");
 							break;
 						case "save":
+							await destination.WriteAsync("Saving ripple space - ");
 							await planeManager.Save();
+							await destination.WriteLineAsync("done.");
 							break;
 					}
 				}

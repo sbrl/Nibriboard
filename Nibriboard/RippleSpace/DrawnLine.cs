@@ -1,38 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using Newtonsoft.Json;
+
 namespace Nibriboard.RippleSpace
 {
 	/// <summary>
 	/// Represents a line drawn across the plane.
 	/// </summary>
+	[Serializable]
+	[JsonObject(MemberSerialization.OptIn)]
 	public class DrawnLine
 	{
 		/// <summary>
 		/// The id of line that this <see cref="NibriboardServer.RippleSpace.DrawnLine" /> is part of.
 		/// Note that this id may not be unique - several lines that were all
 		/// drawn at once may also have the same id. This is such that a single
-        /// line that was split across multiple chunks can still be referenced and
-        /// joined together.
+		/// line that was split across multiple chunks can still be referenced and
+		/// joined together.
 		/// </summary>
+		[JsonProperty]
 		public readonly string LineId;
 
 		/// <summary>
 		/// The width of the line.
 		/// </summary>
+		[JsonProperty]
 		public int Width;
 		/// <summary>
 		/// The colour of the line.
 		/// </summary>
+		[JsonProperty]
 		public string Colour;
 		/// <summary>
 		/// The points that represent the line.
 		/// </summary>
+		[JsonProperty]
 		public List<LocationReference> Points = new List<LocationReference>();
 
 		/// <summary>
 		/// Whether this line spans multiple chunks.
 		/// </summary>
+		[JsonProperty]
 		public bool SpansMultipleChunks {
 			get {
 				// TODO: Make this more intelligent such that connecting lines

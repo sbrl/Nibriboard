@@ -67,6 +67,12 @@ namespace Nibriboard.RippleSpace
 		/// </summary>
 		protected Dictionary<ChunkReference, Chunk> loadedChunkspace = new Dictionary<ChunkReference, Chunk>();
 
+		public PlaneInfo Info {
+			get {
+				return PlaneInfo.FromPlane(this);
+			}
+		}
+
 		/// <summary>
 		/// The number of chunks that this plane currently has laoded into active memory.
 		/// </summary>
@@ -261,12 +267,19 @@ namespace Nibriboard.RippleSpace
 			}
 			await Task.WhenAll(chunkSavers);
 
-			// Pack the chunks into an nplane file
+			// Save the plane information
+			StreamWriter planeInfoWriter = new StreamWriter(CalcPaths.UnpackedPlaneIndex(StorageDirectory));
+			await planeInfoWriter.WriteLineAsync(JsonConvert.SerializeObject(Info));
+			planeInfoWriter.Close();
+
+			// Pack the chunks & plane information into an nplane file
 			WriterOptions packingOptions = new WriterOptions(CompressionType.Deflate);
 
 			IEnumerable<string> chunkFiles = Directory.GetFiles(StorageDirectory.TrimEnd("/".ToCharArray()));
 			using(IWriter packer = WriterFactory.Open(destination, ArchiveType.Zip, packingOptions))
 			{
+				packer.Write("plane-index.json", CalcPaths.UnpackedPlaneIndex(StorageDirectory));
+
 				foreach(string nextChunkFile in chunkFiles)
 				{
 					packer.Write($"{Name}/{Path.GetFileName(nextChunkFile)}", nextChunkFile);
@@ -313,6 +326,7 @@ namespace Nibriboard.RippleSpace
 			using(Stream sourceStream = File.OpenRead(sourceFilename))
 			using(IReader unpacker = ReaderFactory.Open(sourceStream))
 			{
+				Directory.CreateDirectory(targetUnpackingPath);
 				unpacker.WriteAllToDirectory(targetUnpackingPath);
 			}
 

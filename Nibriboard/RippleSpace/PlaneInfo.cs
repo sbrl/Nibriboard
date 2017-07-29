@@ -1,7 +1,11 @@
 ﻿using System;
 
+using Newtonsoft.Json;
+
 namespace Nibriboard.RippleSpace
 {
+	[Serializable]
+	[JsonObject(MemberSerialization.OptOut)]
 	public class PlaneInfo
 	{
 		public string Name { get; set; }
@@ -18,6 +22,12 @@ namespace Nibriboard.RippleSpace
 			Name = inName;
 			ChunkSize = inChunkSize;
 		}
-	}
 
+		public static PlaneInfo FromPlane(Plane plane)
+		{
+			PlaneInfo result = new PlaneInfo(plane.Name, plane.ChunkSize);
+
+			return result;
+		}
+	}
 }
