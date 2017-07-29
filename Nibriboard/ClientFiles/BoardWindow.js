@@ -55,6 +55,7 @@ class BoardWindow extends EventEmitter
 		this.Colour = "rgba(255, 255, 255, 0.3)";
 		
 		// The current state of the viewport.
+		this.lastViewportUpdate = +new Date();
 		this.viewport = {
 			// The x coordinate of the viewport.
 			x: 0,
@@ -337,6 +338,25 @@ class BoardWindow extends EventEmitter
 		this.viewport.y -= event.dy * 1/this.viewport.zoomLevel;
 		this.viewport.zoomLevel += event.dz / 1000;
 		this.viewport.zoomLevel = clamp(this.viewport.zoomLevel, 0.1, 10000);
+		
+		// Update the server on the new size of our viewport
+		
+		setTimeout((function() {
+			if(+new Date() - this.lastViewportUpdate < (1 / this.cursorSyncer.cursorUpdateFrequency) * 1000)
+				return false;
+			
+			this.rippleLink.send({
+				Event: "ViewportUpdate",
+				NewViewport: {
+					X: parseInt(this.viewport.x),
+					Y: parseInt(this.viewport.y),
+					Width: parseInt(this.viewport.width),
+					Height: parseInt(this.viewport.height)
+				}
+			});
+			
+			this.lastViewportUpdate = +new Date();
+		}).bind(this));
 	}
 	
 	/**
