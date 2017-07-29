@@ -108,7 +108,7 @@ hr
 .palette-colour
 {
     float: left;
-    width: 50%; height: 3em;
+    width: 12.5%; height: 1.5em;
     box-sizing: border-box;
     
     cursor: pointer;
