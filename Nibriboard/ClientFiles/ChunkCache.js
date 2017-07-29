@@ -61,7 +61,9 @@ class ChunkCache
 		}
 		
 		if(missingChunks.length > 0) {
-			// Asynchronously request them from the server
+			// Make sure that the server knows our current viewport
+			this.boardWindow.sendViewport();
+			// Asynchronously request the missing chunks from the server
 			this.boardWindow.rippleLink.send({
 				"Event": "ChunkUpdateRequest",
 				"ForgottenChunks": missingChunks
