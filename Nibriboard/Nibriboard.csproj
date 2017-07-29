@@ -110,6 +110,7 @@
     <Compile Include="Utilities\CalcPaths.cs" />
     <Compile Include="RippleSpace\PlaneInfo.cs" />
     <Compile Include="Utilities\BinaryIO.cs" />
+    <Compile Include="Client\Messages\ViewportUpdateMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />

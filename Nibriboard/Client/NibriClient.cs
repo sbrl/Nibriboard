@@ -57,7 +57,8 @@ namespace Nibriboard.Client
 			["ChunkUpdateRequest"] = typeof(ChunkUpdateRequestMessage),
 			["LineStart"] = typeof(LineStartMessage),
 			["LinePart"] = typeof(LinePartMessage),
-			["LineComplete"] = typeof(LineCompleteMessage)
+			["LineComplete"] = typeof(LineCompleteMessage),
+			["ViewportUpdate"] = typeof(ViewportUpdateMessage)
 		};
 
 		/// <summary>
@@ -382,6 +383,16 @@ namespace Nibriboard.Client
 			ClientStatesMessage updateMessage = new ClientStatesMessage();
 			updateMessage.ClientStates.Add(this.GenerateStateSnapshot());
 			manager.BroadcastPlane(this, updateMessage);
+
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
+		/// Handles viewport updates from the remote client.
+		/// </summary>
+		/// <param name="message">The viewport update message to handle.</param>
+		protected Task handleViewportUpdateMessage(ViewportUpdateMessage message) {
+			CurrentViewPort = message.NewViewport;
 
 			return Task.CompletedTask;
 		}
