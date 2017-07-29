@@ -103,7 +103,8 @@ namespace Nibriboard.RippleSpace
                     // TODO: Add connecting lines to each DrawnLine instance to prevent gaps
                     nextLine.Colour = Colour;
                     nextLine.Width = Width;
-					results.Add(nextLine);
+					if(nextLine.Points.Count > 0)
+						results.Add(nextLine);
 					nextLine = new DrawnLine(LineId);
 				}
 
