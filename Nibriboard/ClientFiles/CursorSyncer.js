@@ -6,7 +6,7 @@ class CursorSyncer
 	{
 		// The ripple link we should send the cursor updates down
 		this.rippleLink = inRippleLink;
-		// The target frequency in fps at we should send sursor updates.
+		// The target frequency in fps at we should send cursor updates.
 		this.cursorUpdateFrequency = syncFrequency;
 		
 		// Register ourselves to start sending cursor updates once the ripple

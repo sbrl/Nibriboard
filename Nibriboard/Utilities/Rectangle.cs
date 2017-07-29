@@ -151,7 +151,7 @@ namespace SBRL.Utilities
 			   Left > otherRectangle.Right ||
 			   Right < otherRectangle.Left)
 				return false;
-
+			
 			return true;
 		}
 
