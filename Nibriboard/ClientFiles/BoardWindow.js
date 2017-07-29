@@ -169,7 +169,7 @@ class BoardWindow extends EventEmitter
 					Width: window.innerWidth,
 					Height: window.innerHeight
 				},
-				InitialAbsCursorPosition: this.cursorPosition
+				InitialAbsCursorPosition: this.cursorSyncer.cursorPosition
 			});
 		}).bind(this));
 		this.rippleLink.on("disconnect", (function(event) {

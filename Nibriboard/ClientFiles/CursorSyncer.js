@@ -12,6 +12,8 @@ class CursorSyncer
 		// Register ourselves to start sending cursor updates once the ripple
 		// link connects
 		this.rippleLink.on("connect", this.setup.bind(this));
+		
+		this.cursorPosition = { X: 0, Y: 0 };
 	}
 	
 	setup()
