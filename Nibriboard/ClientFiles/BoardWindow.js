@@ -111,6 +111,13 @@ class BoardWindow extends EventEmitter
 		this.keyboard.on("keyup-c", (function(event) {
 		    this.chunkCache.showRenderedChunks = !this.chunkCache.showRenderedChunks;
 		}).bind(this));
+		// Stop the document from scrolling around on some devices
+		document.addEventListener("keyup", function(event) {
+			if(event.keyCode >= 37 && event.keyCode <= 40) {
+				event.preventDefault();
+				return false;
+			}
+		})
 		
 		// Grab a reference to the sidebar and wrap it in an Interface class instance
 		this.interface = new Interface(
