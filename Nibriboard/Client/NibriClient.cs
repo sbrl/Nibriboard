@@ -197,7 +197,16 @@ namespace Nibriboard.Client
 		/// <param name="message">The message to send.</param>
 		public void Send(Message message)
 		{
-			SendRaw(JsonConvert.SerializeObject(message));
+			try
+			{
+				string payload = JsonConvert.SerializeObject(message);
+				SendRaw(payload);
+			}
+			catch(Exception error)
+			{
+				Log.WriteLine("[NibriClient/#{0}] Error serialising message!", Id);
+				Log.WriteLine("[NibriClient/#{0}] {1}", Id, error);
+			}
 		}
 		/// <summary>
 		/// Sends a raw string to the client. Don't use unnless you know what you're doing!
@@ -210,6 +219,8 @@ namespace Nibriboard.Client
 				Log.WriteLine($"[NibriClient#{Id}] Can't send a message as the client has disconnected.");
                 return false;
             }
+
+			Log.WriteLine("[NibriClient/#{0}] Sending message with length {1}.", Id, message.Length);
 			
 			client.Send(message);
             return true;

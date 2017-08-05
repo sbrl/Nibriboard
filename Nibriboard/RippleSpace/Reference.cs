@@ -16,7 +16,6 @@ namespace Nibriboard.RippleSpace
         /// The name of the plane that this reference is located on.
         /// Mainly used by the serialisation system that sends things to the client.
         /// </summary>
-        [JsonProperty]
         public string PlaneName
         {
             get {

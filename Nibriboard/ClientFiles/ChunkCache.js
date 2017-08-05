@@ -115,7 +115,7 @@ class ChunkCache
 	{
 		for (let chunkData of message.Chunks) {
 			let newChunkRef = new ChunkReference(
-				chunkData.Location.PlaneName,
+				this.boardWindow.currentPlaneName,
 				chunkData.Location.X,
 				chunkData.Location.Y
 			);
