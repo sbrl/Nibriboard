@@ -1,0 +1,3 @@
+[submodule "Nibriboard/lib/GlidingSquirrel"]
+	path = Nibriboard/lib/GlidingSquirrel
+	url = https://git.starbeamrainbowlabs.com/sbrl/GlidingSquirrel

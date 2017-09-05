@@ -39,6 +39,12 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include=".\lib\GlidingSquirrel\GlidingSquirrel.csproj">
+      <Project>{476D3588-4FEE-4C75-874F-214E26B8AC1A}</Project>
+      <Name>GlidingSquirrel</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="IotWeb.Common">
       <HintPath>..\packages\IotWeb.0.8.6\lib\net45\IotWeb.Common.dll</HintPath>
