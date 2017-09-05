@@ -58,6 +58,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Package>monodevelop</Package>
     </Reference>
     <Reference Include="SharpCompress">
       <HintPath>..\packages\SharpCompress.0.18.1\lib\net45\SharpCompress.dll</HintPath>
@@ -142,7 +143,10 @@
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
+          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical">
+            <inheritsSet />
+            <inheritsScope />
+          </DotNetNamingPolicy>
         </Policies>
       </Properties>
     </MonoDevelop>

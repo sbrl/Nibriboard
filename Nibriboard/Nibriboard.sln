@@ -1,0 +1,17 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nibriboard", "Nibriboard.csproj", "{B7F806D9-9C50-4BA8-A803-0FC2EC5F5932}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B7F806D9-9C50-4BA8-A803-0FC2EC5F5932}.Debug|x86.ActiveCfg = Debug|x86
+		{B7F806D9-9C50-4BA8-A803-0FC2EC5F5932}.Debug|x86.Build.0 = Debug|x86
+		{B7F806D9-9C50-4BA8-A803-0FC2EC5F5932}.Release|x86.ActiveCfg = Release|x86
+		{B7F806D9-9C50-4BA8-A803-0FC2EC5F5932}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+EndGlobal
