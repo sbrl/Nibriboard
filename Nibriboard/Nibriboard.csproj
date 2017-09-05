@@ -46,12 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="IotWeb.Common">
-      <HintPath>..\packages\IotWeb.0.8.6\lib\net45\IotWeb.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="IotWeb.Server">
-      <HintPath>..\packages\IotWeb.0.8.6\lib\net45\IotWeb.Server.dll</HintPath>
-    </Reference>
     <Reference Include="MimeSharp">
       <HintPath>..\packages\MimeSharp.1.0.0\lib\MimeSharp.dll</HintPath>
     </Reference>
@@ -143,10 +137,7 @@
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical">
-            <inheritsSet />
-            <inheritsScope />
-          </DotNetNamingPolicy>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
         </Policies>
       </Properties>
     </MonoDevelop>
