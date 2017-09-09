@@ -39,12 +39,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include=".\lib\GlidingSquirrel\GlidingSquirrel.csproj">
-      <Project>{476D3588-4FEE-4C75-874F-214E26B8AC1A}</Project>
-      <Name>GlidingSquirrel</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="MimeSharp">
       <HintPath>..\packages\MimeSharp.1.0.0\lib\MimeSharp.dll</HintPath>
@@ -56,6 +50,9 @@
     </Reference>
     <Reference Include="SharpCompress">
       <HintPath>..\packages\SharpCompress.0.18.1\lib\net45\SharpCompress.dll</HintPath>
+    </Reference>
+    <Reference Include="GlidingSquirrel">
+      <HintPath>lib\GlidingSquirrel\GlidingSquirrel\bin\Debug\GlidingSquirrel.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -137,7 +134,10 @@
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
+          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical">
+            <inheritsSet />
+            <inheritsScope />
+          </DotNetNamingPolicy>
         </Policies>
       </Properties>
     </MonoDevelop>
