@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using System.Threading;
 
-using IotWeb.Server;
-using IotWeb.Common.Http;
 
 using Nibriboard.RippleSpace;
 using Nibriboard.Client;
@@ -20,7 +18,7 @@ namespace Nibriboard
 	public class NibriboardServer
 	{
 		private TcpListener commandServer;
-		private HttpServer httpServer;
+		private WebsocketsServer httpServer;
 
 		private ClientSettings clientSettings;
 		private RippleSpaceManager planeManager;

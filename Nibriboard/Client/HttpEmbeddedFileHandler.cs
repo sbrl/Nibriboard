@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
-using IotWeb.Common.Http;
 using MimeSharp;
+
+using SBRL.GlidingSquirrel.Websocket;
 
 using SBRL.Utilities;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Reflection;
 
 namespace Nibriboard.Client
 {
-	public class HttpEmbeddedFileHandler : IHttpRequestHandler
+	public class HttpEmbeddedFileHandler : WebsocketsServer
 	{
 		private string filePrefix;
 

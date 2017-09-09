@@ -1,11 +1,14 @@
 ﻿using System;
-using IotWeb.Common.Http;
 using System.IO;
+
+using SBRL.GlidingSquirrel.Http;
+using SBRL.GlidingSquirrel.Websocket;
+
 using Newtonsoft.Json;
 
 namespace Nibriboard.Client
 {
-	public class HttpClientSettingsHandler : IHttpRequestHandler
+	public class HttpClientSettingsHandler : WebsocketServer
 	{
 		private ClientSettings settings;
 
