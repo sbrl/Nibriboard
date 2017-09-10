@@ -69,11 +69,8 @@
     <Compile Include="Utilities\EmbeddedFiles.cs" />
     <Compile Include="Env.cs" />
     <Compile Include="RippleSpace\RippleSpaceManager.cs" />
-    <Compile Include="Client\HttpEmbeddedFileHandler.cs" />
     <Compile Include="Client\NibriClient.cs" />
-    <Compile Include="Client\NibriClientManager.cs" />
     <Compile Include="Client\ClientSettings.cs" />
-    <Compile Include="Client\HttpClientSettingsHandler.cs" />
     <Compile Include="Utilities\PointExtensions.cs" />
     <Compile Include="Utilities\JsonUtilities.cs" />
     <Compile Include="Client\Messages\Message.cs" />
@@ -109,6 +106,7 @@
     <Compile Include="RippleSpace\PlaneInfo.cs" />
     <Compile Include="Utilities\BinaryIO.cs" />
     <Compile Include="Client\Messages\ViewportUpdateMessage.cs" />
+    <Compile Include="NibriboardApp.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />

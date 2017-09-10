@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Threading;
-
-
-using Nibriboard.RippleSpace;
-using Nibriboard.Client;
 using System.Net.Sockets;
 using System.Net;
 using System.IO;
+
+using SBRL.GlidingSquirrel.Websocket;
+
+using Nibriboard.RippleSpace;
+using Nibriboard.Client;
 
 namespace Nibriboard
 {
@@ -18,13 +19,10 @@ namespace Nibriboard
 	public class NibriboardServer
 	{
 		private TcpListener commandServer;
-		private WebsocketsServer httpServer;
+		private NibriboardApp appServer;
 
 		private ClientSettings clientSettings;
 		private RippleSpaceManager planeManager;
-
-		private readonly CancellationTokenSource clientManagerCanceller = new CancellationTokenSource();
-		private NibriClientManager clientManager;
 
 		public readonly int CommandPort = 31587;
 		public readonly int Port = 31586;
@@ -49,37 +47,16 @@ namespace Nibriboard
 			};
 
 			// HTTP Server setup
-			httpServer = new HttpServer(Port);
-			httpServer.AddHttpRequestHandler(
-				"/",
-				new HttpEmbeddedFileHandler("Nibriboard.ClientFiles")
-				/*new HttpResourceHandler(
-					Assembly.GetExecutingAssembly(),
-					"ClientFiles",
-					"index.html"
-				)*/
-			);
-			httpServer.AddHttpRequestHandler(
-				"/Settings.json",
-				new HttpClientSettingsHandler(clientSettings)
-			);
-
-			// Websocket setup
-			clientManager = new NibriClientManager(
-				clientSettings,
-				planeManager,
-				clientManagerCanceller.Token
-			);
-			httpServer.AddWebSocketRequestHandler(
-				clientSettings.WebSocketPath,
-
-				clientManager
-			);
+			appServer = new NibriboardApp(new NibriboardAppStartInfo() {
+				FilePrefix = "Nibriboard.ClientFiles",
+				ClientSettings = clientSettings,
+				SpaceManager = planeManager
+			}, IPAddress.IPv6Any, Port);
 		}
 
 		public async Task Start()
 		{
-			httpServer.Start();
+			await appServer.Start();
 			Log.WriteLine("[NibriboardServer] Started on port {0}", Port);
 
 			await planeManager.StartMaintenanceMonkey();

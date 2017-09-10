@@ -5,11 +5,12 @@ using System.Text;
 using System.Linq;
 using System.Reflection;
 
-using IotWeb.Common.Http;
 using Newtonsoft.Json;
 using SBRL.Utilities;
 using Nibriboard.Client.Messages;
 using Nibriboard.RippleSpace;
+
+using SBRL.GlidingSquirrel.Websocket;
 
 namespace Nibriboard.Client
 {
@@ -38,7 +39,7 @@ namespace Nibriboard.Client
 		/// <summary>
 		/// The nibri client manager
 		/// </summary>
-		private readonly NibriClientManager manager;
+		private readonly NibriboardApp manager;
 		/// <summary>
 		/// The plane that this client is currently on.
 		/// </summary>
@@ -48,7 +49,7 @@ namespace Nibriboard.Client
 		/// The underlying websocket connection to the client.
 		/// Please try not to call the send method on here - use the NibriClient Send() method instead.
 		/// </summary>
-		private readonly WebSocket client;
+		private readonly WebsocketClient connection;
 
 		private static readonly Dictionary<string, Type> messageEventTypes = new Dictionary<string, Type>() {
 			["HandshakeRequest"] = typeof(HandshakeRequestMessage),
@@ -64,7 +65,11 @@ namespace Nibriboard.Client
 		/// <summary>
 		/// Whether this nibri client is still connected.
 		/// </summary>
-		public bool Connected = true;
+		public bool Connected {
+			get {
+				return connection.IsClosing;
+			}
+		}
 		/// <summary>
 		/// Fires when this nibri client disconnects.
 		/// </summary>
@@ -117,41 +122,26 @@ namespace Nibriboard.Client
 
 		#region Core Setup & Message Routing Logic
 
-		public NibriClient(NibriClientManager inManager, WebSocket inClient)
+		public NibriClient(NibriboardApp inManager, WebsocketClient inClient)
 		{
 			Log.WriteLine("[Nibriboard/WebSocket] New NibriClient connected with id #{0}.", Id);
 
 			manager = inManager;
-			client = inClient;
+			connection = inClient;
 
-			client.DataReceived += async (WebSocket clientSocket, string frame) => {
-				try
-				{
-					await handleMessage(frame);
-				}
-				catch (Exception error)
-				{
-					await Console.Error.WriteLineAsync(error.ToString());
-					throw;
-				}
+			// Attach a few events
+			connection.OnDisconnection += handleDisconnection;
+			connection.OnTextMessage += handleMessage;
 
-				//Task.Run(async () => await onMessage(frame)).Wait();
-			};
-			// Store whether this NibriClient is still connected or not
-			client.ConnectionClosed += (WebSocket socket) => {
-				Connected = false;
-				Disconnected(this);
-				Log.WriteLine("[NibriClient] Client #{0} disconnected.", Id);
-			};
 		}
 
-		private async Task handleMessage(string frame)
+		private async Task handleMessage(object sender, TextMessageEventArgs eventArgs)
 		{
 			// Update the last time we received a message from the client
 			LastMessageTime = DateTime.Now;
 
 			// Extract the event name from the message that the client sent.
-			string eventName = JsonUtilities.DeserializeProperty<string>(frame, "Event");
+			string eventName = JsonUtilities.DeserializeProperty<string>(eventArgs.Payload, "Event");
 
 			if(eventName == null) {
 				Log.WriteLine("[NibriClient#{0}] Received message that didn't have an event.", Id);
@@ -170,7 +160,7 @@ namespace Nibriboard.Client
 				Type jsonNet = typeof(JsonConvert);
 				MethodInfo deserialiserInfo = jsonNet.GetMethods().First(method => method.Name == "DeserializeObject" && method.IsGenericMethod);
 				MethodInfo genericInfo = deserialiserInfo.MakeGenericMethod(messageType);
-				var decodedMessage = genericInfo.Invoke(null, new object[] { frame });
+				var decodedMessage = genericInfo.Invoke(null, new object[] { eventArgs.Payload });
 
 				string handlerMethodName = "handle" + decodedMessage.GetType().Name;
 				Type clientType = this.GetType();
@@ -180,9 +170,17 @@ namespace Nibriboard.Client
 			catch(Exception error)
 			{
 				Log.WriteLine("[NibriClient#{0}] Error decoding and / or handling message.", Id);
-				Log.WriteLine("[NibriClient#{0}] Raw frame content: {1}", Id, frame);
+				Log.WriteLine("[NibriClient#{0}] Raw frame content: {1}", Id, eventArgs.Payload);
 				Log.WriteLine("[NibriClient#{0}] Exception details: {1}", Id, error);
 			}
+		}
+
+		private Task handleDisconnection(object sender, ClientDisconnectedEventArgs eventArgs)
+		{
+			Disconnected?.Invoke(this);
+			Log.WriteLine("[NibriClient] Client #{0} disconnected.", Id);
+
+			return Task.CompletedTask;
 		}
 
 		#endregion
@@ -222,7 +220,7 @@ namespace Nibriboard.Client
 
 			Log.WriteLine("[NibriClient/#{0}] Sending message with length {1}.", Id, message.Length);
 			
-			client.Send(message);
+			connection.Send(message);
             return true;
 		}
 
@@ -239,7 +237,7 @@ namespace Nibriboard.Client
 		/// <summary>
 		/// Closes the connection to the client gracefully.
 		/// </summary>
-		public void CloseConnection(Message lastMessage)
+		public async Task CloseConnection(Message lastMessage)
 		{
 			if (!Connected)
 				return;
@@ -247,7 +245,7 @@ namespace Nibriboard.Client
 			// Tell the client that we're shutting down
 			Send(lastMessage);
 
-			client.Close();
+			await connection.Close(WebsocketCloseReason.Normal);
 		}
 
 		/// <summary>
@@ -514,7 +512,7 @@ namespace Nibriboard.Client
 		protected ClientStatesMessage GenerateClientStateUpdate()
 		{
 			ClientStatesMessage result = new ClientStatesMessage();
-			foreach (NibriClient otherClient in manager.Clients)
+			foreach (NibriClient otherClient in manager.NibriClients)
 			{
 				// Don't include ourselves in the update message!
 				if (otherClient == this)
