@@ -1,12 +1,12 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nibriboard", "Nibriboard\Nibriboard.csproj", "{B7F806D9-9C50-4BA8-A803-0FC2EC5F5932}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{63B62AF1-5ED2-4051-8AB1-6186A1D9199E}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nibriboard", "Nibriboard\Nibriboard.csproj", "{B7F806D9-9C50-4BA8-A803-0FC2EC5F5932}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

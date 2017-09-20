@@ -67,7 +67,7 @@ namespace Nibriboard.Client
 		/// </summary>
 		public bool Connected {
 			get {
-				return connection.IsClosing;
+				return !connection.IsClosing;
 			}
 		}
 		/// <summary>
@@ -207,7 +207,7 @@ namespace Nibriboard.Client
 			}
 		}
 		/// <summary>
-		/// Sends a raw string to the client. Don't use unnless you know what you're doing!
+		/// Sends a raw string to the client. Don't use unless you know what you're doing!
 		/// Use the regular Send() method if you can possibly help it.
 		/// </summary>
 		/// <param name="message">The message to send.</param>
@@ -245,7 +245,7 @@ namespace Nibriboard.Client
 			// Tell the client that we're shutting down
 			Send(lastMessage);
 
-			await connection.Close(WebsocketCloseReason.Normal);
+			await connection.Close(WebsocketCloseReason.Normal, "Goodbye!");
 		}
 
 		/// <summary>
