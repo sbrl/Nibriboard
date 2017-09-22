@@ -2,9 +2,9 @@
 
 import Vector from './Vector';
 
-/// <summary>
-/// Represents a rectangle in 2D space.
-/// </summary>
+/**
+ * Represents a rectangle in 2D space.
+ */
 class Rectangle
 {
 	/**
@@ -76,6 +76,22 @@ class Rectangle
 		this.y = y;
 		this.width = width;
 		this.height = height;
+	}
+	
+	/**
+	 * Figures out whether this rectangle overlaps another rectangle.
+	 * @param	{Rectangle}	otherRectangle	The other rectangle to check the overlap of.
+	 * @return	{bool}		Whether this rectangle overlaps another rectangle.
+	 */
+	overlaps(otherRectangle)
+	{
+		if(this.Top > otherRectangle.Bottom ||
+			this.Bottom < otherRectangle.Top ||
+			this.Left > otherRectangle.Right ||
+			this.Right < otherRectangle.Left)
+			return false;
+
+		return true;
 	}
 	
 	/**

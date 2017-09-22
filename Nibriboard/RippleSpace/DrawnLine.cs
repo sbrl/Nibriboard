@@ -60,6 +60,20 @@ namespace Nibriboard.RippleSpace
 		}
 
 		/// <summary>
+		/// The chunk reference of the next chunk that this line continues in.
+		/// A value of null is present when this line doesn't continue into another chunk.
+		/// </summary>
+		[JsonProperty]
+		public ChunkReference ContinuesIn = null;
+		/// <summary>
+		/// The chunk reference of the previous chunk that contains the line fragment that
+		/// this line continues from. Is null when this line either doesn't continue from
+		/// another line fragment or doesn't span multiple chunks.
+		/// </summary>
+		[JsonProperty]
+		public ChunkReference ContinuesFrom = null;
+
+		/// <summary>
 		/// Gets a reference in chunk-space ot the chunk that this line starts in.
 		/// </summary>
 		public ChunkReference ContainingChunk {
@@ -119,6 +133,19 @@ namespace Nibriboard.RippleSpace
 				nextLine.Width = Width;
 				results.Add(nextLine);
             }
+
+			// Set the ContinuesIn and ContinuesFrom properties
+			// so that clients can find the next / previous chunk line fragmentss
+			for(int i = 0; i < results.Count - 1; i++)
+			{
+				// Set the ContinuesFrom reference, but not on the first fragment in the list
+				if(i > 0)
+					results[i].ContinuesFrom = results[i - 1].ContainingChunk;
+				
+				// Set the ContinuesIn reference, but not on the last fragment in the list
+				if(i < results.Count - 1)
+					results[i].ContinuesIn = results[i + 1].ContainingChunk;
+			}
 
 			return results;
 		}

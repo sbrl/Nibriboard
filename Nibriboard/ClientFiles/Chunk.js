@@ -20,6 +20,20 @@ class Chunk
 	}
 	
 	/**
+	 * Fetches the first line in this chunk by it's id.
+	 * @param  {string} lineId The target line id to search for.
+	 * @return {object|null}        The requested line, or null if it wasn't found.
+	 */
+	getLineById(lineId)
+	{
+		for (let line of this.lines) {
+			if(line.LineId == lineId)
+				return line;
+		}
+		return null;
+	}
+	
+	/**
 	 * Whether this chunk is located at the specified chunk reference.
 	 * @param	{ChunkReference}	otherChunkRef	The chunk reference to check
 	 *                                       		ourselves against.
@@ -33,12 +47,34 @@ class Chunk
 		return false;
 	}
 	
+	/**
+	 * Whether this chunk falls inside the specified rectangle.
+	 * @param  {Rectangle}	area	The rectangle to test against, in location-space
+	 * @return {Boolean}	Whether this chunk falls inside the specified rectangle.
+	 */
+	isVisible(area)
+	{
+		let chunkArea = new Rectangle(
+			this.chunkRef.x * this.size,
+			this.chunkRef.y * this.size,
+			this.size, this.size
+		);
+		return area.overlaps(area);
+	}
+	
 	update(dt)
 	{
 		
 	}
 	
-	render(canvas, context)
+	/**
+	 * Renders this chunk to the given canvas with the given context.
+	 * @param	{HTMLCanvasElement}			canvas	The canvas to render to.
+	 * @param	{CanvasRenderingContext2D}	context	The context to render with.
+	 * @param	{ChunkCache}	chunkCache	The chunk cache to use to fetch data from surrounding chunks.
+	 * @param	{Rectangle}		chunkArea	The area in which chunks are being rendered.
+	 */
+	render(canvas, context, chunkCache, chunkArea)
 	{
 		var planeSpaceRef = this.chunkRef.inPlaneSpace(this.size);
 		
@@ -47,16 +83,32 @@ class Chunk
 		
 		for(let line of this.lines)
 		{
+			// Don't draw lines that are walked by other chunks
+			if(line.ContinuesFrom != null &&
+				chunkCache.fetchChunk(line.ContinuesFrom) != null)
+				continue;
+			
+			let linePoints = line.Points;
+			
+			// Fetch all the points on fragments of this line forwards from here
+			if(line.ContinuesIn != null) {
+				let nextLines = chunkCache.fetchLineFragments(line.ContinuesIn, line.LineId);
+				for (let nextLine of nextLines) {
+					linePoints = linePoints.concat(nextLine.Points);
+				}
+			}
+			
 			context.beginPath();
 			context.moveTo(
-				line.Points[0].x - planeSpaceRef.x,
-				line.Points[0].y - planeSpaceRef.y
+				linePoints[0].x - planeSpaceRef.x,
+				linePoints[0].y - planeSpaceRef.y
 			);
-			for(let i = 1; i < line.Points.length; i++)
+			
+			for(let i = 1; i < linePoints.length; i++)
 			{
 				context.lineTo(
-					line.Points[i].x - planeSpaceRef.x,
-					line.Points[i].y - planeSpaceRef.y
+					linePoints[i].x - planeSpaceRef.x,
+					linePoints[i].y - planeSpaceRef.y
 				);
 			}
 			
