@@ -43,7 +43,7 @@ class ChunkCache
 		let lineFragments = [];
 		let currentChunk = this.fetchChunk(startingChunkRef);
 		
-		while(currentChunk != null)
+		while(currentChunk instanceof Chunk)
 		{
 			let nextLineFragment = currentChunk.getLineById(lineId);
 			if(nextLineFragment == null)
