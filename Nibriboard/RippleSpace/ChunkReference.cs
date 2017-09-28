@@ -82,24 +82,6 @@ namespace Nibriboard.RippleSpace
 			return $"ChunkReference: {base.ToString()}";
 		}
 
-		public static ChunkReference Parse(Plane plane, string source)
-		{
-			if (!source.StartsWith("ChunkReference:"))
-				throw new InvalidDataException($"Error: That isn't a valid chunk reference. Chunk references start with 'ChunkReference:'.");
-
-			// Trim the extras off the reference
-			source = source.Substring("ChunkReference:".Length);
-			source = source.Trim("() \v\t\r\n".ToCharArray());
-
-			int x = int.Parse(source.Substring(0, source.IndexOf(",")));
-			int y = int.Parse(source.Substring(source.IndexOf(",") + 1));
-			return new ChunkReference(
-				plane,
-				x,
-				y
-			);
-		}
-
 		/// <summary>
 		/// Returns a clone of this ChunkReference.
 		/// </summary>
