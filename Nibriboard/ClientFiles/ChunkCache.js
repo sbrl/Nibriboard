@@ -40,6 +40,8 @@ class ChunkCache
 	 */
 	fetchLineFragments(startingChunkRef, lineId)
 	{
+		throw new Error("Set up the ContinuesIn/From system to use a new UniqueLineId identifier");
+		
 		let lineFragments = [];
 		let currentChunk = this.fetchChunk(startingChunkRef);
 		
