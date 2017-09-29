@@ -72,6 +72,11 @@ namespace Nibriboard.RippleSpace
 		/// </summary>
 		[JsonProperty]
 		public ChunkReference ContinuesIn = null;
+        /// <summary>
+        /// The id of the line that this line fragment is continued by.
+        /// </summary>
+        [JsonProperty]
+        public string ContinuesWithId = null;
 		/// <summary>
 		/// The chunk reference of the previous chunk that contains the line fragment that
 		/// this line continues from. Is null when this line either doesn't continue from
@@ -79,10 +84,16 @@ namespace Nibriboard.RippleSpace
 		/// </summary>
 		[JsonProperty]
 		public ChunkReference ContinuesFrom = null;
+        /// <summary>
+        /// The id of the line fragment that this line continues from.
+        /// </summary>
+        [JsonProperty]
+        public string ContinuesFromId = null;
 
 		/// <summary>
 		/// Gets a reference in chunk-space ot the chunk that this line starts in.
-		/// </summary>
+        /// </summary>
+        [JsonProperty]
 		public ChunkReference ContainingChunk {
 			get {
 				if (Points.Count == 0)
@@ -146,12 +157,16 @@ namespace Nibriboard.RippleSpace
 			for(int i = 0; i < results.Count - 1; i++)
 			{
 				// Set the ContinuesFrom reference, but not on the first fragment in the list
-				if(i > 0)
+                if(i > 0) {
 					results[i].ContinuesFrom = results[i - 1].ContainingChunk;
+                    results[i].ContinuesFromId = results[i - 1].UniqueId;
+                }
 				
 				// Set the ContinuesIn reference, but not on the last fragment in the list
-				if(i < results.Count - 1)
+                if(i < results.Count - 1) {
 					results[i].ContinuesIn = results[i + 1].ContainingChunk;
+                    results[i].ContinuesWithId = results[i + 1].UniqueId;
+                }
 			}
 
 			return results;
