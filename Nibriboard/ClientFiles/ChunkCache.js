@@ -35,19 +35,18 @@ class ChunkCache
 	 * Walk the currently cached chunks to find all the line fragments for the
 	 * specified line id, starting at the specified chunk reference.
 	 * @param	{ChunkReference}	startingChunkRef	The reference of hte chunk we should start walking at.
-	 * @param	{string}	lineId				The id of the line we should fetch the fragments for.
+	 * @param	{string}	lineId				The unique id of the first line fragment we should include in the list.
 	 * @return	{object[]}	A list of line fragments found.
 	 */
-	fetchLineFragments(startingChunkRef, lineId)
+	fetchLineFragments(startingChunkRef, lineUniqueId)
 	{
-		throw new Error("Set up the ContinuesIn/From system to use a new UniqueLineId identifier");
-		
 		let lineFragments = [];
 		let currentChunk = this.fetchChunk(startingChunkRef);
+		let nextUniqueId = lineUniqueId;
 		
 		while(currentChunk instanceof Chunk)
 		{
-			let nextLineFragment = currentChunk.getLineById(lineId);
+			let nextLineFragment = currentChunk.getLineByUniqueId(nextUniqueId);
 			if(nextLineFragment == null)
 				break;
 			
@@ -57,6 +56,7 @@ class ChunkCache
 				break;
 			
 			currentChunk = this.fetchChunk(nextLineFragment.ContinuesIn);
+			nextUniqueId = nextLineFragment.ContinuesWithId;
 		}
 		
 		return lineFragments;
@@ -181,6 +181,11 @@ class ChunkCache
 						line.ContinuesFrom.X, line.ContinuesFrom.Y
 					);
 				}
+				line.ContainingChunk = new ChunkReference(
+					this.boardWindow.currentPlaneName,
+					line.ContainingChunk.X,
+					line.ContainingChunk.Y
+				);
 				return line;
 			});
 			newChunk.lines = newChunk.lines.concat(newLines);

@@ -20,14 +20,14 @@ class Chunk
 	}
 	
 	/**
-	 * Fetches the first line in this chunk by it's id.
-	 * @param  {string} lineId The target line id to search for.
-	 * @return {object|null}        The requested line, or null if it wasn't found.
+	 * Fetches a line in this chunk by it's unique id.
+	 * @param  {string} uniqueLineId The target unique id to search for.
+	 * @return {object|null}   The requested line, or null if it wasn't found.
 	 */
-	getLineById(lineId)
+	getLineByUniqueId(uniqueLineId)
 	{
 		for (let line of this.lines) {
-			if(line.LineId == lineId)
+			if(line.UniqueId == uniqueLineId)
 				return line;
 		}
 		return null;
@@ -92,7 +92,8 @@ class Chunk
 			
 			// Fetch all the points on fragments of this line forwards from here
 			if(line.ContinuesIn != null) {
-				let nextLines = chunkCache.fetchLineFragments(line.ContinuesIn, line.LineId);
+				let nextLines = chunkCache.fetchLineFragments(line.ContainingChunk, line.UniqueId).Points;
+				linePoints = [];
 				for (let nextLine of nextLines) {
 					linePoints = linePoints.concat(nextLine.Points);
 				}

@@ -274,6 +274,8 @@ class BoardWindow extends EventEmitter
 	{
 		context.save();
 		
+		if(this.gridSize <= 0)
+			return false;
 		
 		for(let ax = (this.viewport.x + (this.gridSize - (this.viewport.x % this.gridSize))) - this.gridSize; ax < (this.viewport.x + this.viewport.width); ax += this.gridSize)
 		{
