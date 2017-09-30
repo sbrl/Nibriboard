@@ -61,7 +61,7 @@ namespace Nibriboard
 
 			client.Disconnected += (NibriClient disconnectedClient) => {
 				NibriClients.Remove(disconnectedClient);
-				Log.WriteLine("[NibriClient/#{1}] Client disconnected and removed from active clients list.");
+				Log.WriteLine("[NibriClient/#{0}] Client disconnected and removed from active clients list.", disconnectedClient.Id);
 			};
 			NibriClients.Add(client);
 
