@@ -59,7 +59,10 @@ namespace Nibriboard
 		{
 			NibriClient client = new NibriClient(this, eventArgs.ConnectingClient);
 
-			client.Disconnected += (NibriClient disconnectedClient) => NibriClients.Remove(disconnectedClient);
+			client.Disconnected += (NibriClient disconnectedClient) => {
+				NibriClients.Remove(disconnectedClient);
+				Log.WriteLine("[NibriClient/#{1}] Client disconnected and removed from active clients list.");
+			};
 			NibriClients.Add(client);
 
 			return Task.CompletedTask;
@@ -67,6 +70,8 @@ namespace Nibriboard
 
 		public override Task HandleClientDisconnected(object sender, ClientDisconnectedEventArgs eventArgs)
 		{
+			// We can't use this to remove the NibriClient from the list since we don't know which
+			// NibriClient objects wrap which WebsocketClient instances
 			return Task.CompletedTask;
 		}
 

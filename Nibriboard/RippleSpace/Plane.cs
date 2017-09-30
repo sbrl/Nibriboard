@@ -205,7 +205,7 @@ namespace Nibriboard.RippleSpace
 		public async Task AddLine(DrawnLine newLine)
 		{
 			if(newLine.Points.Count == 0) {
-				Log.WriteLine("[Plane/{0}] Lines that don't contain any points can't be added to a chunk!");
+				Log.WriteLine("[Plane/{0}] Lines that don't contain any points can't be added to a chunk!", Name);
 				return;
 			}
 			List<DrawnLine> chunkedLineParts;
