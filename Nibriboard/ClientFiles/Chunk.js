@@ -92,7 +92,7 @@ class Chunk
 			
 			// Fetch all the points on fragments of this line forwards from here
 			if(line.ContinuesIn != null) {
-				let nextLines = chunkCache.fetchLineFragments(line.ContainingChunk, line.UniqueId).Points;
+				let nextLines = chunkCache.fetchLineFragments(line.ContainingChunk, line.UniqueId);
 				linePoints = [];
 				for (let nextLine of nextLines) {
 					linePoints = linePoints.concat(nextLine.Points);
