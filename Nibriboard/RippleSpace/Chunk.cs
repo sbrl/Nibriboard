@@ -91,7 +91,7 @@ namespace Nibriboard.RippleSpace
 		public DateTime TimeLastAccessed { get; private set; } = DateTime.Now;
 
 		/// <summary>
-		/// Whether this <see cref="T:Nibriboard.RippleSpace.Chunk"/> is primary chunk.
+		/// Whether this <see cref="Chunk"/> is a primary chunk.
 		/// Primary chunks are always loaded.
 		/// </summary>
 		[JsonProperty]
