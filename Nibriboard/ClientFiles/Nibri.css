@@ -150,4 +150,5 @@ hr
 .fps
 {
     top: 0.2em !important; right: 0.2em !important;
+    left: initial !important;
 }
