@@ -127,6 +127,9 @@
     <EmbeddedResource Include="ClientFiles\favicon.ico" />
     <EmbeddedResource Include="ClientFiles\nibriboard.svg" />
     <EmbeddedResource Include="ClientFiles\images\transparent-square-tiles.png" />
+    <EmbeddedResource Include="ClientFiles\images\icons\brush.png" />
+    <EmbeddedResource Include="ClientFiles\images\icons\pan.png" />
+    <EmbeddedResource Include="ClientFiles\images\icons\point.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="RippleSpace\" />
@@ -144,7 +147,10 @@
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
+          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical">
+            <inheritsSet />
+            <inheritsScope />
+          </DotNetNamingPolicy>
         </Policies>
       </Properties>
     </MonoDevelop>

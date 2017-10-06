@@ -115,7 +115,7 @@ namespace Nibriboard
 
 			response.ContentType = LookupMimeType(expandedFilePath);
 
-			string embeddedFile = EmbeddedFiles.ReadAllText(expandedFilePath);
+            byte[] embeddedFile = EmbeddedFiles.ReadAllBytes(expandedFilePath);
 
 			try
 			{
