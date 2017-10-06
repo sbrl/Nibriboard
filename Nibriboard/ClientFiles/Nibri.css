@@ -106,6 +106,7 @@ hr
 {
     border: 0.2em dashed hsl(219, 87%, 54%);
 }
+.tool-selector > img { max-width: 1.25em; }
 
 .palette-colour
 {

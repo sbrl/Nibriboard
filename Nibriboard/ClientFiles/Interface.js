@@ -36,7 +36,7 @@ class Interface extends EventEmitter
 			toolSelectors[i].addEventListener("touchend", this.handleSelectTool.bind(this));
 			this.boardWindow.keyboard.on(`keyup-${i + 1}`, (function(toolId, event) {
 			    this.handleSelectTool({
-					target: this.sidebar.querySelector(`.tools .tool-selector:nth-child(${toolId})`)
+					currentTarget: this.sidebar.querySelector(`.tools .tool-selector:nth-child(${toolId})`)
 				});
 			}).bind(this, i + 1));
 		}
@@ -80,7 +80,7 @@ class Interface extends EventEmitter
 	{
 		let oldTool = this.currentToolElement.dataset.toolName;
 		delete this.currentToolElement.dataset.selected;
-		this.currentToolElement = event.target;
+		this.currentToolElement = event.currentTarget;
 		this.currentToolElement.dataset.selected = "yes";
 		this.currentTool = this.currentToolElement.dataset.toolName;
 		console.info("Selected tool", this.currentTool);
