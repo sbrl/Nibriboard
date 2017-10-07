@@ -117,7 +117,7 @@ class Mouse
 	{
 		this.position.x = event.clientX;
 		this.position.y = event.clientY;
-		this.pressur = typeof event.pressure === "number" ? event.pressure : event.mozPressure;
+		this.pressure = typeof event.pressure === "number" ? event.pressure : event.mozPressure;
 	}
 }
 
