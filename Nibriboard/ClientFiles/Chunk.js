@@ -85,7 +85,7 @@ class Chunk
 		{
 			// Don't draw lines that are walked by other chunks
 			if(line.ContinuesFrom != null &&
-				chunkCache.fetchChunk(line.ContinuesFrom) != null)
+				!(chunkCache.fetchChunk(line.ContinuesFrom) instanceof Chunk))
 				continue;
 			
 			let linePoints = line.Points;
