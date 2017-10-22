@@ -119,6 +119,7 @@
     <Compile Include="Utilities\BinaryIO.cs" />
     <Compile Include="Client\Messages\ViewportUpdateMessage.cs" />
     <Compile Include="NibriboardApp.cs" />
+    <Compile Include="Utilities\LineSimplifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientFiles\index.html" />
@@ -147,10 +148,7 @@
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical">
-            <inheritsSet />
-            <inheritsScope />
-          </DotNetNamingPolicy>
+          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
         </Policies>
       </Properties>
     </MonoDevelop>
