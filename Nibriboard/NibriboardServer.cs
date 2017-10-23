@@ -51,7 +51,7 @@ namespace Nibriboard
 				FilePrefix = "Nibriboard.ClientFiles",
 				ClientSettings = clientSettings,
 				SpaceManager = planeManager
-			}, IPAddress.IPv6Any, Port);
+			}, IPAddress.Any, Port);
 		}
 
 		public async Task Start()

@@ -221,7 +221,13 @@ namespace Nibriboard.RippleSpace
 		}
 		public static async Task<Chunk> FromStream(Plane plane, StreamReader chunkSource)
 		{
-			Chunk loadedChunk = JsonConvert.DeserializeObject<Chunk>(await chunkSource.ReadToEndAsync());
+			Chunk loadedChunk = JsonConvert.DeserializeObject<Chunk>(
+				await chunkSource.ReadToEndAsync(),
+				new JsonSerializerSettings() {
+					MissingMemberHandling = MissingMemberHandling.Ignore,
+					NullValueHandling = NullValueHandling.Ignore
+				}
+			);
 			loadedChunk.plane = plane;
 			loadedChunk.Location.Plane = plane;
 			foreach(DrawnLine line in loadedChunk.lines)

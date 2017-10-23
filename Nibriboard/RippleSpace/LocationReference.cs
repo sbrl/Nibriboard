@@ -14,6 +14,9 @@ namespace Nibriboard.RippleSpace
 		/// </summary>
 		public ChunkReference ContainingChunk {
 			get {
+				if(Plane == null)
+					return null;
+				
 				return new ChunkReference(
 					Plane,
 					X / Plane.ChunkSize,
