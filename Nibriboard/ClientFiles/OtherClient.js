@@ -96,7 +96,7 @@ class OtherClient
 	fetchLine(lineId)
 	{
 		if(!this.currentLines.hasOwnProperty(lineId))
-			throw new Exception(`Error: A client with the id ${lineId} does not appear to be attached to the OtherClient with the id ${this.Id}`);
+			throw new Error(`Error: A client with the id ${lineId} does not appear to be attached to the OtherClient with the id ${this.Id}`);
 		
 		return this.currentLines[lineId];
 	}

@@ -70,7 +70,7 @@ class ClientManager extends EventEmitter
 	 */
 	get(targetId) {
 		if(!this.otherClients.has(targetId))
-			throw new Exception(`Error: The other client with the id ${targetId} couldn't be found.`);
+			throw new Error(`Error: The other client with the id ${targetId} couldn't be found.`);
 		
 		return this.otherClients.get(targetId);
 	}
