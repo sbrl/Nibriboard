@@ -12,13 +12,15 @@ class Interface extends EventEmitter
 		this.sidebar = inSidebar;
 		this.debugDisplay = inDebugDisplay;
 		
-		this.brushIndicator = this.sidebar.querySelector(".brush-indicator");
+		this.brushIndicator = new BrushIndicator(
+			this.sidebar.querySelector(".brush-indicator")
+		);
 		
 		this.setupToolSelectors();
 		this.setupColourSelectors();
 		this.setupBrushWidthControls();
 		
-		this.updateBrushIndicator();
+		this.brushIndicator.render();
 	}
 	
 	/**
@@ -68,7 +70,7 @@ class Interface extends EventEmitter
 	setupBrushWidthControls()
 	{
 		this.brushWidthElement = this.sidebar.querySelector(".brush-width-controls");
-		this.currentBrushWidth = parseInt(this.brushWidthElement.value);
+		this.brushIndicator.width = parseInt(this.brushWidthElement.value);
 		
 		this.brushWidthElement.addEventListener("input", this.handleBrushWidthChange.bind(this));
 	}
@@ -105,12 +107,13 @@ class Interface extends EventEmitter
 		delete this.currentColourElement.dataset.selected;
 		this.currentColourElement = paletteElement;
 		this.currentColourElement.dataset.selected = "yes";
-		this.currentColour = this.currentColourElement.style.backgroundColor;
+		this.brushIndicator.colour = this.currentColourElement.style.backgroundColor;
+		this.brushIndicator.render();
 		
-		this.updateBrushIndicator();
-		
-		console.info("Selected colour", this.currentColour);
-		this.emit("colourchange", { newColour: this.currentColour });
+		console.info("Selected colour", this.brushIndicator.colour);
+		this.emit("colourchange", {
+			newColour: this.brushIndicator.colour
+		});
 	}
 	
 	seekColour(direction = "forwards")
@@ -146,23 +149,14 @@ class Interface extends EventEmitter
 		if(newWidth < 1) newWidth = 1;
 		if(newWidth > parseInt(this.brushWidthElement.max)) newWidth = parseInt(this.brushWidthElement.max);
 		
-		this.currentBrushWidth = newWidth; // Store the new value
+		this.brushIndicator.width = newWidth; // Store the new value
 		if(updateInterface)
 			this.brushWidthElement.value = newWidth; // Update the interface
 		
-		// Update the brush indicator
-		this.updateBrushIndicator();
-		// Emit the brush width change event
-		this.emit("brushwidthchange", { newWidth: this.currentBrushWidth });
-	}
-	
-	updateBrushIndicator()
-	{
-		// The brush indicator is zoom-agnostic (for the moment, at least)
-		this.brushIndicator.style.width = `${this.currentBrushWidth}px`;
-		this.brushIndicator.style.height = this.brushIndicator.style.width;
+		this.brushIndicator.render();
 		
-		this.brushIndicator.style.backgroundColor = this.currentColour;
+		// Emit the brush width change event
+		this.emit("brushwidthchange", { newWidth: this.brushIndicator.width });
 	}
 	
 	/**
