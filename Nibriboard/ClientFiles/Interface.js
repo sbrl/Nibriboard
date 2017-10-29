@@ -2,6 +2,8 @@
 
 window.EventEmitter = require("event-emitter-es6");
 
+import BrushIndicator from './BrushIndicator.js';
+
 class Interface extends EventEmitter
 {
 	constructor(inBoardWindow, inSidebar, inDebugDisplay)

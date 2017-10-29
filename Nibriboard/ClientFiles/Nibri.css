@@ -74,22 +74,15 @@ hr
 
 .brush-settings
 {
-    display: flex; flex-direction: column;
+    display: flex; flex-direction: row;
     min-height: 5em;
 }
 
-.brush-preview-display
-{
-    flex: 1;
-}
-
-.brush-indicator
-{
-    position: relative;
-    top: 50%; left: 50%; transform: translate(-50%, -50%);
-    
-    margin: 1em 0 0 0;
-    border-radius: 50%;
+.brush-indicator  { flex: 0; }
+.brush-width-controls
+{   
+    flex: 3;
+    margin-top: 2em;
 }
 
 .tool-selector

@@ -70,7 +70,7 @@ class Pencil
 		}).bind(this))
 		
 		// Look up the initial line with in the interface
-		this.currentLineWidth = inInterface.currentBrushWidth;
+		this.currentLineWidth = inInterface.brushIndicator.width;
 		// Listen for future updates fromt he interface
 		inInterface.on("brushwidthchange", (function(event) {
 		    this.currentLineWidth = event.newWidth;

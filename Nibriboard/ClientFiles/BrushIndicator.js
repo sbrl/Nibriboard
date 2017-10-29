@@ -7,6 +7,8 @@ class BrushIndicator
 		this.canvas = canvas;
 		this.context = canvas.getContext("2d");
 		
+		this.canvas.height = this.canvas.width = 48;
+		
 		this.width = 10;
 		this.colour = "red";
 	}
@@ -19,11 +21,10 @@ class BrushIndicator
 		);
 		
 		this.context.beginPath();
-		this.context.arc(
+		this.context.ellipse(
 			this.canvas.width / 2, this.canvas.height / 2,
-			this.width / 2,
-			0, Math.PI * 2,
-			false
+			this.width / 3, this.width / 3,
+			0, 0, Math.PI * 2, false
 		);
 		this.context.fillStyle = this.colour;
 		this.context.fill();

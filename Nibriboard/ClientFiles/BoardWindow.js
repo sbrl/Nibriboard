@@ -103,10 +103,10 @@ class BoardWindow extends EventEmitter
 		    this.interface.seekColour("forwards");
 		}).bind(this));
 		this.keyboard.on("keyup-up", (function(event) {
-		    this.interface.updateBrushWidth(this.interface.currentBrushWidth + 2, true);
+		    this.interface.updateBrushWidth(this.interface.brushIndicator.width + 2, true);
 		}).bind(this));
 		this.keyboard.on("keyup-down", (function(event) {
-		    this.interface.updateBrushWidth(this.interface.currentBrushWidth - 2, true);
+		    this.interface.updateBrushWidth(this.interface.brushIndicator.width - 2, true);
 		}).bind(this));
 		this.keyboard.on("keyup-c", (function(event) {
 		    this.chunkCache.showRenderedChunks = !this.chunkCache.showRenderedChunks;
