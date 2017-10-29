@@ -36,9 +36,9 @@ class Pencil
 		 */
 		this.mouse = new Mouse();
 		
-		// The id of the current line-in-progress.
+		/** The id of the current line-in-progress.*/
 		this.currentLineId = cuid();
-		// Holds the (unsimplified) line segments before the pencil is lifted.
+		/** Holds the (unsimplified) line segments before the pencil is lifted. */
 		this.currentLineSegments = [];
 		// The segments of the (unsimplified) line that haven't yet been sent
 		// to the server.
