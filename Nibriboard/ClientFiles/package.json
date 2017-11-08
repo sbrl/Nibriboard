@@ -10,8 +10,9 @@
     "event-emitter-es6": "^1.1.5",
     "favicon-notification": "^0.1.4",
     "fps-indicator": "^1.0.2",
+    "keycode": "^2.1.8",
     "pan-zoom": "^2.0.0",
-    "keycode": "^2.1.8"
+    "visvalingam-simplifier": "^0.1.3"
   },
   "devDependencies": {
     "acorn": "^4.0.11",

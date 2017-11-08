@@ -5,6 +5,7 @@ import Vector from './Utilities/Vector';
 import Mouse from './Utilities/Mouse';
 
 var cuid = require("cuid");
+var simplify_line = require("visvalingam-simplifier").simplify_line;
 
 class Pencil
 {
@@ -40,6 +41,9 @@ class Pencil
 		this.currentLineId = cuid();
 		/** Holds the (unsimplified) line segments before the pencil is lifted. */
 		this.currentLineSegments = [];
+		/** Holds the (simplified) line segment befoer the pencil is lifted. */
+		this.currentSimplifiedLineSegments = [];
+		
 		// The segments of the (unsimplified) line that haven't yet been sent
 		// to the server.
 		this.unsentSegments = [];
@@ -120,6 +124,8 @@ class Pencil
 		this.unsentSegments.push(nextPoint);
 		this.currentLineSegments.push(nextPoint);
 		
+		this.recalculateSimplifiedLine();
+		
 		var timeSinceLastPush = new Date() - this.lastServerPush;
 		if(timeSinceLastPush > this.pushDelay)
 			this.sendUnsent();
@@ -144,6 +150,7 @@ class Pencil
 		
 		// Reset the current line segments
 		this.currentLineSegments = [];
+		this.currentSimplifiedLineSegments = [];
 		// Regenerate the line id
 		this.currentLineId = cuid();
 	}
@@ -170,20 +177,28 @@ class Pencil
 	}
 	
 	/**
+	 * Recalculates the simplified line points array.
+	 */
+	recalculateSimplifiedLine()
+	{
+		this.currentSimplifiedLineSegments = simplify_line(this.currentLineSegments);
+	}
+	
+	/**
 	 * Renders the line that is currently being drawn to the screen.
 	 * @param  {HTMLCanvasElement} canvas  The canvas to draw to.
 	 * @param  {CanvasRenderingContext2D} context The rendering context to use to draw to the canvas.
 	 */
 	render(canvas, context) {
-		if(this.currentLineSegments.length == 0)
+		if(this.currentSimplifiedLineSegments.length == 0)
 			return;
 		
 		context.save();
 		
 		context.beginPath();
-		context.moveTo(this.currentLineSegments[0].x, this.currentLineSegments[0].y);
-		for(let i = 1; i < this.currentLineSegments.length; i++) {
-			context.lineTo(this.currentLineSegments[i].x, this.currentLineSegments[i].y);
+		context.moveTo(this.currentSimplifiedLineSegments[0].x, this.currentSimplifiedLineSegments[0].y);
+		for(let i = 1; i < this.currentSimplifiedLineSegments.length; i++) {
+			context.lineTo(this.currentSimplifiedLineSegments[i].x, this.currentSimplifiedLineSegments[i].y);
 		}
 		
 		context.lineWidth = this.currentLineWidth;
