@@ -1,11 +1,10 @@
 "use strict";
 
+import cuid from "cuid";
+import { simplify_line } from "visvalingam-simplifier";
+
 import Vector from './Utilities/Vector';
-
 import Mouse from './Utilities/Mouse';
-
-var cuid = require("cuid");
-var simplify_line = require("visvalingam-simplifier").simplify_line;
 
 class Pencil
 {

@@ -1,6 +1,6 @@
 "use strict";
 
-window.FpsIndicator = require("fps-indicator");
+import FpsIndicator from "fps-indicator";
 
 import BoardWindow from './BoardWindow';
 

@@ -1,6 +1,6 @@
 "use strict";
 
-window.EventEmitter = require("event-emitter-es6");
+import EventEmitter from "event-emitter-es6";
 
 import BrushIndicator from './BrushIndicator.js';
 

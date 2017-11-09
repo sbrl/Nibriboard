@@ -1,9 +1,9 @@
 "use strict";
 
 // npm modules
-window.EventEmitter = require("event-emitter-es6");
-window.FaviconNotification = require("favicon-notification");
-window.panzoom = require("pan-zoom");
+import EventEmitter from "event-emitter-es6";
+import FaviconNotification from "favicon-notification";
+import panzoom from "pan-zoom";
 
 // Our files
 import RippleLink from './RippleLink';
@@ -140,7 +140,7 @@ class BoardWindow extends EventEmitter
 		FaviconNotification.add();
 		
 		// Setup the input controls
-		window.panzoom(canvas, this.handleCanvasMovement.bind(this));
+		panzoom(canvas, this.handleCanvasMovement.bind(this));
 		
 		// --~~~--
 		

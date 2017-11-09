@@ -2,7 +2,7 @@
 
 import { WebSocketStates, ReverseWebSocketStates } from './Utilities/WebSocketStates';
 
-const EventEmitter = require("event-emitter-es6");
+import EventEmitter from "event-emitter-es6";
 
 class RippleLink extends EventEmitter
 {
