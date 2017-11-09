@@ -108,7 +108,7 @@ namespace Nibriboard
 			{
 				response.ResponseCode = HttpResponseCode.NotFound;
 				response.ContentType = "text/plain";
-				await response.SetBody($"Can't find expandedFilePath.");
+				await response.SetBody($"Can't find '{expandedFilePath}'.");
 				logRequest(request, response);
 				return;
 			}

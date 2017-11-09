@@ -22,3 +22,9 @@ An infinite whiteboard for recording those big ideas.
  - Future reference: Libraries I am considering
 	 - [Paper.js](http://paperjs.org/) - Client-side rendering
  - [IotWeb](http://sensaura.org/pages/tools/iotweb/) - Underlying HTTP / WebSocket server
+
+
+## Useful Links
+ - MSBuild:
+	 - [`Exec` task](https://docs.microsoft.com/en-gb/visualstudio/msbuild/exec-task)
+	 - [Dynamic wildcarded embedded resources](https://ayende.com/blog/4446/how-to-setup-dynamic-groups-in-msbuild-without-visual-studio-ruining-them)

@@ -48,7 +48,7 @@ namespace Nibriboard
 
 			// HTTP Server setup
 			appServer = new NibriboardApp(new NibriboardAppStartInfo() {
-				FilePrefix = "Nibriboard.ClientFiles",
+				FilePrefix = "Nibriboard.obj.client_dist",
 				ClientSettings = clientSettings,
 				SpaceManager = planeManager
 			}, IPAddress.Any, Port);

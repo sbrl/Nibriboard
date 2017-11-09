@@ -1,5 +1,11 @@
-# Don't include the project of the client's javascript build process
+# Don't include the product of the client's javascript build process
 Nibriboard/ClientFiles/NibriClient.js
+
+# ....or ghostwriter backup files
+*.backup
+
+# ...or saved ripplespaces
+*.zip
 
 # We don't want temporary files created by ...browserify?
 # # I'm not sure where in npm they come from, but we don't want them anyhow :P
