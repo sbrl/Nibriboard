@@ -13,8 +13,7 @@ An infinite whiteboard for recording those big ideas.
  	 - [pan-zoom](https://www.npmjs.com/package/pan-zoom) - Handles panning & zooming delta calculations
      - [keycode](https://www.npmjs.com/package/keycode) - Key code -> key name translation
  	 - [acorn](https://www.npmjs.com/package/acorn) - Syntax checking etc. during `npm build .`
- 	 - [browserify](https://www.npmjs.com/package/browserify) - Building and packing the client-sided js into a single bundle
- 	 - [rollupify](https://www.npmjs.com/package/rollupify) - Adds support for es6 modules to browserify, and removes unused code from the final bundle
+ 	 - [webpack](https://webpack.js.org/) - Building and packing the client-sided js into a single bundle
  - Images:
      - [Transparent Square Tiles](https://www.toptal.com/designers/subtlepatterns/transparent-square-tiles/) from [subtlepatterns.com](https://subtlepatterns.com/)
      - Icons:
