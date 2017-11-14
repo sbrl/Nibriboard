@@ -18,13 +18,17 @@ Nibriboard is a product of an initial idea that I thought I could get done in ab
  - Make debug info hidden by default + toggleable
  - Implement WebSockets gzip support in the [GlidingSquirrel](https://git.starbeamrainbowlabs.com/sbrl/GlidingSquirrel)
 
+
 ## Getting Started
 Nibriboard is _not_ ready for general consumption just yet. It's got no authentication yet for one! If you'd like to play around with it, then you'll need the following:
 
+ - git
  - Node.JS + npm
  - mono if you're on Linux / macOS / etc.
  
-Next, run 
+Once you've verified that you've got the above installed and in your PATH, simply run `msbuild` in the root of this repository to build Nibriboard. Windows users may need to use a _Visual Studio Command Prompt_ if the `msbuild` command isn't in your `PATH` environment variable.
+
+Note that if you're intending to use Nibriboard over the internet or an untrusted network, you should proxy it behind nginx to provide TLS, as Nirbiboard doesn't handle HTTPS on it's own.
 
 
 ## Credits
