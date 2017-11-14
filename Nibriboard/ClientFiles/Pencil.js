@@ -66,7 +66,7 @@ class Pencil
 	setupInterfaceBindings(inInterface)
 	{
 		// Snag the initial colour from the interface
-		this.currentColour = inInterface.currentColour;
+		this.currentColour = inInterface.brushIndicator.colour;
 		// Listen for future colour updates
 		inInterface.on("colourchange", (function(event) {
 		    this.currentColour = event.newColour;
