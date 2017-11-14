@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Nibriboard.RippleSpace;
+using Nibriboard.Utilities;
 using SBRL.Utilities;
 
 namespace Nibriboard.Client
@@ -84,10 +85,19 @@ namespace Nibriboard.Client
 			if(!currentLines.ContainsKey(lineId))
 				throw new KeyNotFoundException("Error: A line with that id wasn't found in this LineIncubator.");
 
-			Log.WriteLine("[LineIncubator] Completing line #{0}", lineId);
+            DrawnLine completedLine = currentLines[lineId];
+            currentLines.Remove(lineId);
 
-			DrawnLine completedLine = currentLines[lineId];
-			currentLines.Remove(lineId);
+            int originalPointCount = completedLine.Points.Count;
+            completedLine.Points = LineSimplifier.SimplifyLine(completedLine.Points, 6);
+
+            Log.WriteLine(
+                "[LineIncubator] [LineComplete] #{0}: {1} -> {2} points ({3:0.00}% reduction)",
+                lineId,
+                originalPointCount,
+                completedLine.Points.Count,
+                ((float)completedLine.Points.Count / (float)originalPointCount) * 100f
+            );
 
 			return completedLine;
 		}

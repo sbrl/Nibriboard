@@ -17,7 +17,7 @@ namespace Nibriboard.RippleSpace
 		/// </summary>
 		Addition,
 		/// <summary>
-		/// Something was deleted form the chunk.
+		/// Something was deleted from the chunk.
 		/// </summary>
 		Deletion,
 		/// <summary>

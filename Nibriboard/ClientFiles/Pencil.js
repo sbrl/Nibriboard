@@ -180,7 +180,7 @@ class Pencil
 	 */
 	recalculateSimplifiedLine()
 	{
-		this.currentSimplifiedLineSegments = simplify_line(this.currentLineSegments);
+		this.currentSimplifiedLineSegments = simplify_line(this.currentLineSegments, 6);
 	}
 	
 	/**
