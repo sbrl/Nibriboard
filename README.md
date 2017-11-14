@@ -1,6 +1,31 @@
 # Nibriboard
 
-An infinite whiteboard for recording those big ideas.
+> An infinite whiteboard for recording those big ideas.
+
+Nibriboard is a product of an initial idea that I thought I could get done in about 3 weeks in February 2017, but 9 months later I'm going strong, but not quite there yet :P
+
+## Features
+ - Infinite whiteboard that can be panned around (limited only by your hard drive space and floating-point number limits)
+ - Real-time multi-user support
+ - User input is simplified to reduce disk space / bandwidth
+
+### Todo
+ - Authentication + user accounts
+ - Multi-whiteboard support (the backend supports it - it's just not exposed correctly yet)
+ - Improve client-side multi-user cursor support (disconnected users' cursors don't disappear correctly)
+ - Improve colour palette
+ - Improve left-hand user interface panel
+ - Make debug info hidden by default + toggleable
+ - Implement WebSockets gzip support in the [GlidingSquirrel](https://git.starbeamrainbowlabs.com/sbrl/GlidingSquirrel)
+
+## Getting Started
+Nibriboard is _not_ ready for general consumption just yet. It's got no authentication yet for one! If you'd like to play around with it, then you'll need the following:
+
+ - Node.JS + npm
+ - mono if you're on Linux / macOS / etc.
+ 
+Next, run 
+
 
 ## Credits
  - Main code - [Starbeamrainbowlabs](https://starbeamrainbowlabs.com/)
