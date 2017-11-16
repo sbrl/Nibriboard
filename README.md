@@ -33,6 +33,7 @@ Note that if you're intending to use Nibriboard over the internet or an untruste
 
 ## Credits
  - Main code - [Starbeamrainbowlabs](https://starbeamrainbowlabs.com/)
+ - HTTP + WebSockets implementation: my library [GlidingSquirrel](https://github.com/sbrl/GlidingSquirrel) (bug reports welcome!)
  - Client-Side Libraries:
  	 - [favicon-notification](https://www.npmjs.com/package/favicon-notification)
  	 - [event-emitter-es6](https://www.npmjs.com/package/event-emitter-es6) - For ES6 class event generation and consumption
