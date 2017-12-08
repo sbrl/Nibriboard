@@ -11,6 +11,7 @@
     "favicon-notification": "^0.1.4",
     "fps-indicator": "^1.0.2",
     "keycode": "^2.1.8",
+    "line-distance-calculator": "0.0.2",
     "pan-zoom": "^2.0.0",
     "visvalingam-simplifier": "^0.1.3"
   },

@@ -45,6 +45,13 @@ class Interface extends EventEmitter
 			}).bind(this, i + 1));
 		}
 		
+		this.boardWindow.keyboard.on(`keydown-ctrl`, (function(event) {
+		    this.setTool("pan");
+		}).bind(this));
+		this.boardWindow.keyboard.on(`keyup-ctrl`, (function(event) {
+		    this.setTool("brush");
+		}).bind(this));
+		
 		this.emit("toolchange", {
 			oldTool: this.currentToolElement.dataset.toolName,
 			newTool: this.currentToolElement.dataset.toolName
@@ -75,6 +82,17 @@ class Interface extends EventEmitter
 		this.brushIndicator.width = parseInt(this.brushWidthElement.value);
 		
 		this.brushWidthElement.addEventListener("input", this.handleBrushWidthChange.bind(this));
+	}
+	
+	/**
+	 * Sets the currently active tool.
+	 * @param {string} newToolName The name of the tool to set to be the currently active one.
+	 */
+	setTool(newToolName)
+	{
+		this.handleSelectTool({
+			currentTarget: this.sidebar.querySelector(`.tools .tool-selector[data-tool-name=${newToolName}]`)
+		});
 	}
 	
 	/**

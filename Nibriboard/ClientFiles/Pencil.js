@@ -84,16 +84,21 @@ class Pencil
 		if(event.target != this.canvas)
 			return;
 		
-		this.pencilDown = true;
+		switch(this.boardWindow.interface.currentTool)
+		{
+			case "brush": // Put the pencil down and start the new line
+				this.pencilDown = true;
+				
+				console.log(`Starting line with id ${this.currentLineId}.`);
+				this.rippleLink.send({
+					Event: "LineStart",
+					LineId: this.currentLineId,
+					LineColour: this.currentColour,
+					LineWidth: this.currentLineWidth
+				});
+				break;
+		}
 		
-		console.log(`Starting line with id ${this.currentLineId}.`);
-		
-		this.rippleLink.send({
-			Event: "LineStart",
-			LineId: this.currentLineId,
-			LineColour: this.currentColour,
-			LineWidth: this.currentLineWidth
-		});
 	}
 	
 	handleMouseMove(event) {
@@ -101,33 +106,42 @@ class Pencil
 		if(event.target != this.canvas)
 			return;
 		
-		// Don't do anything at all if the brush tool isn't selected
-		if(this.boardWindow.interface.currentTool !== "brush")
-			return;
-		
 		// Don't draw anything if the left mouse button isn't down
-		if(!this.mouse.leftDown || !this.pencilDown)
-			return;
-		// Oh and don't bother drawing anything if the control key is held down
-		// either - that indicates that we're in panning mode
-		// todo Create a tools systme where you can select a panning tool
-		// too / instead...?
-		if(this.boardWindow.keyboard.DownKeys.includes(17))
+		if(/*!this.mouse.leftDown || (is this really needed?)*/ !this.pencilDown)
 			return;
 		
-		// The server only supports ints atm, so we have to round here :-(
-		var nextPoint = new Vector(
-			Math.floor((event.clientX / this.boardWindow.viewport.zoomLevel) + this.boardWindow.viewport.x),
-			Math.floor((event.clientY / this.boardWindow.viewport.zoomLevel) + this.boardWindow.viewport.y)
-		);
-		this.unsentSegments.push(nextPoint);
-		this.currentLineSegments.push(nextPoint);
+		switch(this.boardWindow.interface.currentTool)
+		{
+			case "brush":
+				// The server only supports ints atm, so we have to round here :-(
+				// TODO: Lift this limit
+				var nextPoint = new Vector(
+					Math.floor((event.clientX / this.boardWindow.viewport.zoomLevel) + this.boardWindow.viewport.x),
+					Math.floor((event.clientY / this.boardWindow.viewport.zoomLevel) + this.boardWindow.viewport.y)
+				);
+				this.unsentSegments.push(nextPoint);
+				this.currentLineSegments.push(nextPoint);
+				
+				this.recalculateSimplifiedLine();
+				
+				var timeSinceLastPush = new Date() - this.lastServerPush;
+				if(timeSinceLastPush > this.pushDelay)
+				this.sendUnsent();
+				break;
+			
+			case "pan":
+				// handled by BoardWindow.handleCanvasMovement(event)
+				break;
+			
+			case "pointer":
+				// Don't need to do anything here!
+				break;
+			
+			default:
+				console.warn(`Unknown tool ${this.boardWindow.interface.currentTool}.`);
+				break;
+		}
 		
-		this.recalculateSimplifiedLine();
-		
-		var timeSinceLastPush = new Date() - this.lastServerPush;
-		if(timeSinceLastPush > this.pushDelay)
-			this.sendUnsent();
 	}
 	
 	handleMouseUp(event) {
