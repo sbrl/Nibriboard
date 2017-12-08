@@ -3,6 +3,7 @@
 import cuid from "cuid";
 import { simplify_line } from "visvalingam-simplifier";
 
+import ChunkReference from './ChunkReference.js';
 import Vector from './Utilities/Vector';
 import Mouse from './Utilities/Mouse';
 
@@ -127,6 +128,21 @@ class Pencil
 				var timeSinceLastPush = new Date() - this.lastServerPush;
 				if(timeSinceLastPush > this.pushDelay)
 				this.sendUnsent();
+				break;
+			
+			case "eraser":
+				let locRef = this.boardWin.cursorSyncer.absCursorPosition;
+				let hoverChunkRef = new ChunkReference(
+					this.boardWindow.currentPlaneName, 
+					Math.floor((this.boardWindow.viewport.x + this.mouse.position.x) / this.boardWindow.gridSize),
+					Math.floor((this.boardWindow.viewport.y + this.mouse.position.y) / this.boardWindow.gridSize)
+				);
+				
+				let hoverChunk = this.boardWindow.chunkCache.fetchChunk(hoverChunk);
+				if(hoverChunk == null)
+					break; // If it's null, then we haven't received it yet from the server
+				
+				let lineToErase = hoverChunk.getLineUnderPoint()
 				break;
 			
 			case "pan":

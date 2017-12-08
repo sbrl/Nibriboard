@@ -185,7 +185,7 @@ class BoardWindow extends EventEmitter
 		}).bind(this))
 		
 		// Keep the server up to date on our viewport and cursor position
-		this.cursorSyncer = new CursorSyncer(this.rippleLink, this.cursorUpdateFrequency)
+		this.cursorSyncer = new CursorSyncer(this, this.cursorUpdateFrequency)
 		
 		// RippleLink message bindings
 		

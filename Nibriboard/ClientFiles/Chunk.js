@@ -1,5 +1,7 @@
 "use strict";
 
+import { point_line_distance_multi } from 'line-distance-calculator';
+
 /**
  * Represents a single chunk on a plane.
  * Note that this is the client's representation of the chunk, so it's likely
@@ -14,8 +16,11 @@ class Chunk
 	 */
 	constructor(inChunkRef, inSize)
 	{
+		/** @type {ChunkReference} */
 		this.chunkRef = inChunkRef;
+		/** @type {number} */
 		this.size = inSize;
+		/** @type {[ { Points: [Vector], Width: number, Color: string }] */
 		this.lines = [];
 	}
 	
@@ -60,6 +65,23 @@ class Chunk
 			this.size, this.size
 		);
 		return area.overlaps(area);
+	}
+	
+	/**
+	 * Fetches the last line segment that lies underneath the specified point.
+	 * Prefers lines drawn later to lines drawn earlier.
+	 * @param  {Vector} point The point to find the line underneath.
+	 * @return {object|null}       The first line (segment) that lies underneath the specified point, or null if one couldn't be found.
+	 */
+	getLineUnderPoint(point)
+	{
+		// Prefer lines that have been drawn later (i.e. on top)
+		for (let i = this.lines.length - 1; i > 0; i--) {
+			// If our distance to the line is less than half the width (i.e. 
+			// the radius), then we must be inside it
+			if(point_line_distance_multi(point, this.lines[i].Points) <= this.lines[i].Width / 2)
+				return this.lines[i];
+		}
 	}
 	
 	update(dt)
