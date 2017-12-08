@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Text;
 using System.Linq;
 using System.Reflection;
 
@@ -59,6 +58,7 @@ namespace Nibriboard.Client
 			["LineStart"] = typeof(LineStartMessage),
 			["LinePart"] = typeof(LinePartMessage),
 			["LineComplete"] = typeof(LineCompleteMessage),
+			["LineRemove"] = typeof(LineRemoveMessage),
 			["ViewportUpdate"] = typeof(ViewportUpdateMessage)
 		};
 
@@ -189,7 +189,7 @@ namespace Nibriboard.Client
 		#region Message Sending
 
 		/// <summary>
-		/// Sends a <see cref="Nibriboard.Client.Messages.Message"/> to the client.
+		/// Sends a <see cref="Message"/> to the client.
 		/// If you *really* need to send a raw message to the client, you can do so with the SendRawa() method.
 		/// </summary>
 		/// <param name="message">The message to send.</param>
@@ -485,6 +485,19 @@ namespace Nibriboard.Client
 				LineId = line.LineId
 			});
 			await CurrentPlane.AddLine(line);
+		}
+
+		/// <summary>
+		/// Handles messages requesting that a line be removed from a chunk.
+		/// </summary>
+		/// <param name="message">The message to handle.</param>
+		protected async Task handleLineRemoveMessage(LineRemoveMessage message)
+		{
+			bool removeSuccess = await CurrentPlane.RemoveLineSegment(
+				message.ConvertedContainingChunk(CurrentPlane),
+				message.UniqueId
+			);
+			Log.WriteLine("[NibriClient#{1}] " + (removeSuccess ? "Removed" : "Failed to remove") + " line segment with unique id {0} from {1}", message.UniqueId, message.ConvertedContainingChunk(CurrentPlane));
 		}
 
 		#endregion

@@ -137,6 +137,7 @@
 		<Compile Include="Client\Messages\ViewportUpdateMessage.cs" />
 		<Compile Include="NibriboardApp.cs" />
 		<Compile Include="Utilities\LineSimplifier.cs" />
+		<Compile Include="Client\Messages\LineRemoveMessage.cs" />
 	</ItemGroup>
 	<!--
 	<ItemGroup>
@@ -165,12 +166,12 @@
 	
 	<!-- MonoDevelop settings -->
 	<ProjectExtensions>
-		<MonoDevelop>
-			<Properties>
-				<Policies>
-					<DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
-				</Policies>
-			</Properties>
-		</MonoDevelop>
+	  <MonoDevelop>
+	    <Properties>
+	      <Policies>
+	        <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
+	      </Policies>
+	    </Properties>
+	  </MonoDevelop>
 	</ProjectExtensions>
 </Project>

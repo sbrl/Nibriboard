@@ -199,6 +199,15 @@ namespace Nibriboard.RippleSpace
 			OnChunkUpdate(this, new ChunkUpdateEventArgs() { UpdateType = ChunkUpdateType.Addition });
 		}
 
+		/// <summary>
+		/// Removes the line in this chunk with the specified unique id.
+		/// </summary>
+		/// <param name="targetLineUniqueId">The id of the line to remove.</param>
+		public bool Remove(string targetLineUniqueId)
+		{
+			return lines.RemoveAll((line) => line.UniqueId == targetLineUniqueId) > 0;
+		}
+
 		public IEnumerator<DrawnLine> GetEnumerator()
 		{
 			UpdateAccessTime();

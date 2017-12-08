@@ -229,6 +229,12 @@ namespace Nibriboard.RippleSpace
 			}
 		}
 
+		public async Task<bool> RemoveLineSegment(ChunkReference containingChunk, string targetLineUniqueId)
+		{
+			Chunk chunk = await FetchChunk(containingChunk);
+			return chunk.Remove(targetLineUniqueId);
+		}
+
 		public void PerformMaintenance()
 		{
 			// Be lazy and don't bother to perform maintenance if it's not needed
