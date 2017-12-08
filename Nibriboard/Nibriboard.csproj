@@ -58,7 +58,7 @@
 	<Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 	
 	<Target Name="BeforeBuild">
-		<Exec IgnoreExitCode="true" WorkingDirectory="$(SolutionDir)" Command="git submodule update --init" />
+		<Exec IgnoreExitCode="true" WorkingDirectory="$(ProjectDir)" Command="git submodule update --init" />
 		<MakeDir Directories="$(ProjectDir)/obj/client_dist" />
 		
 		<Message Importance="high" Text="------[ Gliding Squirrel ]------" />
@@ -78,9 +78,14 @@
 		<Copy SourceFiles="@(StaticClientFiles)" DestinationFolder="$(ProjectDir)/obj/client_dist/%(RecursiveDir)" />
 		
 		<Message Importance="high" Text="Generating embedded resource directives" />
-		<CreateItem Include="$(ProjectDir)/obj/client_dist/**/*.*">
+		<CreateItem Include="$(ProjectDir)/obj/client_dist/**">
 			<Output ItemName="EmbeddedResource" TaskParameter="Include" />
 		</CreateItem>
+		
+		<!-- todo: try a RemoveDir in a Before/After Clean -->
+		<ItemGroup>
+			<FileWrites Include="$(ProjectDir)/ClientFiles/node_modules/**/*" />
+		</ItemGroup>
 	</Target>
 	
 	
