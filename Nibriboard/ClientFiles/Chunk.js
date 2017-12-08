@@ -76,11 +76,31 @@ class Chunk
 	getLineUnderPoint(point)
 	{
 		// Prefer lines that have been drawn later (i.e. on top)
-		for (let i = this.lines.length - 1; i > 0; i--) {
+		for (let i = this.lines.length - 1; i >= 0; i--) {
 			// If our distance to the line is less than half the width (i.e. 
 			// the radius), then we must be inside it
-			if(point_line_distance_multi(point, this.lines[i].Points) <= this.lines[i].Width / 2)
+			let thisLineDistanceData = point_line_distance_multi(point, this.lines[i].Points);
+			if(thisLineDistanceData[1] <= this.lines[i].Width / 2)
 				return this.lines[i];
+		}
+		return null;
+	}
+	
+	/**
+	 * Removes the line with the specified unique id from this chunk.
+	 * Warning: This is client-side only! The server won't get told about this, 
+	 * and changes will be overwritten by the next chunk update!
+	 * @param	{string}	targetUniqueId	The target unique id of the line to remove.
+	 */
+	removeByUniqueId(targetUniqueId)
+	{
+		// Search for the line with the target unique id
+		for(let i in this.lines) {
+			if(this.lines[i].UniqueId == targetUniqueId) {
+				// Found it! Remove it and return.
+				this.lines.splice(i, 1);
+				break;
+			}
 		}
 	}
 	

@@ -98,6 +98,12 @@ class Pencil
 					LineWidth: this.currentLineWidth
 				});
 				break;
+			
+			case "eraser":
+				// Put the pencil down, but don't tell the server since we're 
+				// not drawing a line
+				this.pencilDown = true;
+				break;
 		}
 		
 	}
@@ -107,13 +113,12 @@ class Pencil
 		if(event.target != this.canvas)
 			return;
 		
-		// Don't draw anything if the left mouse button isn't down
-		if(/*!this.mouse.leftDown || (is this really needed?)*/ !this.pencilDown)
-			return;
-		
 		switch(this.boardWindow.interface.currentTool)
 		{
 			case "brush":
+				if(!this.pencilDown)
+					return; // Don't draw anything if the left mouse button isn't down
+					
 				// The server only supports ints atm, so we have to round here :-(
 				// TODO: Lift this limit
 				var nextPoint = new Vector(
@@ -131,18 +136,39 @@ class Pencil
 				break;
 			
 			case "eraser":
-				let locRef = this.boardWin.cursorSyncer.absCursorPosition;
+				if(!this.pencilDown)
+					return; // Only erase when the pencil is down
+				
+				let locRef = this.boardWindow.cursorSyncer.absCursorPosition;
 				let hoverChunkRef = new ChunkReference(
 					this.boardWindow.currentPlaneName, 
-					Math.floor((this.boardWindow.viewport.x + this.mouse.position.x) / this.boardWindow.gridSize),
-					Math.floor((this.boardWindow.viewport.y + this.mouse.position.y) / this.boardWindow.gridSize)
+					Math.floor(locRef.x / this.boardWindow.gridSize),
+					Math.floor(locRef.y / this.boardWindow.gridSize)
 				);
 				
-				let hoverChunk = this.boardWindow.chunkCache.fetchChunk(hoverChunk);
-				if(hoverChunk == null)
+				let hoverChunk = this.boardWindow.chunkCache.fetchChunk(hoverChunkRef);
+				if(hoverChunk == null) {
+					console.warn(`Can't erase on chunk ${hoverChunkRef} as it's currently not loaded.`);
 					break; // If it's null, then we haven't received it yet from the server
+				}
 				
-				let lineToErase = hoverChunk.getLineUnderPoint()
+				let lineToErase = hoverChunk.getLineUnderPoint(locRef);
+				if(lineToErase == null) {
+					console.debug(`No line found at abs ${locRef}.`);
+					break; // There's no line underneath the cursor atm
+				}
+				
+				console.info(`[pencil] Erasing line with unique id ${lineToErase.UniqueId} from ${hoverChunkRef}.`);
+				
+				// Ask the server politely to remove the line
+				this.rippleLink.send({
+					Event: "LineRemove",
+					ContainingChunk: hoverChunkRef,
+					UniqueId: lineToErase.UniqueId
+				});
+				
+				// Remove the line ourselves too to make the interface update faster
+				hoverChunk.removeByUniqueId(lineToErase.UniqueId);
 				break;
 			
 			case "pan":
@@ -161,27 +187,36 @@ class Pencil
 	}
 	
 	handleMouseUp(event) {
-		// Don't do anything at all if the brush tool isn't selected
-		if(this.boardWindow.interface.currentTool !== "brush")
-			return;
 		// Ignore it if the ctrl key is held down - see above
 		if(this.boardWindow.keyboard.DownKeys.includes(17))
 			return;
 		
-		this.sendUnsent();
-		// Tell the server that the line is complete
-		this.rippleLink.send({
-			Event: "LineComplete",
-			LineId: this.currentLineId
-		});
-		
-		this.pencilDown = false;
-		
-		// Reset the current line segments
-		this.currentLineSegments = [];
-		this.currentSimplifiedLineSegments = [];
-		// Regenerate the line id
-		this.currentLineId = cuid();
+		switch(this.boardWindow.interface.currentTool)
+		{
+			case "brush":
+				
+				this.sendUnsent();
+				// Tell the server that the line is complete
+				this.rippleLink.send({
+					Event: "LineComplete",
+					LineId: this.currentLineId
+				});
+				
+				this.pencilDown = false;
+				
+				// Reset the current line segments
+				this.currentLineSegments = [];
+				this.currentSimplifiedLineSegments = [];
+				// Regenerate the line id
+				this.currentLineId = cuid();
+				
+				break;
+			
+			case "eraser":
+				this.pencilDown = false;
+				
+				break;
+		}
 	}
 	
 	/**
