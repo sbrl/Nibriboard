@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+################################################################################
+################################### Settings ###################################
+################################################################################
+
+# The port the nibriboard command server is listening on
+port=31587;
+
+################################################################################
+
+command="$@";
+
+if [[ "${command}" == "" ]]; then
+	command="help";
+fi
+
+echo "${command}" | nc ::1 $port;
+exit_code=$?;
+
+if [[ "${exit_code}" -ne "0" ]]; then
+	echo -e "nibriboardctl: Can't contact the command server at [::1]:$port";
+	exit ${exit_code};
+fi
