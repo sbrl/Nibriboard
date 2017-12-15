@@ -343,8 +343,8 @@ namespace Nibriboard.Client
 			List<ChunkReference> initialChunks = new List<ChunkReference>();
 			ChunkReference currentChunkRef = new ChunkReference(
 				CurrentPlane,
-				CurrentViewPort.X / CurrentPlane.ChunkSize,
-				CurrentViewPort.Y / CurrentPlane.ChunkSize
+				(int)Math.Floor(CurrentViewPort.X / CurrentPlane.ChunkSize),
+				(int)Math.Floor(CurrentViewPort.Y / CurrentPlane.ChunkSize)
 			);
 			while(CanSee(currentChunkRef))
 			{
@@ -354,7 +354,7 @@ namespace Nibriboard.Client
 					currentChunkRef = currentChunkRef.Clone() as ChunkReference;
 					currentChunkRef.X++;
 				}
-				currentChunkRef.X = CurrentViewPort.X;
+				currentChunkRef.X = (int)Math.Floor(CurrentViewPort.X / CurrentPlane.ChunkSize);
 				currentChunkRef.Y++;
 			}
 

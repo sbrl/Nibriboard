@@ -13,7 +13,7 @@ namespace Nibriboard.RippleSpace
 	/// and obtained (A <see cref="NibriboardServer.RippleSpace.LocationReference" />
 	/// is returned).
 	/// </remarks>
-	public class ChunkReference : Reference
+	public class ChunkReference : Reference<int>
 	{
 		public ChunkReference(Plane inPlane, int inX, int inY) : base(inPlane, inX, inY)
 		{

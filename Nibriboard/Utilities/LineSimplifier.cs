@@ -16,12 +16,12 @@ namespace Nibriboard.Utilities
 
 			while(true)
 			{
-				float smallestArea = float.MaxValue;
+				double smallestArea = float.MaxValue;
 				int smallestAreaI = 1;
 
 				for(int i = 1; i < points.Count - 1; i++)
 				{
-					float nextArea = TriangleArea(points[i - 1], points[i], points[i + 1]);
+					double nextArea = TriangleArea(points[i - 1], points[i], points[i + 1]);
 					if(nextArea < smallestArea) {
 						smallestArea = nextArea;
 						smallestAreaI = i;
@@ -39,7 +39,7 @@ namespace Nibriboard.Utilities
 			return points;
 		}
 
-		public static float TriangleArea(LocationReference a, LocationReference b, LocationReference c)
+		public static double TriangleArea(LocationReference a, LocationReference b, LocationReference c)
 		{
 			return Math.Abs(
 				(

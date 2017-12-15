@@ -25,20 +25,20 @@ namespace SBRL.Utilities
 		/// <summary>
 		/// The X coordinate of the rectangle.
 		/// </summary>
-		public int X { get; set; }
+		public double X { get; set; }
 		/// <summary>
 		/// The Ycoordinateof the rectangle.
 		/// </summary>
 		/// <value>The y.</value>
-		public int Y { get; set; }
+		public double Y { get; set; }
 		/// <summary>
 		/// The width of the rectangle.
 		/// </summary>
-		public int Width { get; set; }
+		public double Width { get; set; }
 		/// <summary>
 		/// The height of the rectangle.
 		/// </summary>
-		public int Height { get; set; }
+		public double Height { get; set; }
 		#endregion
 
 		#region Corners
@@ -85,7 +85,7 @@ namespace SBRL.Utilities
 		/// The Y coordinate of the top of the rectangle.
 		/// </summary>
 		[JsonIgnore]
-		public int Top {
+		public double Top {
 			get {
 				return Y;
 			}
@@ -97,7 +97,7 @@ namespace SBRL.Utilities
 		/// The Y coordinate of the bottom of the rectangle.
 		/// </summary>
 		[JsonIgnore]
-		public int Bottom {
+		public double Bottom {
 			get {
 				return Y + Height;
 			}
@@ -109,7 +109,7 @@ namespace SBRL.Utilities
 		/// The X coordinate of the left side of the rectangle.
 		/// </summary>
 		[JsonIgnore]
-		public int Left {
+		public double Left {
 			get {
 				return X;
 			}
@@ -121,7 +121,7 @@ namespace SBRL.Utilities
 		/// The X coordinate of the right side of the rectangle.
 		/// </summary>
 		[JsonIgnore]
-		public int Right {
+		public double Right {
 			get {
 				return X + Width;
 			}
@@ -131,7 +131,7 @@ namespace SBRL.Utilities
 		}
 		#endregion
 
-		public Rectangle(int x, int y, int width, int height)
+		public Rectangle(double x, double y, double width, double height)
 		{
 			X = x;
 			Y = y;

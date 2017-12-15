@@ -8,7 +8,7 @@ namespace Nibriboard.RippleSpace
 	/// An abstract class representing a coordinate reference to a location.
 	/// </summary>
 	[JsonObject(MemberSerialization.OptIn)]
-	public abstract class Reference : ICloneable
+	public abstract class Reference<T> : ICloneable
 	{
 		public Plane Plane { get; set; }
 
@@ -27,14 +27,14 @@ namespace Nibriboard.RippleSpace
         /// The x position of this reference.
         /// </summary>
         [JsonProperty]
-		public int X { get; set; }
+		public T X { get; set; }
         /// <summary>
         /// The y position of this reference.
         /// </summary>
 		[JsonProperty]
-		public int Y { get; set; }
+		public T Y { get; set; }
 
-		public Reference(Plane inPlane, int inX, int inY)
+		public Reference(Plane inPlane, T inX, T inY)
 		{
 			Plane = inPlane;
 			X = inX; Y = inY;
@@ -43,8 +43,8 @@ namespace Nibriboard.RippleSpace
 		/// Creates a new blank <see cref="Nibriboard.RippleSpace.Reference" />.
 		/// Don't use this yourself! This is only for Newtonsoft.Json to use when deserialising references.
 		/// </summary>
-		public Reference()
-		{
+		public Reference() {
+
 
 		}
 

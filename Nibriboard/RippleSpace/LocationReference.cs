@@ -7,7 +7,7 @@ namespace Nibriboard.RippleSpace
 	/// <summary>
 	/// Represents a location in absolute plane-space.
 	/// </summary>
-	public class LocationReference : Reference
+	public class LocationReference : Reference<double>
 	{
 		/// <summary>
 		/// The chunk that this location reference fall inside.
@@ -19,12 +19,12 @@ namespace Nibriboard.RippleSpace
 				
 				return new ChunkReference(
 					Plane,
-					X / Plane.ChunkSize,
-					Y / Plane.ChunkSize
+					(int)Math.Floor(X / Plane.ChunkSize),
+					(int)Math.Floor(Y / Plane.ChunkSize)
 				);
 			}
 		}
-		public LocationReference(Plane inPlane, int inX, int inY) : base(inPlane, inX, inY)
+		public LocationReference(Plane inPlane, double inX, double inY) : base(inPlane, inX, inY)
 		{
 			
 		}

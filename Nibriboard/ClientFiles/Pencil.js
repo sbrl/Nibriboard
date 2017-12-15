@@ -119,11 +119,9 @@ class Pencil
 				if(!this.pencilDown)
 					return; // Don't draw anything if the left mouse button isn't down
 					
-				// The server only supports ints atm, so we have to round here :-(
-				// TODO: Lift this limit
 				var nextPoint = new Vector(
-					Math.floor((event.clientX / this.boardWindow.viewport.zoomLevel) + this.boardWindow.viewport.x),
-					Math.floor((event.clientY / this.boardWindow.viewport.zoomLevel) + this.boardWindow.viewport.y)
+					(event.clientX / this.boardWindow.viewport.zoomLevel) + this.boardWindow.viewport.x,
+					(event.clientY / this.boardWindow.viewport.zoomLevel) + this.boardWindow.viewport.y
 				);
 				this.unsentSegments.push(nextPoint);
 				this.currentLineSegments.push(nextPoint);

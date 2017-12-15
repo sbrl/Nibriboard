@@ -3,7 +3,7 @@
 namespace SBRL.Utilities
 {
 	/// <summary>
-	/// Represents a single point in 2D space.
+	/// Represents a single podouble in 2D space.
 	/// May also be used to represent a direction with a magnitude.
 	/// </summary>
 	/// <version>v0.1</version>
@@ -21,14 +21,14 @@ namespace SBRL.Utilities
 		/// <summary>
 		/// The X coordinate.
 		/// </summary>
-		public int X { get; set; }
+		public double X { get; set; }
 		/// <summary>
 		/// The Y coordinate.
 		/// </summary>
-		public int Y { get; set; }
+		public double Y { get; set; }
 
 
-		public Vector2(int x, int y)
+		public Vector2(double x, double y)
 		{
 			X = x;
 			Y = y;
@@ -49,14 +49,14 @@ namespace SBRL.Utilities
 				Y - b.X
 			);
 		}
-		public Vector2 Divide(int b)
+		public Vector2 Divide(double b)
 		{
 			return new Vector2(
 				X / b,
 				Y / b
 			);
 		}
-		public Vector2 Multiply(int b)
+		public Vector2 Multiply(double b)
 		{
 			return new Vector2(
 				X * b,
