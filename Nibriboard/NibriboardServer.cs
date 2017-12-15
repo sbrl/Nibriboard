@@ -90,16 +90,28 @@ namespace Nibriboard
 					switch(commandParts[0].Trim())
 					{
 						case "help":
-							await destination.WriteLineAsync("NibriboardServer Command Console");
-							await destination.WriteLineAsync("================================");
+							await destination.WriteLineAsync("Nibriboard Server Command Console");
+							await destination.WriteLineAsync("=================================");
 							await destination.WriteLineAsync("Available commands:");
 							await destination.WriteLineAsync("    help     Show this message");
 							await destination.WriteLineAsync("    save     Save the ripplespace to disk");
+							await destination.WriteLineAsync("    planes   List all the currently loaded planes");
 							break;
 						case "save":
 							await destination.WriteAsync("Saving ripple space - ");
 							await planeManager.Save();
 							await destination.WriteLineAsync("done.");
+							break;
+						case "planes":
+							await destination.WriteLineAsync("Planes:");
+							foreach(Plane plane in planeManager.Planes)
+								await destination.WriteLineAsync($"\t{plane.Name}");
+							await destination.WriteLineAsync();
+							await destination.WriteLineAsync($"Total {planeManager.Planes.Count}");
+							break;
+
+						default:
+							await destination.WriteLineAsync($"Error: Unrecognised command {commandParts[0].Trim()}");
 							break;
 					}
 				}
