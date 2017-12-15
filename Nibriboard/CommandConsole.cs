@@ -61,9 +61,9 @@ namespace Nibriboard
 					await destination.WriteLineAsync("Nibriboard Server Command Console");
 					await destination.WriteLineAsync("=================================");
 					await destination.WriteLineAsync("Available commands:");
-					await destination.WriteLineAsync("    help     Show this message");
-					await destination.WriteLineAsync("    save     Save the ripplespace to disk");
-					await destination.WriteLineAsync("    planes   List all the currently loaded planes");
+					await destination.WriteLineAsync("    help         Show this message");
+					await destination.WriteLineAsync("    save         Save the ripplespace to disk");
+					await destination.WriteLineAsync("    plane list   List all the currently loaded planes");
 					break;
 				case "save":
 					await destination.WriteAsync("Saving ripple space - ");
@@ -71,12 +71,25 @@ namespace Nibriboard
 					await destination.WriteLineAsync("done.");
 					await destination.WriteLineAsync($"Save is now {BytesToString(server.PlaneManager.LastSaveFileSize)} in size.");
 					break;
-				case "planes":
-					await destination.WriteLineAsync("Planes:");
-					foreach(Plane plane in server.PlaneManager.Planes)
-						await destination.WriteLineAsync($"    {plane.Name} @ {plane.ChunkSize} ({plane.LoadedChunks} / ~{plane.SoftLoadedChunkLimit} chunks loaded, {plane.UnloadableChunks} inactive)");
-					await destination.WriteLineAsync();
-					await destination.WriteLineAsync($"Total {server.PlaneManager.Planes.Count}");
+				case "plane":
+					if(commandParts.Length < 2) {
+						await destination.WriteLineAsync("Error: No sub-action specified.");
+						break;
+					}
+					string subAction = commandParts[1].Trim();
+					switch(subAction)
+					{
+						case "list":
+							await destination.WriteLineAsync("Planes:");
+							foreach(Plane plane in server.PlaneManager.Planes)
+								await destination.WriteLineAsync($"    {plane.Name} @ {plane.ChunkSize} ({plane.LoadedChunks} / ~{plane.SoftLoadedChunkLimit} chunks loaded, {plane.UnloadableChunks} inactive)");
+							await destination.WriteLineAsync();
+							await destination.WriteLineAsync($"Total {server.PlaneManager.Planes.Count}");
+							break;
+						default:
+							await destination.WriteLineAsync($"Error: Unknown sub-action {subAction}.");
+							break;
+					}
 					break;
 
 				default:
