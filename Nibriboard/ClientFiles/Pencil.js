@@ -139,12 +139,8 @@ class Pencil
 				if(!this.pencilDown)
 					return; // Only erase when the pencil is down
 				
-				let locRef = this.boardWindow.cursorSyncer.absCursorPosition;
-				let hoverChunkRef = new ChunkReference(
-					this.boardWindow.currentPlaneName, 
-					Math.floor(locRef.x / this.boardWindow.gridSize),
-					Math.floor(locRef.y / this.boardWindow.gridSize)
-				);
+				let cursorPos = this.boardWindow.cursorSyncer.absCursorPosition;
+				let hoverChunkRef = this.boardWindow.cursorSyncer.chunkRefUnderCursor;
 				
 				let hoverChunk = this.boardWindow.chunkCache.fetchChunk(hoverChunkRef);
 				if(hoverChunk == null) {
@@ -152,7 +148,7 @@ class Pencil
 					break; // If it's null, then we haven't received it yet from the server
 				}
 				
-				let lineToErase = hoverChunk.getLineUnderPoint(locRef);
+				let lineToErase = hoverChunk.getLineUnderPoint(cursorPos);
 				if(lineToErase == null) {
 					console.debug(`No line found at abs ${locRef}.`);
 					break; // There's no line underneath the cursor atm

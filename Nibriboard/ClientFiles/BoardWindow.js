@@ -96,6 +96,9 @@ class BoardWindow extends EventEmitter
 		    this.displayGrid = this.displayGrid ? false : true;
 			console.info(`[BoardWindow/KeyboardHandler] Grid display set to ${this.displayGrid ? "on" : "off"}`);
 		}).bind(this));
+		this.keyboard.on("keyup-x", (function(event) {
+			console.debug("Chunk Cache: ", this.chunkCache.cache);
+		}).bind(this));
 		this.keyboard.on("keyup-left", (function(event) {
 		    this.interface.seekColour("backwards");
 		}).bind(this));

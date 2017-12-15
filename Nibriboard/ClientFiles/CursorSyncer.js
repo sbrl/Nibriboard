@@ -2,6 +2,8 @@
 
 import Vector from './Utilities/Vector.js';
 
+import ChunkReference from './ChunkReference.js';
+
 class CursorSyncer
 {
 	constructor(inBoardWindow, syncFrequency)
@@ -22,6 +24,15 @@ class CursorSyncer
 		this.absCursorPosition = new Vector(0, 0);
 	}
 	
+	get chunkRefUnderCursor()
+	{
+		return new ChunkReference(
+			this.boardWindow.currentPlaneName, 
+			Math.floor(locRef.x / this.boardWindow.gridSize),
+			Math.floor(locRef.y / this.boardWindow.gridSize)
+		);
+	}
+	
 	setup()
 	{
 		// The last time we sent a cursor update to the server.
@@ -31,8 +42,8 @@ class CursorSyncer
 			this.cursorPosition.x = event.clientX;
 			this.cursorPosition.y = event.clientY;
 			
-			this.absCursorPosition.x = this.boardWindow.viewport.x + this.cursorPosition.x;
-			this.absCursorPosition.y = this.boardWindow.viewport.y + this.cursorPosition.y;
+			this.absCursorPosition.x = this.boardWindow.viewport.x + this.cursorPosition.x * 1/this.boardWindow.viewport.zoomLevel;
+			this.absCursorPosition.y = this.boardWindow.viewport.y + this.cursorPosition.y * 1/this.boardWindow.viewport.zoomLevel;
 			
 			setTimeout((function() {
 			    // Throttle the cursor updates we send to the server - a high

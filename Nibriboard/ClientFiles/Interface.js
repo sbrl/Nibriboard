@@ -219,8 +219,10 @@ class Interface extends EventEmitter
 	
 	updateDebugInfo(dt)
 	{
-		this.debugDisplay.querySelector("#debug-framespacing").value = `${dt}ms`;
 		this.debugDisplay.querySelector("#debug-viewport").value = this.boardWindow.viewport;
+		if(typeof this.boardWindow.cursorSyncer != "undefined")
+			this.debugDisplay.querySelector("#debug-cursor").value = `${this.boardWindow.cursorSyncer.cursorPosition} -> ${this.boardWindow.cursorSyncer.absCursorPosition}`;
+		this.debugDisplay.querySelector("#debug-framespacing").value = `${dt}ms`;
 	}
 }
 

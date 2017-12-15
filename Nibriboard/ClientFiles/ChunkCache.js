@@ -21,14 +21,22 @@ class ChunkCache
 	/**
 	 * Fetches the chunk with the specified chunk reference.
 	 * @param	{ChunkReference}	chunkRef	The chunk reference of the chunk to fetch.
+	 * @param	{bool}				quiet		Whether to be quiet if the chunk wasn't found.
 	 * @return	{Chunk|null}					The requested chunk, or null if it isn't present in the cache.
 	 */
-	fetchChunk(chunkRef)
+	fetchChunk(chunkRef, quiet)
 	{
+		// Return null if we don't currently have that chunk in storage
 		if(!this.cache.has(chunkRef.toString()))
 			return null;
 		
-		return this.cache.get(chunkRef.toString());
+		let requestedChunk = this.cache.get(chunkRef.toString());
+		if(!(requestedChunk instanceof Chunk)) {
+			if(!quiet)
+				console.warn(`Attempt to access a chunk at ${chunkRef} that's not loaded yet.`);
+			return null;
+		}
+		return requestedChunk;
 	}
 	
 	/**
@@ -71,7 +79,7 @@ class ChunkCache
 	add(chunkData, override = false)
 	{
 		var hasChunk = this.cache.has(chunkData.chunkRef.toString()) &&
-			this.cache.get(chunkData.chunkRef.toString()).requestedFromServer;
+			this.cache.get(chunkData.chunkRef.toString()) instanceof Chunk;
 		
 		if(!override && hasChunk)
 			throw new Error("Error: We already have a chunk at that location stored.");
@@ -81,6 +89,11 @@ class ChunkCache
 		return !hasChunk;
 	}
 	
+	/**
+	 * Updates the chunk cache ready for the next frame.
+	 * @param	{number}			dt			The amount of time, in milliseconds, since that last frame was rendered.
+	 * @param	{viewport_object}	visibleArea	The area that's currently visible on-screen.
+	 */
 	update(dt, visibleArea)
 	{
 		let chunkSize = this.boardWindow.gridSize;
@@ -140,8 +153,8 @@ class ChunkCache
 					cx / chunkSize, cy / chunkSize
 				);
 				
-				let chunk = this.cache.get(cChunk.toString());
-				if(typeof chunk != "undefined" && !chunk.requestedFromServer)
+				let chunk = this.fetchChunk(cChunk, true);
+				if(chunk != null)
 					chunk.render(canvas, context, this, chunkArea);
 				
 				if(this.showRenderedChunks) {
