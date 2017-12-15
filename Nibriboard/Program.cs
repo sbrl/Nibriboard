@@ -10,12 +10,6 @@ namespace Nibriboard
 	{
 		public static void Main(string[] args)
 		{
-			Plane testPlane = new Plane(new PlaneInfo("test-plane", 512), ".");
-			LocationReference testReference = new LocationReference(testPlane, -300, -250);
-			Console.WriteLine(testReference);
-			Console.WriteLine(testReference.ContainingChunk);
-			return;
-
 			string packedRippleSpaceFile = "./default.ripplespace.zip";
 
 			for(int i = 0; i < args.Length; i++)
