@@ -28,8 +28,8 @@ class CursorSyncer
 	{
 		return new ChunkReference(
 			this.boardWindow.currentPlaneName, 
-			Math.floor(locRef.x / this.boardWindow.gridSize),
-			Math.floor(locRef.y / this.boardWindow.gridSize)
+			Math.floor(this.absCursorPosition.x / this.boardWindow.gridSize),
+			Math.floor(this.absCursorPosition.y / this.boardWindow.gridSize)
 		);
 	}
 	

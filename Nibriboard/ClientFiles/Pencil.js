@@ -150,7 +150,7 @@ class Pencil
 				
 				let lineToErase = hoverChunk.getLineUnderPoint(cursorPos);
 				if(lineToErase == null) {
-					console.debug(`No line found at abs ${locRef}.`);
+					console.debug(`No line found at abs ${cursorPos}.`);
 					break; // There's no line underneath the cursor atm
 				}
 				
