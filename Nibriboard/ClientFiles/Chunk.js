@@ -79,6 +79,11 @@ class Chunk
 		for (let i = this.lines.length - 1; i >= 0; i--) {
 			// If our distance to the line is less than half the width (i.e. 
 			// the radius), then we must be inside it
+			
+			// Skip lines with less than 2 points
+			// TODO: Handle these separately
+			if(this.lines[i].Points.length < 2)
+				continue;
 			let thisLineDistanceData = point_line_distance_multi(point, this.lines[i].Points);
 			if(thisLineDistanceData[1] <= this.lines[i].Width / 2)
 				return this.lines[i];
