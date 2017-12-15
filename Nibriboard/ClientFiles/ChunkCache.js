@@ -70,6 +70,14 @@ class ChunkCache
 		return lineFragments;
 	}
 	
+	clearRequestedChunks()
+	{
+		for(let [chunkRefStr, chunk] of this.cache.entries()) {
+			if(!(chunk instanceof Chunk))
+				this.cache.delete(chunkRefStr);
+		}
+	}
+	
 	/**
 	 * Adds the given chunk to the chunk cache.
 	 * @param	{Chunk}	chunkData	The chunk to add to the cache.
