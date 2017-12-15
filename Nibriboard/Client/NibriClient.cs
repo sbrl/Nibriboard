@@ -366,18 +366,10 @@ namespace Nibriboard.Client
 		/// <param name="message">The message to process.</param>
 		protected async Task handleChunkUpdateRequestMessage(ChunkUpdateRequestMessage message)
 		{
-			chunkCache.Remove(message.ForgottenChunksAsReferences(this.CurrentPlane));
+			List<ChunkReference> requestedChunkRefs = message.ForgottenChunksAsReferences(this.CurrentPlane);
+			chunkCache.Remove(requestedChunkRefs);
 
-			ChunkUpdateMessage response = new ChunkUpdateMessage();
-			List<ChunkReference> missingChunks = ChunkTools.GetContainingChunkReferences(CurrentPlane, CurrentViewPort);
-			missingChunks = chunkCache.FindMissing(missingChunks);
-
-			await SendChunks(missingChunks);
-			/*response.Chunks = await CurrentPlane.FetchChunks(missingChunks);
-			Console.WriteLine(JsonConvert.SerializeObject(response));
-			Send(response);*/
-
-			chunkCache.Add(missingChunks);
+			await SendChunks(requestedChunkRefs);
 		}
 
 		/// <summary>
@@ -552,6 +544,14 @@ namespace Nibriboard.Client
 										  "Try joining a plane and sending that request again."));
 				return;
 			}
+
+			if(chunkRefs.Count() == 0) {
+				Log.WriteLine("[NibriClient#{0}/SendChunks] Can't send 0 chunks!", Id);
+				return;
+			}
+
+			// Keep track of the fact that we've sent the client a bunch of chunks
+			chunkCache.Add(chunkRefs);
 
 			ChunkUpdateMessage updateMessage = new ChunkUpdateMessage();
 			foreach(ChunkReference chunkRef in chunkRefs)
