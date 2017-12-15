@@ -41,6 +41,20 @@ namespace Nibriboard.RippleSpace
 
 		public int DefaultChunkSize { get; set; } = 512;
 
+		/// <summary>
+		/// The size of the last save, in bytes.
+		/// Returns 0 if this RippleSpace hasn't been saved yet.
+		/// </summary>
+		/// <value>The last size of the save file.</value>
+		public long LastSaveFileSize {
+			get {
+				if(!File.Exists(SourceFilename))
+					return 0;
+				
+				return (new FileInfo(SourceFilename)).Length;
+			}
+		}
+
 		public RippleSpaceManager()
 		{
 			// Create a temporary directory in which to store our unpacked planes

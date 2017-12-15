@@ -143,6 +143,7 @@
 		<Compile Include="NibriboardApp.cs" />
 		<Compile Include="Utilities\LineSimplifier.cs" />
 		<Compile Include="Client\Messages\LineRemoveMessage.cs" />
+		<Compile Include="CommandConsole.cs" />
 	</ItemGroup>
 	<!--
 	<ItemGroup>
