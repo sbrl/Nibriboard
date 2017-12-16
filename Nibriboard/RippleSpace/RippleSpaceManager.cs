@@ -131,7 +131,6 @@ namespace Nibriboard.RippleSpace
 
 				await Task.Delay(MaintenanceInternal);
 			}
-
 		}
 
 		public async Task Save()

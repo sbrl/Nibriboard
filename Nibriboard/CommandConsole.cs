@@ -64,6 +64,7 @@ namespace Nibriboard
 					await destination.WriteLineAsync("    help         Show this message");
 					await destination.WriteLineAsync("    save         Save the ripplespace to disk");
 					await destination.WriteLineAsync("    plane list   List all the currently loaded planes");
+					await destination.WriteLineAsync("    plane create {new-plane-name} [{chunkSize}]   Create a new named plane, optionally with the specified chunk size.");
 					break;
 				case "save":
 					await destination.WriteAsync("Saving ripple space - ");
@@ -85,6 +86,24 @@ namespace Nibriboard
 								await destination.WriteLineAsync($"    {plane.Name} @ {plane.ChunkSize} ({plane.LoadedChunks} / ~{plane.SoftLoadedChunkLimit} chunks loaded, {plane.UnloadableChunks} inactive)");
 							await destination.WriteLineAsync();
 							await destination.WriteLineAsync($"Total {server.PlaneManager.Planes.Count}");
+							break;
+						case "create":
+							if(commandParts.Length < 3) {
+								await destination.WriteLineAsync("Error: No name specified for the new plane!");
+								return;
+							}
+							string newPlaneName = commandParts[2].Trim();
+							int chunkSize = server.PlaneManager.DefaultChunkSize;
+							if(commandParts.Length >= 4)
+								chunkSize = int.Parse(commandParts[3]);
+							
+							server.PlaneManager.CreatePlane(new PlaneInfo(
+								newPlaneName,
+								chunkSize
+							));
+
+							await destination.WriteLineAsync($"Created plane with name {newPlaneName} and chunk size {chunkSize}.");
+
 							break;
 						default:
 							await destination.WriteLineAsync($"Error: Unknown sub-action {subAction}.");
