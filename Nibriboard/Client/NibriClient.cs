@@ -10,6 +10,7 @@ using Nibriboard.Client.Messages;
 using Nibriboard.RippleSpace;
 
 using SBRL.GlidingSquirrel.Websocket;
+using System.Net;
 
 namespace Nibriboard.Client
 {
@@ -68,6 +69,11 @@ namespace Nibriboard.Client
 		public bool Connected {
 			get {
 				return !connection.IsClosing;
+			}
+		}
+		public IPEndPoint RemoteEndpoint {
+			get {
+				return connection.RemoteEndpoint;
 			}
 		}
 		/// <summary>

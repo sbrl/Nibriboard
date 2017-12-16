@@ -174,6 +174,11 @@ namespace SBRL.Utilities
 
 			return result;
 		}
+
+		public override string ToString()
+		{
+			return string.Format($"{Width}x{Height} @ ({X}, {Y})");
+		}
 	}
 }
 

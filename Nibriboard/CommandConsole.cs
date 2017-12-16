@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using Nibriboard.Client;
 using Nibriboard.RippleSpace;
 
 namespace Nibriboard
@@ -64,8 +65,9 @@ namespace Nibriboard
 					await destination.WriteLineAsync("    help                        Show this message");
 					await destination.WriteLineAsync("    save                        Save the ripplespace to disk");
 					await destination.WriteLineAsync("    plane list                  List all the currently loaded planes");
-					await destination.WriteLineAsync("    plane create {new-plane-name} [{chunkSize}]   Create a new named plane, optionally with the specified chunk size.");
-					await destination.WriteLineAsync("    plane status {plane-name}   Show the statistics of the current plane.");
+					await destination.WriteLineAsync("    plane create {new-plane-name} [{chunkSize}]   Create a new named plane, optionally with the specified chunk size");
+					await destination.WriteLineAsync("    plane status {plane-name}   Show the statistics of the specified plane");
+					await destination.WriteLineAsync("    clients                     List the currently connected clients");
 					break;
 				case "save":
 					await destination.WriteAsync("Saving ripple space - ");
@@ -133,6 +135,16 @@ namespace Nibriboard
 							await destination.WriteLineAsync($"Error: Unknown sub-action {subAction}.");
 							break;
 					}
+					break;
+
+				case "clients":
+
+					foreach(NibriClient client in server.AppServer.NibriClients) {
+						await destination.WriteLineAsync($"{client.Id}: {client.Name} from {client.RemoteEndpoint}, on {client.CurrentPlane.Name} looking at {client.CurrentViewPort}");
+					}
+					await destination.WriteLineAsync();
+					await destination.WriteLineAsync($"Total {server.AppServer.ClientCount} clients");
+
 					break;
 
 				/*case "chunk":

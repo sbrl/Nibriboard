@@ -18,14 +18,15 @@ namespace Nibriboard
 	/// </summary>
 	public class NibriboardServer
 	{
-		private CommandConsole commandServer;
-		private NibriboardApp appServer;
-
 		private ClientSettings clientSettings;
-		public RippleSpaceManager PlaneManager;
+
+		private CommandConsole commandServer;
 
 		public readonly int CommandPort = 31587;
 		public readonly int Port = 31586;
+
+		public RippleSpaceManager PlaneManager;
+		public NibriboardApp AppServer;
 
 		public NibriboardServer(string pathToRippleSpace, int inPort = 31586)
 		{
@@ -50,7 +51,7 @@ namespace Nibriboard
 			};
 
 			// HTTP Server setup
-			appServer = new NibriboardApp(new NibriboardAppStartInfo() {
+			AppServer = new NibriboardApp(new NibriboardAppStartInfo() {
 				FilePrefix = "Nibriboard.obj.client_dist",
 				ClientSettings = clientSettings,
 				SpaceManager = PlaneManager
@@ -62,7 +63,7 @@ namespace Nibriboard
 
 		public async Task Start()
 		{
-			await appServer.Start();
+			await AppServer.Start();
 			Log.WriteLine("[NibriboardServer] Started on port {0}", Port);
 
 			await PlaneManager.StartMaintenanceMonkey();
