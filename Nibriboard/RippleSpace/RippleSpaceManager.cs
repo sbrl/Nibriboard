@@ -116,6 +116,15 @@ namespace Nibriboard.RippleSpace
 			return newPlane;
 		}
 
+		public Plane GetByName(string targetPlaneName)
+		{
+			foreach(Plane plane in Planes) {
+				if(plane.Name == targetPlaneName)
+					return plane;
+			}
+			return null;
+		}
+
 		public async Task StartMaintenanceMonkey()
 		{
 			Log.WriteLine("[RippleSpace/Maintenance] Automated maintenance monkey created.");

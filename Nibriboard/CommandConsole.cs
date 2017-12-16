@@ -61,10 +61,11 @@ namespace Nibriboard
 					await destination.WriteLineAsync("Nibriboard Server Command Console");
 					await destination.WriteLineAsync("=================================");
 					await destination.WriteLineAsync("Available commands:");
-					await destination.WriteLineAsync("    help         Show this message");
-					await destination.WriteLineAsync("    save         Save the ripplespace to disk");
-					await destination.WriteLineAsync("    plane list   List all the currently loaded planes");
+					await destination.WriteLineAsync("    help                        Show this message");
+					await destination.WriteLineAsync("    save                        Save the ripplespace to disk");
+					await destination.WriteLineAsync("    plane list                  List all the currently loaded planes");
 					await destination.WriteLineAsync("    plane create {new-plane-name} [{chunkSize}]   Create a new named plane, optionally with the specified chunk size.");
+					await destination.WriteLineAsync("    plane status {plane-name}   Show the statistics of the current plane.");
 					break;
 				case "save":
 					await destination.WriteAsync("Saving ripple space - ");
@@ -83,7 +84,7 @@ namespace Nibriboard
 						case "list":
 							await destination.WriteLineAsync("Planes:");
 							foreach(Plane plane in server.PlaneManager.Planes)
-								await destination.WriteLineAsync($"    {plane.Name} @ {plane.ChunkSize} ({plane.LoadedChunks} / ~{plane.SoftLoadedChunkLimit} chunks loaded, {plane.UnloadableChunks} inactive)");
+								await destination.WriteLineAsync($"    {plane.Name} @ {plane.ChunkSize} ({plane.LoadedChunks} / ~{plane.SoftLoadedChunkLimit} chunks loaded, {plane.UnloadableChunks} inactive, {plane.TotalChunks} total at last save)");
 							await destination.WriteLineAsync();
 							await destination.WriteLineAsync($"Total {server.PlaneManager.Planes.Count}");
 							break;
@@ -105,11 +106,61 @@ namespace Nibriboard
 							await destination.WriteLineAsync($"Created plane with name {newPlaneName} and chunk size {chunkSize}.");
 
 							break;
+						case "status":
+							if(commandParts.Length < 3) {
+								await destination.WriteLineAsync("Error: No plane name specified!");
+								return;
+							}
+
+							string targetPlaneName = commandParts[2].Trim();
+							Plane targetPlane = server.PlaneManager.GetByName(targetPlaneName);
+							if(targetPlane == null) {
+								await destination.WriteLineAsync($"Error: A plane with the name {targetPlaneName} doesn't exist.");
+								return;
+							}
+
+							await destination.WriteLineAsync($"Name: {targetPlane.Name}");
+							await destination.WriteLineAsync($"Chunk size: {targetPlane.ChunkSize}");
+							await destination.WriteLineAsync($"Loaded chunks: {targetPlane.LoadedChunks}");
+							await destination.WriteLineAsync($"Unloaded chunks: {targetPlane.TotalChunks - targetPlane.LoadedChunks}");
+							await destination.WriteLineAsync($"Total chunks: {targetPlane.TotalChunks}");
+							await destination.WriteLineAsync($"Primary chunk area size: {targetPlane.PrimaryChunkAreaSize}");
+							await destination.WriteLineAsync($"Min unloadeable chunks: {targetPlane.MinUnloadeableChunks}");
+							await destination.WriteLineAsync($"Soft loaded chunk limit: {targetPlane.SoftLoadedChunkLimit}");
+
+							break;
 						default:
 							await destination.WriteLineAsync($"Error: Unknown sub-action {subAction}.");
 							break;
 					}
 					break;
+
+				/*case "chunk":
+					if(commandParts.Length < 2) {
+						await destination.WriteLineAsync("Error: No sub-action specified.");
+						break;
+					}
+
+					string chunkSubAction = commandParts[1].Trim();
+					switch(chunkSubAction)
+					{
+						case "list":
+							if(commandParts.Length < 3) {
+								await destination.WriteLineAsync("Error: No plane specified to list the chunks of!");
+								return;
+							}
+
+							Plane plane = server.PlaneManager.GetByName(commandParts[2].Trim());
+
+							foreach(Chunk chunk in plane.
+							break;
+
+						default:
+							await destination.WriteLineAsync($"Error: Unknown sub-action {chunkSubAction}.");
+							break;
+					}
+
+					break;*/
 
 				default:
 					await destination.WriteLineAsync($"Error: Unrecognised command {commandName}");

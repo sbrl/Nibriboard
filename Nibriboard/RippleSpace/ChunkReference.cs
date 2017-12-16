@@ -20,7 +20,7 @@ namespace Nibriboard.RippleSpace
 			
 		}
 		/// <summary>
-		/// Creates a new blank <see cref="Nibriboard.RippleSpace.ChunkReference" />.
+		/// Creates a new blank <see cref="ChunkReference" />.
 		/// Don't use this yourself! This is only for Newtonsoft.Json to use when deserialising references.
 		/// </summary>
 		public ChunkReference() : base()

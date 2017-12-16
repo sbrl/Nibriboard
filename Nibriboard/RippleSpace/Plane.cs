@@ -43,7 +43,7 @@ namespace Nibriboard.RippleSpace
 		/// loaded.
 		/// Works like a radius.
 		/// </summary>
-		public int PrimaryChunkAreaSize = 10;
+		public int PrimaryChunkAreaSize = 5;
 
 		/// <summary>
 		/// The minimum number of potentially unloadable chunks that we should have
@@ -95,6 +95,19 @@ namespace Nibriboard.RippleSpace
 				return result;
 			}
 		}
+		/// <summary>
+		/// Calculates the total number of chunks created that are on this plane - including those
+		/// that are currently unloaded.
+		/// </summary>
+		/// <description>
+		/// This is, understandably, a rather expensive operation - so use with caution!
+		/// Also, this count is only accurate to the last save.
+		/// </description>
+		public int TotalChunks {
+			get {
+				return Directory.GetFileSystemEntries(StorageDirectory, "*.chunk").Length;
+			}
+		}
 
 		/// <summary>
 		/// Initialises a new plane.
@@ -110,7 +123,7 @@ namespace Nibriboard.RippleSpace
 			// Set the soft loaded chunk limit to double the number of chunks in the
 			// primary chunks area
 			// Note that the primary chunk area is a radius around (0, 0) - not the diameter
-			SoftLoadedChunkLimit = PrimaryChunkAreaSize * PrimaryChunkAreaSize * 4;
+			SoftLoadedChunkLimit = PrimaryChunkAreaSize * PrimaryChunkAreaSize * 16;
 		}
 
 		private async Task LoadPrimaryChunks()
@@ -131,7 +144,7 @@ namespace Nibriboard.RippleSpace
 				}
 			}
 
-			await FetchChunks(primaryChunkRefs);
+			await FetchChunks(primaryChunkRefs, false);
 		}
 
 		/// <summary>
@@ -139,16 +152,24 @@ namespace Nibriboard.RippleSpace
 		/// </summary>
 		/// <param name="chunkRefs">The chunk references to fetch the attached chunks for.</param>
 		/// <returns>The chunks attached to the specified chunk references.</returns>
-		public async Task<List<Chunk>> FetchChunks(List<ChunkReference> chunkRefs)
+		public async Task<List<Chunk>> FetchChunks(IEnumerable<ChunkReference> chunkRefs, bool autoCreate)
 		{
-			// todo Paralellise loading with https://www.nuget.org/packages/AsyncEnumerator
+			// Todo Paralellise loading with https://www.nuget.org/packages/AsyncEnumerator
 			List<Chunk> chunks = new List<Chunk>();
-			foreach(ChunkReference chunkRef in chunkRefs)
-				chunks.Add(await FetchChunk(chunkRef));
+			foreach(ChunkReference chunkRef in chunkRefs) {
+				Chunk nextChunk = await FetchChunk(chunkRef, true);
+				if(nextChunk != null) // Might be null if we're not allowed to create new chunks
+					chunks.Add(nextChunk);
+			}
 			return chunks;
 		}
+		public async Task<List<Chunk>> FetchChunks(IEnumerable<ChunkReference> chunkRefs)
+		{
+			return await FetchChunks(chunkRefs, true);
+		}
 
-		public async Task<Chunk> FetchChunk(ChunkReference chunkLocation)
+
+		public async Task<Chunk> FetchChunk(ChunkReference chunkLocation, bool autoCreate)
 		{
 			// If the chunk is in the loaded chunk-space, then return it immediately
 			if(loadedChunkspace.ContainsKey(chunkLocation))
@@ -162,12 +183,21 @@ namespace Nibriboard.RippleSpace
 			Chunk loadedChunk;
 			if(File.Exists(chunkFilePath)) // If the chunk exists on disk, load it
 				loadedChunk = await Chunk.FromFile(this, chunkFilePath);
-			else // Ooooh! It's a _new_, never-before-seen one! Create a brand new chunk :D
+			else
+			{
+				// Ooooh! It's a _new_, never-before-seen one! Create a brand new chunk :D
+				// ....but only if we've been told it's ok to create new chunks.
+				if(!autoCreate) return null;
 				loadedChunk = new Chunk(this, ChunkSize, chunkLocation);
+			}
 			loadedChunk.OnChunkUpdate += HandleChunkUpdate;
 			loadedChunkspace.Add(chunkLocation, loadedChunk);
 
 			return loadedChunk;
+		}
+		public async Task<Chunk> FetchChunk(ChunkReference chunkLocation)
+		{
+			return await FetchChunk(chunkLocation, true);
 		}
 
 		/// <summary>
