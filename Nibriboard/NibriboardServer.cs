@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Threading;
-using System.Net.Sockets;
 using System.Net;
 using System.IO;
-
-using SBRL.GlidingSquirrel.Websocket;
 
 using Nibriboard.RippleSpace;
 using Nibriboard.Client;
@@ -50,7 +46,8 @@ namespace Nibriboard
 				WebSocketPath = "/RipplespaceLink"
 			};
 
-			// HTTP Server setup
+			// HTTP / Websockets Server setup
+			SBRL.GlidingSquirrel.Log.LoggingLevel = SBRL.GlidingSquirrel.LogLevel.Debug;
 			AppServer = new NibriboardApp(new NibriboardAppStartInfo() {
 				FilePrefix = "Nibriboard.obj.client_dist",
 				ClientSettings = clientSettings,
