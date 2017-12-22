@@ -31,7 +31,7 @@ class Interface extends EventEmitter
 	setupToolSelectors()
 	{
 		this.currentToolElement = this.sidebar.querySelector(".tools .tool-selector[data-selected]");
-		this.currentTool = "brush";
+		this.lastTool = this.currentTool = "brush";
 		
 		var toolSelectors = this.sidebar.querySelectorAll(".tools .tool-selector");
 		for(let i = 0; i < toolSelectors.length; i++)
@@ -49,7 +49,7 @@ class Interface extends EventEmitter
 		    this.setTool("pan");
 		}).bind(this));
 		this.boardWindow.keyboard.on(`keyup-ctrl`, (function(event) {
-		    this.setTool("brush");
+		    this.revertTool();
 		}).bind(this));
 		
 		this.emit("toolchange", {
@@ -96,17 +96,26 @@ class Interface extends EventEmitter
 	}
 	
 	/**
+	 * Reverts the currently selected tool back to the last one selected.
+	 */
+	revertTool()
+	{
+		this.setTool(this.lastTool);
+	}
+	
+	/**
 	 * Handles tool changes requested by the user.
 	 */
 	handleSelectTool(event)
 	{
-		let oldTool = this.currentToolElement.dataset.toolName;
+		this.lastTool = this.currentTool;
+		
 		delete this.currentToolElement.dataset.selected;
 		this.currentToolElement = event.currentTarget;
 		this.currentToolElement.dataset.selected = "yes";
 		this.currentTool = this.currentToolElement.dataset.toolName;
 		console.info("Selected tool", this.currentTool);
-		this.emit("toolchange", { oldTool, newTool: this.currentTool });
+		this.emit("toolchange", { oldTool: this.lastTool, newTool: this.currentTool });
 	}
 	
 	/**
