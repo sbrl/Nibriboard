@@ -44,7 +44,7 @@
 			<HintPath>..\packages\NCuid.1.0.0\lib\net40\NCuid.dll</HintPath>
 		</Reference>
 		<Reference Include="SharpCompress">
-		  <HintPath>..\packages\SharpCompress.0.19.1\lib\net45\SharpCompress.dll</HintPath>
+		  <HintPath>..\packages\SharpCompress.0.19.2\lib\net45\SharpCompress.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 	<ItemGroup>
