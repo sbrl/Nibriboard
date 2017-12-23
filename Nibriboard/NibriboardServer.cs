@@ -24,7 +24,7 @@ namespace Nibriboard
 			get {
 				Version asmVersion = Assembly.GetExecutingAssembly().GetName().Version;
 				string commit = EmbeddedFiles.ReadAllText("Nibriboard.commit-hash.txt");
-				return $"{asmVersion.Major}.{asmVersion.Minor}.{asmVersion.Build}-{commit.Substring(0, 7)}";
+				return $"v{asmVersion.Major}.{asmVersion.Minor}.{asmVersion.Build}-{commit.Substring(0, 7)}";
 			}
 		}
 		/// <summary>

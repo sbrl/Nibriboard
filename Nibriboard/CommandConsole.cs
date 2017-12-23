@@ -62,12 +62,15 @@ namespace Nibriboard
 					await destination.WriteLineAsync("Nibriboard Server Command Console");
 					await destination.WriteLineAsync("=================================");
 					await destination.WriteLineAsync("Available commands:");
-					await destination.WriteLineAsync("    help                        Show this message");
-					await destination.WriteLineAsync("    save                        Save the ripplespace to disk");
-					await destination.WriteLineAsync("    plane list                  List all the currently loaded planes");
-					await destination.WriteLineAsync("    plane create {new-plane-name} [{chunkSize}]   Create a new named plane, optionally with the specified chunk size");
-					await destination.WriteLineAsync("    plane status {plane-name}   Show the statistics of the specified plane");
-					await destination.WriteLineAsync("    clients                     List the currently connected clients");
+					await destination.WriteLineAsync("    help                 Show this message");
+					await destination.WriteLineAsync("    version              Show the version of nibriboard that is currently running");
+					await destination.WriteLineAsync("    save                 Save the ripplespace to disk");
+					await destination.WriteLineAsync("    plane {subcommand}   Interact with planes");
+					await destination.WriteLineAsync("    clients              List the currently connected clients");
+					break;
+				case "version":
+					await destination.WriteLineAsync($"Nibriboard Server {NibriboardServer.Version}, built on {NibriboardServer.BuildDate.ToString("R")}");
+					await destination.WriteLineAsync("By Starbeamrainbowlabs, licensed under MPL-2.0");
 					break;
 				case "save":
 					await destination.WriteAsync("Saving ripple space - ");
@@ -77,7 +80,19 @@ namespace Nibriboard
 					break;
 				case "plane":
 					if(commandParts.Length < 2) {
-						await destination.WriteLineAsync("Error: No sub-action specified.");
+						await destination.WriteLineAsync("Nibriboard Server Command Console: plane");
+						await destination.WriteLineAsync("----------------------------------------");
+						await destination.WriteLineAsync("Interact with planes.");
+						await destination.WriteLineAsync("Usage:");
+						await destination.WriteLineAsync("    plane {subcommand}");
+						await destination.WriteLineAsync();
+						await destination.WriteLineAsync("Subcommands:");
+						await destination.WriteLineAsync("    list");
+						await destination.WriteLineAsync("        List all the currently loaded planes");
+						await destination.WriteLineAsync("    create {new-plane-name} [{chunkSize}]");
+						await destination.WriteLineAsync("        Create a new named plane, optionally with the specified chunk size");
+						await destination.WriteLineAsync("    status {plane-name}");
+						await destination.WriteLineAsync("        Show the statistics of the specified plane");
 						break;
 					}
 					string subAction = commandParts[1].Trim();
