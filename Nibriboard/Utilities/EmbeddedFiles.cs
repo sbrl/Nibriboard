@@ -11,7 +11,7 @@ namespace SBRL.Utilities
 	/// A collection of static methods for manipulating embedded resources.
 	/// </summary>
 	/// <description>
-	/// v0.3, by Starbeamrainbowlabs <feedback@starbeamrainbowlabs.com>
+	/// v0.3, by Starbeamrainbowlabs &gt;feedback@starbeamrainbowlabs.com&lt;
 	/// Last updated 8th August 2016.
 	/// Licensed under MPL-2.0.
 	/// 

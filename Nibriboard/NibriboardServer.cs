@@ -5,6 +5,8 @@ using System.IO;
 
 using Nibriboard.RippleSpace;
 using Nibriboard.Client;
+using System.Reflection;
+using SBRL.Utilities;
 
 namespace Nibriboard
 {
@@ -14,6 +16,29 @@ namespace Nibriboard
 	/// </summary>
 	public class NibriboardServer
 	{
+		/// <summary>
+		/// Gets the version of this Nibriboard Server instance.
+		/// </summary>
+		/// <value>The version.</value>
+		public static string Version {
+			get {
+				Version asmVersion = Assembly.GetExecutingAssembly().GetName().Version;
+				string commit = EmbeddedFiles.ReadAllText("Nibriboard.commit-hash.txt");
+				return $"{asmVersion.Major}.{asmVersion.Minor}.{asmVersion.Build}-{commit.Substring(0, 7)}";
+			}
+		}
+		/// <summary>
+		/// Gets the date on which this Nibriboard server instance was built.
+		/// </summary>
+		/// <value>The build date.</value>
+		public static DateTime BuildDate {
+			get {
+				DateTime result = DateTime.MinValue;
+				DateTime.TryParse(EmbeddedFiles.ReadAllText("Nibriboard.build-date.txt"), out result);
+				return result;
+			}
+		}
+
 		private ClientSettings clientSettings;
 
 		private CommandConsole commandServer;

@@ -37,7 +37,10 @@ namespace Nibriboard
 				}
 			}
 
-			Log.WriteLine("[core] Starting Nibriboard.");
+			Log.WriteLine($"[core] Nibriboard Server {NibriboardServer.Version}, built on {NibriboardServer.BuildDate.ToString("R")}");
+			Log.WriteLine("[core] An infinite whiteboard for those big ideas.");
+			Log.WriteLine("[core] By Starbeamrainbowlabs");
+			Log.WriteLine("[core] Starting");
 
 			Log.WriteLine("[core] Detected embedded files: ");
 			EmbeddedFiles.WriteResourceList();

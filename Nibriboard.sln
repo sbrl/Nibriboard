@@ -19,4 +19,8 @@ Global
 		{B7F806D9-9C50-4BA8-A803-0FC2EC5F5932}.Release|x86.ActiveCfg = Release|x86
 		{B7F806D9-9C50-4BA8-A803-0FC2EC5F5932}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		description = @An infinite whiteeboard for those big ideas.\nThis is the main server binary.
+		version = 0.6
+	EndGlobalSection
 EndGlobal

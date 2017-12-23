@@ -8,6 +8,7 @@
 		<RootNamespace>Nibriboard</RootNamespace>
 		<AssemblyName>Nibriboard</AssemblyName>
 		<TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+		<ReleaseVersion>0.6</ReleaseVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
 		<DebugSymbols>true</DebugSymbols>
@@ -60,8 +61,6 @@
 		<Exec IgnoreExitCode="true" WorkingDirectory="$(ProjectDir)" Command="git submodule update --init" />
 		<MakeDir Directories="$(ProjectDir)/obj/client_dist" />
 		
-		<Message Importance="high" Text="------[ Gliding Squirrel ]------" />
-		<MSBuild Projects="$(ProjectDir)/lib/GlidingSquirrel/GlidingSquirrel/GlidingSquirrel.csproj" Properties="Configuration=$(Configuration)" />
 		<Message Importance="high" Text="----------[ npm build ]----------" />
 		
 		<Exec WorkingDirectory="$(ProjectDir)/ClientFiles" Condition="!Exists('node_modules/')" Command="npm install" />
@@ -81,12 +80,14 @@
 			<Output ItemName="EmbeddedResource" TaskParameter="Include" />
 		</CreateItem>
 		
-		<!-- todo: try a RemoveDir in a Before/After Clean -->
-		<ItemGroup>
-			<FileWrites Include="$(ProjectDir)/ClientFiles/node_modules/**/*" />
-		</ItemGroup>
+		<Exec WorkingDirectory="$(ProjectDir)" Command="git rev-parse HEAD &gt;commit-hash.txt" />
+		<Exec WorkingDirectory="$(ProjectDir)" Command="date --rfc-3339 seconds &gt;build-date.txt" />
 	</Target>
 	
+	<!-- todo: try a RemoveDir in a Before/After Clean -->
+	<ItemGroup>
+		<FileWrites Include="$(ProjectDir)/ClientFiles/node_modules/**/*" />
+	</ItemGroup>
 	
 	<ItemGroup>
 		<Compile Include="Program.cs" />
@@ -143,6 +144,10 @@
 		<Compile Include="Utilities\LineSimplifier.cs" />
 		<Compile Include="Client\Messages\LineRemoveMessage.cs" />
 		<Compile Include="CommandConsole.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="commit-hash.txt" />
+		<EmbeddedResource Include="build-date.txt" />
 	</ItemGroup>
 	<!--
 	<ItemGroup>
