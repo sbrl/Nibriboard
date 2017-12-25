@@ -75,7 +75,7 @@ namespace Nibriboard
 			return Task.CompletedTask;
 		}
 
-		public override async Task HandleHttpRequest(HttpRequest request, HttpResponse response)
+        public override async Task<HttpConnectionAction> HandleHttpRequest(HttpRequest request, HttpResponse response)
 		{
 			if(request.Method != HttpMethod.GET)
 			{
@@ -83,7 +83,7 @@ namespace Nibriboard
 				response.ContentType = "text/plain";
 				await response.SetBody("Error: That method isn't supported yet.");
 				logRequest(request, response);
-				return;
+                return HttpConnectionAction.Continue;
 			}
 
 			if(request.Url == "/Settings.json")
@@ -95,7 +95,7 @@ namespace Nibriboard
 				await response.SetBody(settingsJson);
 
 				Log.WriteLine("[Http/ClientSettings] Sent settings to {0}", request.ClientAddress);
-				return;
+                return HttpConnectionAction.Continue;
 			}
 
 
@@ -110,7 +110,7 @@ namespace Nibriboard
 				response.ContentType = "text/plain";
 				await response.SetBody($"Can't find '{expandedFilePath}'.");
 				logRequest(request, response);
-				return;
+                return HttpConnectionAction.Continue;
 			}
 
 			response.ContentType = LookupMimeType(expandedFilePath);
@@ -127,6 +127,8 @@ namespace Nibriboard
 				Log.WriteLine(error.ToString());
 			}
 			logRequest(request, response);
+
+            return HttpConnectionAction.Continue;
 		}
 
 		#region Interface Methods
@@ -202,6 +204,12 @@ namespace Nibriboard
 			);
 		}
 
-		#endregion
-	}
+        public override bool ShouldAcceptConnection(HttpRequest connectionRequest, HttpResponse connectionResponse)
+        {
+            // TODO: Implement support for user accounts here
+            return true;
+        }
+
+        #endregion
+    }
 }

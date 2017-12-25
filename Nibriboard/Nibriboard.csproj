@@ -52,7 +52,7 @@
 		  <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
 		</Reference>
 		<Reference Include="GlidingSquirrel">
-		  <HintPath>..\packages\GlidingSquirrel.0.6.0-alpha\lib\net462\GlidingSquirrel.dll</HintPath>
+		  <HintPath>..\packages\GlidingSquirrel.0.6.1-alpha\lib\net462\GlidingSquirrel.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 	<Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -179,7 +179,10 @@
 	  <MonoDevelop>
 	    <Properties>
 	      <Policies>
-	        <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
+	        <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical">
+	          <inheritsSet />
+	          <inheritsScope />
+	        </DotNetNamingPolicy>
 	      </Policies>
 	    </Properties>
 	  </MonoDevelop>
