@@ -22,6 +22,8 @@ class Chunk
 		this.size = inSize;
 		/** @type {[ { Points: [Vector], Width: number, Color: string }] */
 		this.lines = [];
+		/** The last time this chunk was seen on (or near) the user's screen. @type {Date} */
+		this.lastSeen = new Date();
 	}
 	
 	/**
@@ -111,7 +113,7 @@ class Chunk
 	
 	update(dt)
 	{
-		
+		this.lastSeen = new Date();
 	}
 	
 	/**

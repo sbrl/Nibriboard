@@ -16,6 +16,14 @@ class ChunkCache
 		this.showRenderedChunks = false;
 		
 		this.boardWindow.rippleLink.on("ChunkUpdate", this.handleChunkUpdate.bind(this));
+		
+		/** A few presetsymbols for various non-chunk entries in the cache. */
+		this.cacheTypes = {
+			/** An empty chunk @type {Symbol} */
+			empty: Symbol("empty-chunk"),
+			/** A chunk that's been requested from the server, but hasn't arrived yet. @type {Symbol} */
+			requested: Symbol("requested-chunk")
+		}
 	}
 	
 	/**
@@ -31,7 +39,7 @@ class ChunkCache
 			return null;
 		
 		let requestedChunk = this.cache.get(chunkRef.toString());
-		if(!(requestedChunk instanceof Chunk)) {
+		if(!this.isChunk(requestedChunk)) {
 			if(!quiet)
 				console.warn(`Attempt to access a chunk at ${chunkRef} that's not loaded yet.`);
 			return null;
@@ -52,7 +60,7 @@ class ChunkCache
 		let currentChunk = this.fetchChunk(startingChunkRef);
 		let nextUniqueId = lineUniqueId;
 		
-		while(currentChunk instanceof Chunk)
+		while(currentChunk instanceof Chunk) // No need to search empty chunks
 		{
 			let nextLineFragment = currentChunk.getLineByUniqueId(nextUniqueId);
 			if(nextLineFragment == null)
@@ -70,10 +78,14 @@ class ChunkCache
 		return lineFragments;
 	}
 	
+	/**
+	 * Deletes all the stray chunk requests we've filed in the chunk cache.
+	 * @return {[type]} [description]
+	 */
 	clearRequestedChunks()
 	{
 		for(let [chunkRefStr, chunk] of this.cache.entries()) {
-			if(!(chunk instanceof Chunk))
+			if(chunk == this.cacheTypes.requested)
 				this.cache.delete(chunkRefStr);
 		}
 	}
@@ -98,6 +110,44 @@ class ChunkCache
 	}
 	
 	/**
+	 * Prunes the cache of all the chunks that haven't been seen on (or near)
+	 * the screen for at least the specified number of milliseconds.
+	 * @param 	{number}	msSinceSeen		The minimum number of milliseconds since a chunk as been seen for it to be unloaded.
+	 * @return	{number}	The number of chunks unloaded.
+	 */
+	prune(msSinceSeen)
+	{
+		let now = +new Date(), chunksPruned = 0;
+		for(let [cRefStr, chunk] of this.cache) {
+			// Skip over symbols and other such oddities
+			// future: handle these
+			if(!(chunk instanceof Chunk))
+				continue;
+			
+			if(typeof chunk.lastSeen == "undefined") debugger;
+			
+			if(now - chunk.lastSeen.getTime() >= msSinceSeen) {
+				this.cache.delete(cRefStr);
+				chunksPruned++;
+			}
+		}
+		return chunksPruned;
+	}
+	
+	/**
+	 * Works out whether _thing_ is a chunk or not.
+	 * @param	{object}	thing	The thing to analyze.
+	 * @return	{bool}		Whether _thing_ is a chunk or not.
+	 */
+	isChunk(thing) {
+		if(thing instanceof Chunk)
+			return true;
+		if(thing === this.cacheTypes.empty)
+			return true;
+		return false;
+	}
+	
+	/**
 	 * Updates the chunk cache ready for the next frame.
 	 * @param	{number}			dt			The amount of time, in milliseconds, since that last frame was rendered.
 	 * @param	{viewport_object}	visibleArea	The area that's currently visible on-screen.
@@ -117,10 +167,15 @@ class ChunkCache
 					this.boardWindow.currentPlaneName,
 					cx / chunkSize, cy / chunkSize
 				);
-				if(!this.cache.has(cChunk.toString())) {
+				let chunk = this.cache.get(cChunk.toString());
+				if(!this.isChunk(chunk) && chunk != this.cacheTypes.requested) {
 					console.info(`Requesting ${cChunk}`);
 					missingChunks.push(cChunk);
-					this.cache.set(cChunk.toString(), { requestedFromServer: true });
+					this.cache.set(cChunk.toString(), this.cacheTypes.requested);
+				}
+				else if(chunk instanceof Chunk){
+					// It's a real (non-empty), so update it
+					chunk.update(dt);
 				}
 			}
 		}
@@ -134,6 +189,12 @@ class ChunkCache
 				"ForgottenChunks": missingChunks
 			});
 		}
+		
+		// Prune chunks from the cache that haven't been accessed in 60 
+		// seconds or more
+		let prunedChunkCount = this.prune(60 * 1000);
+		if(prunedChunkCount > 0)
+			console.debug(`Pruned ${prunedChunkCount} from the local chunk cache, leaving ${this.cache.size} entries total remaining.`);
 	}
 	
 	/**
@@ -185,7 +246,7 @@ class ChunkCache
 				chunkData.Location.Y
 			);
 			
-			console.info(`Chunk Update @ ${newChunkRef}`)
+			console.info(`Chunk Update @ ${newChunkRef}`);
 			
 			let newChunk = new Chunk(newChunkRef, chunkData.Size);
 			let newLines = chunkData.lines.map((line) => {
@@ -229,7 +290,6 @@ ChunkCache.CalculateChunkArea = function(visibleArea, chunkSize) {
 		(Math.ceil((Math.abs(visibleArea.x) + (visibleArea.width)) / chunkSize) * chunkSize),
 		(Math.ceil((Math.abs(visibleArea.y) + (visibleArea.height)) / chunkSize) * chunkSize)
 	);
-	
 }
 
 export default ChunkCache;
