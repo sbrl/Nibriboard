@@ -121,7 +121,7 @@ class Chunk
 	 * @param	{ChunkCache}	chunkCache	The chunk cache to use to fetch data from surrounding chunks.
 	 * @param	{Rectangle}		chunkArea	The area in which chunks are being rendered.
 	 */
-	render(canvas, context, chunkCache, chunkArea)
+	render(canvas, context, chunkCache, chunkArea, mode)
 	{
 		var planeSpaceRef = this.chunkRef.inPlaneSpace(this.size);
 		
@@ -131,20 +131,41 @@ class Chunk
 		for(let line of this.lines)
 		{
 			// Don't draw lines that are walked by other chunks
-			if(line.ContinuesFrom != null &&
+			/**if(line.ContinuesFrom != null &&
 				!(chunkCache.fetchChunk(line.ContinuesFrom) instanceof Chunk))
-				continue;
+				continue;*/
 			
 			let linePoints = line.Points;
 			
+			// If this line continues from a previous chunk, fetch the last 
+			// point of that line to stitch it up properly
+			if(line.ContinuesFrom != null &&
+				chunkCache.fetchChunk(line.ContinuesFrom) instanceof Chunk) {
+				let prevChunk = chunkCache.fetchChunk(line.ContinuesFrom);
+				let prevLine = prevChunk.getLineByUniqueId(line.ContinuesFromId);
+				linePoints.unshift(prevLine.Points[prevLine.Points.length - 1]);
+			}
+			
+			// If this line continues into another chunk, fetch the first point
+			// of that line to stitch it up properly
+			if(line.ContinuesIn != null &&
+				chunkCache.fetchChunk(line.ContinuesIn) instanceof Chunk) {
+				let nextChunk = chunkCache.fetchChunk(line.ContinuesIn);
+				let nextLine = nextChunk.getLineByUniqueId(line.ContinuesWithId);
+				if(nextLine != null)
+					linePoints.push(nextLine.Points[0]);
+				else
+					console.warn("Next line was null when we tried to fetch the first point of the following line!");
+			}
+			
 			// Fetch all the points on fragments of this line forwards from here
-			if(line.ContinuesIn != null) {
+			/*if(line.ContinuesIn != null) {
 				let nextLines = chunkCache.fetchLineFragments(line.ContainingChunk, line.UniqueId);
 				linePoints = [];
 				for (let nextLine of nextLines) {
 					linePoints = linePoints.concat(nextLine.Points);
 				}
-			}
+			}*/
 			
 			context.beginPath();
 			context.moveTo(
