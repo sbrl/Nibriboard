@@ -224,12 +224,17 @@ namespace Nibriboard.RippleSpace
 				return;
 
 			Chunk chunk = loadedChunkspace[chunkLocation];
+			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilepath());
 
 			// If it's empty, then there's no point in saving it
 			if (chunk.IsEmpty)
+			{
+				// Delete the existing chunk file, if it 
+				if (File.Exists(chunkFilePath))
+					File.Delete(chunkFilePath);
 				return;
+			}
 
-			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilepath());
 
 			using (Stream chunkDestination = File.Open(chunkFilePath, FileMode.OpenOrCreate))
 				await chunk.SaveTo(chunkDestination);
@@ -307,9 +312,15 @@ namespace Nibriboard.RippleSpace
 				// Figure out where to put the chunk and create the relevant directories
 				string chunkDestinationFilename = CalcPaths.ChunkFilepath(StorageDirectory, loadedChunkItem.Key);
 				Directory.CreateDirectory(Path.GetDirectoryName(chunkDestinationFilename));
+
 				// Ask the chunk to save itself, but only if it isn't empty
-				if (loadedChunkItem.Value.IsEmpty)
+				if (loadedChunkItem.Value.IsEmpty) {
+					// Delete the existing chunk file, if it 
+					if (File.Exists(chunkDestinationFilename))
+						File.Delete(chunkDestinationFilename);
+					
 					continue;
+				}
 
 				Stream chunkDestination = File.Open(chunkDestinationFilename, FileMode.OpenOrCreate);
 				chunkSavers.Add(loadedChunkItem.Value.SaveTo(chunkDestination));
