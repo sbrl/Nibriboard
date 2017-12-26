@@ -268,31 +268,34 @@ namespace Nibriboard.RippleSpace
 			return chunk.Remove(targetLineUniqueId);
 		}
 
-		public void PerformMaintenance()
+		public async Task PerformMaintenance()
 		{
 			// Be lazy and don't bother to perform maintenance if it's not needed
 			if(LoadedChunks < SoftLoadedChunkLimit ||
 			   UnloadableChunks < MinUnloadeableChunks)
 				return;
 
+			int unloadedChunks = 0;
 			foreach(KeyValuePair<ChunkReference, Chunk> chunkEntry in loadedChunkspace)
 			{
 				if(!chunkEntry.Value.CouldUnload)
 					continue;
 
 				// This chunk has been inactive for a while - let's serialise it and save it to disk
-				Stream chunkSerializationSink = new FileStream(
+				Stream chunkSerializationSink = File.Open(
 					Path.Combine(StorageDirectory, chunkEntry.Key.AsFilepath()),
-					FileMode.Create,
-					FileAccess.Write,
-					FileShare.None
+					FileMode.Create
 				);
-				IFormatter binaryFormatter = new BinaryFormatter();
-				binaryFormatter.Serialize(chunkSerializationSink, chunkEntry.Value);
+				await chunkEntry.Value.SaveTo(chunkSerializationSink);
 
 				// Remove the chunk from the loaded chunkspace
 				loadedChunkspace.Remove(chunkEntry.Key);
+
+				unloadedChunks++;
 			}
+
+			if (unloadedChunks > 0)
+				Log.WriteLine($"[RippleSpace/{Name}] Unloaded {unloadedChunks} inactive chunks.");
 		}
 
 		public async Task<long> Save()

@@ -131,7 +131,7 @@ namespace Nibriboard.RippleSpace
 				Stopwatch maintenanceStopwatch = Stopwatch.StartNew();
 
 				foreach (Plane plane in Planes)
-					plane.PerformMaintenance();
+					await plane.PerformMaintenance();
 
 				LastMaintenanceDuration = maintenanceStopwatch.ElapsedMilliseconds;
 
