@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Nibriboard.Client;
 using Nibriboard.RippleSpace;
+using Nibriboard.Utilities;
 
 namespace Nibriboard
 {
@@ -74,9 +76,12 @@ namespace Nibriboard
 					break;
 				case "save":
 					await destination.WriteAsync("Saving ripple space - ");
-					await server.PlaneManager.Save();
+					Stopwatch timer = Stopwatch.StartNew();
+					long bytesWritten = await server.PlaneManager.Save();
+					long msTaken = timer.ElapsedMilliseconds;
 					await destination.WriteLineAsync("done.");
-					await destination.WriteLineAsync($"Save is now {BytesToString(server.PlaneManager.LastSaveFileSize)} in size.");
+					await destination.WriteLineAsync($"{Formatters.HumanSize(bytesWritten)} written in {msTaken}ms.");
+					await destination.WriteLineAsync($"Save is now {Formatters.HumanSize(server.PlaneManager.LastSaveSize)} in size.");
 					break;
 				case "plane":
 					if(commandParts.Length < 2) {
@@ -193,17 +198,6 @@ namespace Nibriboard
 					await destination.WriteLineAsync($"Error: Unrecognised command {commandName}");
 					break;
 			}
-		}
-
-		public static string BytesToString(long byteCount)
-		{
-			string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; // Longs run out around EB
-			if(byteCount == 0)
-				return "0" + suf[0];
-			long bytes = Math.Abs(byteCount);
-			int place = (int)Math.Floor(Math.Log(bytes, 1024));
-			double num = Math.Round(bytes / Math.Pow(1024, place), 1);
-			return (Math.Sign(byteCount) * num).ToString() + suf[place];
 		}
 	}
 }

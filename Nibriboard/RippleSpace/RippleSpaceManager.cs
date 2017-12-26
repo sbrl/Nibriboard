@@ -14,15 +14,9 @@ namespace Nibriboard.RippleSpace
 	public class RippleSpaceManager
 	{
 		/// <summary>
-		/// The filename from which this ripplespace was loaded, and the filename to which it should be saved again.
-		/// </summary>
-		/// <value>The source filename.</value>
-		public string SourceFilename { get; set; }
-		
-		/// <summary>
 		/// The temporary directory in which we are currently storing our unpacked planes temporarily.
 		/// </summary>
-		public string UnpackedDirectory { get; set; }
+		public string SourceDirectory { get; set; }
 
 		/// <summary>
 		/// The master list of planes that this PlaneManager is in charge of. 
@@ -46,28 +40,31 @@ namespace Nibriboard.RippleSpace
 		/// Returns 0 if this RippleSpace hasn't been saved yet.
 		/// </summary>
 		/// <value>The last size of the save file.</value>
-		public long LastSaveFileSize {
+		public long LastSaveSize {
 			get {
-				if(!File.Exists(SourceFilename))
+				if(!Directory.Exists(SourceDirectory))
 					return 0;
-				
-				return (new FileInfo(SourceFilename)).Length;
+
+				return (new DirectoryInfo(SourceDirectory))
+					.GetFiles("*", SearchOption.AllDirectories)
+					.Sum(file => file.Length);
 			}
 		}
 
-		public RippleSpaceManager()
+		public RippleSpaceManager(string inSourceDirectory)
 		{
-			// Create a temporary directory in which to store our unpacked planes
-			UnpackedDirectory = Path.GetTempFileName();
-			File.Delete(UnpackedDirectory);
-			UnpackedDirectory = Path.GetDirectoryName(UnpackedDirectory) + "/ripplespace-" + Path.GetFileName(UnpackedDirectory) + "/";
-			Directory.CreateDirectory(UnpackedDirectory);
+			SourceDirectory = inSourceDirectory;
 
-			Log.WriteLine("[RippleSpace] New blank ripplespace initialised.");
+			// Make sure that the source directory exists
+			if (!Directory.Exists(SourceDirectory)) {
+				Directory.CreateDirectory(SourceDirectory);
+
+				Log.WriteLine("[RippleSpace] New blank ripplespace initialised.");
+			}
 		}
 		~RippleSpaceManager()
 		{
-			Directory.Delete(UnpackedDirectory, true);
+			Directory.Delete(SourceDirectory, true);
 		}
 
 		/// <summary>
@@ -110,7 +107,7 @@ namespace Nibriboard.RippleSpace
 
 			Plane newPlane = new Plane(
 				newPlaneInfo,
-				CalcPaths.UnpackedPlaneDir(UnpackedDirectory, newPlaneInfo.Name)
+				CalcPaths.PlaneDirectory(SourceDirectory, newPlaneInfo.Name)
 			);
 			Planes.Add(newPlane);
 			return newPlane;
@@ -142,88 +139,72 @@ namespace Nibriboard.RippleSpace
 			}
 		}
 
-		public async Task Save()
+		public async Task<long> Save()
 		{
 			Stopwatch timer = Stopwatch.StartNew();
 
 			// Save the planes to disk
-			List<Task> planeSavers = new List<Task>();
-			StreamWriter indexWriter = new StreamWriter(UnpackedDirectory + "index.list");
-			foreach(Plane item in Planes)
+			List<Task<long>> planeSavers = new List<Task<long>>();
+			StreamWriter indexWriter = new StreamWriter(SourceDirectory + "index.list");
+			foreach(Plane currentPlane in Planes)
 			{
 				// Add the plane to the index
-				await indexWriter.WriteLineAsync(item.Name);
-
-				// Figure out where the plane should save itself to and create the appropriate directories
-				string planeSavePath = CalcPaths.UnpackedPlaneFile(UnpackedDirectory, item.Name);
-				Directory.CreateDirectory(Path.GetDirectoryName(planeSavePath));
+				await indexWriter.WriteLineAsync(currentPlane.Name);
 
 				// Ask the plane to save to the directory
-				planeSavers.Add(item.Save(File.OpenWrite(planeSavePath)));
+				planeSavers.Add(currentPlane.Save());
 			}
 			indexWriter.Close();
 			await Task.WhenAll(planeSavers);
 
+			long totalBytesWritten = planeSavers.Sum((Task<long> saver) => saver.Result);
 
-			// Pack the planes into the ripplespace archive
-			Stream destination = File.OpenWrite(SourceFilename);
-			string[] planeFiles = Directory.GetFiles(UnpackedDirectory, "*.nplane.zip", SearchOption.TopDirectoryOnly);
-
-			using(IWriter rippleSpacePacker = WriterFactory.Open(destination, ArchiveType.Zip, new WriterOptions(CompressionType.Deflate)))
-			{
-				rippleSpacePacker.Write("index.list", UnpackedDirectory + "index.list");
-				foreach(string planeFilename in planeFiles)
-				{
-					rippleSpacePacker.Write(Path.GetFileName(planeFilename), planeFilename);
-				}
-			}
-			destination.Close();
-
-			Log.WriteLine("[Command/Save] Save complete in {0}ms", timer.ElapsedMilliseconds);
-		}
-
-		public static async Task<RippleSpaceManager> FromFile(string filename)
-		{
-			if(!File.Exists(filename))
-				throw new FileNotFoundException($"Error: Couldn't find the packed ripplespace at {filename}");
-
-			RippleSpaceManager rippleSpace = new RippleSpaceManager();
-			rippleSpace.SourceFilename = filename;
-
-			using(Stream packedRippleSpaceStream = File.OpenRead(filename))
-			using(IReader rippleSpaceUnpacker = ReaderFactory.Open(packedRippleSpaceStream))
-			{
-				Log.WriteLine($"[Core] Unpacking ripplespace packed with {rippleSpaceUnpacker.ArchiveType} from {filename}.");
-				rippleSpaceUnpacker.WriteAllToDirectory(rippleSpace.UnpackedDirectory);
-			}
-			Log.WriteLine("[Core] done!");
-
-			if(!File.Exists(rippleSpace.UnpackedDirectory + "index.list"))
-				throw new InvalidDataException($"Error: The packed ripplespace at {filename} doesn't appear to contain an index file.");
-
-			Log.WriteLine("[Core] Importing planes");
-
-			StreamReader planes = new StreamReader(rippleSpace.UnpackedDirectory + "index.list");
-			List<Task<Plane>> planeReaders = new List<Task<Plane>>();
-			string nextPlane;
-			int planeCount = 0;
-			while((nextPlane = await planes.ReadLineAsync()) != null)
-			{
-				planeReaders.Add(Plane.FromFile(
-					planeName: nextPlane,
-					storageDirectoryRoot: rippleSpace.UnpackedDirectory,
-					sourceFilename: CalcPaths.UnpackedPlaneFile(rippleSpace.UnpackedDirectory, nextPlane),
-					deleteSource: true
-				));
-				planeCount++;
-			}
-			await Task.WhenAll(planeReaders);
-
-			rippleSpace.Planes.AddRange(
-				planeReaders.Select((Task<Plane> planeReader) => planeReader.Result)
+			Log.WriteLine(
+				"[Command/Save] Save complete - {0} written in {1}ms",
+				Formatters.HumanSize(totalBytesWritten),
+				timer.ElapsedMilliseconds
 			);
 
-			Log.WriteLine("[Core] done! {0} planes loaded.", planeCount);
+			return totalBytesWritten;
+		}
+
+		public static async Task<RippleSpaceManager> FromDirectory(string sourceDirectory)
+		{
+
+			RippleSpaceManager rippleSpace = new RippleSpaceManager(sourceDirectory);
+
+			if (!Directory.Exists(sourceDirectory))
+			{
+				Log.WriteLine($"[Core] Creating new ripplespace in {sourceDirectory}.");
+				return rippleSpace;
+			}
+
+			Log.WriteLine($"[Core] Loading ripplespace from {sourceDirectory}.");
+
+			// Load the planes in
+			if (!File.Exists(rippleSpace.SourceDirectory + "index.list"))
+				throw new InvalidDataException($"Error: The ripplespace at {sourceDirectory} doesn't appear to contain an index file.");
+			
+			Log.WriteLine("[Core] Importing planes");
+			Stopwatch timer = Stopwatch.StartNew();
+
+			StreamReader planeList = new StreamReader(sourceDirectory + "index.list");
+
+			List<Task<Plane>> planeLoaders = new List<Task<Plane>>();
+			string nextPlaneName = string.Empty;
+			while ((nextPlaneName = await planeList.ReadLineAsync()) != null)
+			{
+				planeLoaders.Add(Plane.FromDirectory(CalcPaths.PlaneDirectory(sourceDirectory, nextPlaneName)));
+			}
+			await Task.WhenAll(planeLoaders);
+
+
+			rippleSpace.Planes.AddRange(
+				planeLoaders.Select((Task<Plane> planeLoader) => planeLoader.Result)
+			);
+
+			long msTaken = timer.ElapsedMilliseconds;
+			Log.WriteLine($"[Core] done! {rippleSpace.Planes.Count} plane{(rippleSpace.Planes.Count != 1?"s":"")} loaded in {msTaken}ms.");
 
 			return rippleSpace;
 		}

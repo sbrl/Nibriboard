@@ -144,6 +144,7 @@
 		<Compile Include="Utilities\LineSimplifier.cs" />
 		<Compile Include="Client\Messages\LineRemoveMessage.cs" />
 		<Compile Include="CommandConsole.cs" />
+		<Compile Include="Utilities\Formatters.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="commit-hash.txt" />
@@ -179,10 +180,7 @@
 	  <MonoDevelop>
 	    <Properties>
 	      <Policies>
-	        <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical">
-	          <inheritsSet />
-	          <inheritsScope />
-	        </DotNetNamingPolicy>
+	        <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
 	      </Policies>
 	    </Properties>
 	  </MonoDevelop>

@@ -10,7 +10,7 @@ namespace Nibriboard
 	{
 		public static void Main(string[] args)
 		{
-			string packedRippleSpaceFile = "./default.ripplespace.zip";
+			string packedRippleSpaceFile = "./default-ripplespace";
 
 			for(int i = 0; i < args.Length; i++)
 			{

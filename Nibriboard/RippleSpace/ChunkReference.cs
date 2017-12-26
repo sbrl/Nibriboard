@@ -15,6 +15,28 @@ namespace Nibriboard.RippleSpace
 	/// </remarks>
 	public class ChunkReference : Reference<int>
 	{
+		/// <summary>
+		/// The region size to use.
+		/// Regions are used when saving and loading to avoid too many files being stored in a 
+		/// single directory.
+		/// </summary>
+		public static int RegionSize = 32;
+
+		/// <summary>
+		/// Converts this ChunkReference into a RegionReference.
+		/// A RegionReference is used when saving, to work out which folder it should go in.
+		/// The size of the regions used is determined by the <see cref="RegionSize" /> property.
+		/// </summary>
+		public ChunkReference RegionReference {
+			get {
+				return new ChunkReference(
+					Plane,
+					(int)Math.Floor((float)X / (float)RegionSize),
+					(int)Math.Floor((float)Y / (float)RegionSize)
+				);
+			}
+		}
+
 		public ChunkReference(Plane inPlane, int inX, int inY) : base(inPlane, inX, inY)
 		{
 			
@@ -54,12 +76,12 @@ namespace Nibriboard.RippleSpace
 			);
 		}
 
-		public string AsFilename()
+		public string AsFilepath()
 		{
-			return $"{Plane.Name}-{X},{Y}.chunk";
+			return Path.Combine($"Region_{RegionReference.X},{RegionReference.Y}", $"{X},{Y}.chunk");
 		}
 
-		public override int GetHashCode ()
+		public override int GetHashCode()
 		{
 			return $"({Plane.Name})+{X}+{Y}".GetHashCode();
 		}

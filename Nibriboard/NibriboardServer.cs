@@ -46,22 +46,20 @@ namespace Nibriboard
 		public readonly int CommandPort = 31587;
 		public readonly int Port = 31586;
 
-		public RippleSpaceManager PlaneManager;
-		public NibriboardApp AppServer;
+		public readonly RippleSpaceManager PlaneManager;
+		public readonly NibriboardApp AppServer;
 
 		public NibriboardServer(string pathToRippleSpace, int inPort = 31586)
 		{
 			Port = inPort;
 
-			// Load the specified packed ripple space file if it exists - otherwise save it to disk
-			if(File.Exists(pathToRippleSpace))
-			{
-				PlaneManager = RippleSpaceManager.FromFile(pathToRippleSpace).Result;
+			// Load the specified ripple space if it exists - otherwise save it to disk
+			if(Directory.Exists(pathToRippleSpace)) {
+				PlaneManager = RippleSpaceManager.FromDirectory(pathToRippleSpace).Result;
 			}
-			else
-			{
+			else {
 				Log.WriteLine("[NibriboardServer] Couldn't find packed ripple space at {0} - creating new ripple space instead.", pathToRippleSpace);
-				PlaneManager = new RippleSpaceManager() { SourceFilename = pathToRippleSpace };
+				PlaneManager = new RippleSpaceManager(pathToRippleSpace);
 			}
 
 			clientSettings = new ClientSettings() {

@@ -179,7 +179,7 @@ namespace Nibriboard.RippleSpace
 
 			// Uh-oh! The chunk isn't loaded at moment. Load it quick & then
 			// return it fast.
-			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilename());
+			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilepath());
 			Chunk loadedChunk;
 			if(File.Exists(chunkFilePath)) // If the chunk exists on disk, load it
 				loadedChunk = await Chunk.FromFile(this, chunkFilePath);
@@ -210,7 +210,7 @@ namespace Nibriboard.RippleSpace
 			if(loadedChunkspace.ContainsKey(chunkLocation))
 				return true;
 
-			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilename());
+			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilepath());
 			if(File.Exists(chunkFilePath))
 				return true;
 
@@ -220,16 +220,19 @@ namespace Nibriboard.RippleSpace
 		public async Task SaveChunk(ChunkReference chunkLocation)
 		{
 			// It doesn't exist, so we can't save it :P
-			if(!loadedChunkspace.ContainsKey(chunkLocation))
+			if (!loadedChunkspace.ContainsKey(chunkLocation))
 				return;
 
 			Chunk chunk = loadedChunkspace[chunkLocation];
-			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilename());
 
-			using(StreamWriter chunkDestination = new StreamWriter(chunkFilePath))
-			{
+			// If it's empty, then there's no point in saving it
+			if (chunk.IsEmpty)
+				return;
+
+			string chunkFilePath = Path.Combine(StorageDirectory, chunkLocation.AsFilepath());
+
+			using (Stream chunkDestination = File.Open(chunkFilePath, FileMode.OpenOrCreate))
 				await chunk.SaveTo(chunkDestination);
-			}
 		}
 
 		public async Task AddLine(DrawnLine newLine)
@@ -279,7 +282,7 @@ namespace Nibriboard.RippleSpace
 
 				// This chunk has been inactive for a while - let's serialise it and save it to disk
 				Stream chunkSerializationSink = new FileStream(
-					Path.Combine(StorageDirectory, chunkEntry.Key.AsFilename()),
+					Path.Combine(StorageDirectory, chunkEntry.Key.AsFilepath()),
 					FileMode.Create,
 					FileAccess.Write,
 					FileShare.None
@@ -292,7 +295,7 @@ namespace Nibriboard.RippleSpace
 			}
 		}
 
-		public async Task Save(Stream destination)
+		public async Task<long> Save()
 		{
 			// Save all the chunks to disk
 			List<Task> chunkSavers = new List<Task>();
@@ -301,32 +304,31 @@ namespace Nibriboard.RippleSpace
 				// Figure out where to put the chunk and create the relevant directories
 				string chunkDestinationFilename = CalcPaths.ChunkFilepath(StorageDirectory, loadedChunkItem.Key);
 				Directory.CreateDirectory(Path.GetDirectoryName(chunkDestinationFilename));
-				// Ask the chunk to save itself
-				StreamWriter chunkDestination = new StreamWriter(chunkDestinationFilename);
+				// Ask the chunk to save itself, but only if it isn't empty
+				if (loadedChunkItem.Value.IsEmpty)
+					continue;
+
+				Stream chunkDestination = File.Open(chunkDestinationFilename, FileMode.OpenOrCreate);
 				chunkSavers.Add(loadedChunkItem.Value.SaveTo(chunkDestination));
 			}
 			await Task.WhenAll(chunkSavers);
 
 			// Save the plane information
-			StreamWriter planeInfoWriter = new StreamWriter(CalcPaths.UnpackedPlaneIndex(StorageDirectory));
+			StreamWriter planeInfoWriter = new StreamWriter(CalcPaths.PlaneIndex(StorageDirectory));
 			await planeInfoWriter.WriteLineAsync(JsonConvert.SerializeObject(Info));
 			planeInfoWriter.Close();
 
-			// Pack the chunks & plane information into an nplane file
-			WriterOptions packingOptions = new WriterOptions(CompressionType.Deflate);
-
-			IEnumerable<string> chunkFiles = Directory.GetFiles(StorageDirectory.TrimEnd("/".ToCharArray()));
-			using(IWriter packer = WriterFactory.Open(destination, ArchiveType.Zip, packingOptions))
+			// Calculate the total number bytes written
+			long totalSize = 0;
+			foreach (KeyValuePair<ChunkReference, Chunk> loadedChunkItem in loadedChunkspace)
 			{
-				packer.Write("plane-index.json", CalcPaths.UnpackedPlaneIndex(StorageDirectory));
-
-				foreach(string nextChunkFile in chunkFiles)
-				{
-					packer.Write($"{Name}/{Path.GetFileName(nextChunkFile)}", nextChunkFile);
-				}
+				string destFilename = CalcPaths.ChunkFilepath(StorageDirectory, loadedChunkItem.Key);
+				if (!File.Exists(destFilename)) // Don't assume that the file exists - it might be an empty chunk
+					continue;
+				totalSize += (new FileInfo(destFilename)).Length;
 			}
-			destination.Flush();
-			destination.Close();
+
+			return totalSize;
 		}
 
 		/// <summary>
@@ -351,37 +353,20 @@ namespace Nibriboard.RippleSpace
 		}
 
 		/// <summary>
-		/// Loads a plane form a given nplane file.
+		/// Loads a plane from a given nplane file.
 		/// </summary>
-		/// <param name="planeName">The name of the plane to load.</param>
-		/// <param name="storageDirectoryRoot">The directory to which the plane should be unpacked.</param>
-		/// <param name="sourceFilename">The path to the nplane file to load.</param>
-		/// <param name="deleteSource">Whether the source file should be deleted once the plane has been loaded.</param>
+		/// <param name="planeDirectory">The directory from which the plane should be loaded.</param>
 		/// <returns>The loaded plane.</returns>
-		public static async Task<Plane> FromFile(string planeName, string storageDirectoryRoot, string sourceFilename, bool deleteSource)
+		public static async Task<Plane> FromDirectory(string planeDirectory)
 		{
-			string targetUnpackingPath = CalcPaths.UnpackedPlaneDir(storageDirectoryRoot, planeName);
-
-			// Unpack the plane to the temporary directory
-			using(Stream sourceStream = File.OpenRead(sourceFilename))
-			using(IReader unpacker = ReaderFactory.Open(sourceStream))
-			{
-				Directory.CreateDirectory(targetUnpackingPath);
-				unpacker.WriteAllToDirectory(targetUnpackingPath);
-			}
-
 			PlaneInfo planeInfo = JsonConvert.DeserializeObject<PlaneInfo>(
-				File.ReadAllText(CalcPaths.UnpackedPlaneIndex(targetUnpackingPath))
+				File.ReadAllText(CalcPaths.PlaneIndex(planeDirectory))
 			);
-			planeInfo.Name = planeName;
 
-			Plane loadedPlane = new Plane(planeInfo, targetUnpackingPath);
+			Plane loadedPlane = new Plane(planeInfo, planeDirectory);
 
-			// Load the primary chunks from disk inot the plane
+			// Load the primary chunks into the plane
 			await loadedPlane.LoadPrimaryChunks();
-
-			if(deleteSource)
-				File.Delete(sourceFilename);
 
 			return loadedPlane;
 		}

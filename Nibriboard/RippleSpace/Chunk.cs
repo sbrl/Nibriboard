@@ -7,6 +7,11 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
 using Nibriboard.Utilities;
+using SharpCompress.Archives;
+using SharpCompress.Readers;
+using SharpCompress.Common;
+using SharpCompress.Compressors.BZip2;
+using SharpCompress.Compressors;
 
 namespace Nibriboard.RippleSpace
 {
@@ -90,6 +95,14 @@ namespace Nibriboard.RippleSpace
 		/// </summary>
 		public DateTime TimeLastAccessed { get; private set; } = DateTime.Now;
 
+		/// <summary>
+		/// Whether this chunk is currently empty or not.
+		/// </summary>
+		public bool IsEmpty {
+			get {
+				return lines.Count == 0;
+			}
+		}
 		/// <summary>
 		/// Whether this <see cref="Chunk"/> is a primary chunk.
 		/// Primary chunks are always loaded.
@@ -225,13 +238,16 @@ namespace Nibriboard.RippleSpace
 
 		public static async Task<Chunk> FromFile(Plane plane, string filename)
 		{
-			StreamReader chunkSource = new StreamReader(filename);
+			Stream chunkSource = File.OpenRead(filename);
 			return await FromStream(plane, chunkSource);
 		}
-		public static async Task<Chunk> FromStream(Plane plane, StreamReader chunkSource)
+		public static async Task<Chunk> FromStream(Plane plane, Stream chunkSource)
 		{
+			BZip2Stream decompressor = new BZip2Stream(chunkSource, CompressionMode.Decompress);
+			StreamReader decompressedSource = new StreamReader(decompressor);
+
 			Chunk loadedChunk = JsonConvert.DeserializeObject<Chunk>(
-				await chunkSource.ReadToEndAsync(),
+				await decompressedSource.ReadToEndAsync(),
 				new JsonSerializerSettings() {
 					MissingMemberHandling = MissingMemberHandling.Ignore,
 					NullValueHandling = NullValueHandling.Ignore
@@ -256,9 +272,13 @@ namespace Nibriboard.RippleSpace
 		/// Saves this chunk to the specified stream.
 		/// </summary>
 		/// <param name="destination">The destination stream to save the chunk to.</param>
-		public async Task SaveTo(StreamWriter destination)
+		public async Task SaveTo(Stream destination)
 		{
-			await destination.WriteLineAsync(JsonConvert.SerializeObject(this));
+			BZip2Stream compressor = new BZip2Stream(destination, CompressionMode.Compress);
+			StreamWriter destWriter = new StreamWriter(compressor) { AutoFlush = true };
+
+			await destWriter.WriteLineAsync(JsonConvert.SerializeObject(this));
+			compressor.Close();
 			destination.Close();
 		}
 
