@@ -54,6 +54,9 @@
 		<Reference Include="GlidingSquirrel">
 		  <HintPath>..\packages\GlidingSquirrel.0.6.1-alpha\lib\net462\GlidingSquirrel.dll</HintPath>
 		</Reference>
+		<Reference Include="SimpleHashing.Net">
+		  <HintPath>..\packages\SimpleHashing.Net.1.0.1\lib\SimpleHashing.Net.dll</HintPath>
+		</Reference>
 	</ItemGroup>
 	<Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 	
@@ -145,6 +148,10 @@
 		<Compile Include="Client\Messages\LineRemoveMessage.cs" />
 		<Compile Include="CommandConsole.cs" />
 		<Compile Include="Utilities\Formatters.cs" />
+		<Compile Include="Userspace\UserManager.cs" />
+		<Compile Include="Userspace\RbacPermission.cs" />
+		<Compile Include="Userspace\RbacRole.cs" />
+		<Compile Include="Userspace\User.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="commit-hash.txt" />
@@ -169,6 +176,7 @@
 		<Folder Include="ClientFiles\" />
 		<Folder Include="Client\" />
 		<Folder Include="Client\Messages\" />
+		<Folder Include="Userspace\" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="packages.config" />
