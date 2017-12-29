@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Nibriboard.Userspace
 {
@@ -22,32 +26,49 @@ namespace Nibriboard.Userspace
 				new RbacPermission("manage-any-plane-members", "Manage the users allowed to access one any plane.")
 			});
 			Roles.Add(new RbacRole("Guest", new List<RbacPermission>() {
-				GetPermission("view-public-plane")
+				ResolvePermission("view-public-plane")
 			}));
 			Roles.Add(new RbacRole("Member", new List<RbacPermission>() {
-				GetPermission("view-own-plane"),
-				GetPermission("create-plane"),
-				GetPermission("delete-own-plane"),
-				GetPermission("manage-own-plane-members")
+				ResolvePermission("view-own-plane"),
+				ResolvePermission("create-plane"),
+				ResolvePermission("delete-own-plane"),
+				ResolvePermission("manage-own-plane-members")
 			}, new List<RbacRole>() {
-				GetRole("Guest")
+				ResolveRole("Guest")
 			}));
 			Roles.Add(new RbacRole("Root", new List<RbacPermission>() {
-				GetPermission("view-any-plane"),
-				GetPermission("delete-any-plane"),
-				GetPermission("manage-any-plane-members")
+				ResolvePermission("view-any-plane"),
+				ResolvePermission("delete-any-plane"),
+				ResolvePermission("manage-any-plane-members")
 			}, new List<RbacRole>() {
-				GetRole("Member")
+				ResolveRole("Member")
 			}));
 		}
 
-		public RbacPermission GetPermission(string permissionName)
+		public async Task LoadUserData(StreamReader userDataStream)
+		{
+			LoadUserData(await userDataStream.ReadToEndAsync());
+		}
+		public void LoadUserData(string userData)
+		{
+			Users = JsonConvert.DeserializeObject<List<User>>(userData, new UserCreationConverter(this));
+		}
+
+		public RbacPermission ResolvePermission(string permissionName)
 		{
 			return Permissions.Find((RbacPermission permission) => permission.Name == permissionName);
 		}
-		public RbacRole GetRole(string roleName)
+		public RbacRole ResolveRole(string roleName)
 		{
 			return Roles.Find((RbacRole role) => role.Name == roleName);
+		}
+		public IEnumerable<RbacRole> ResolveRoles(IEnumerable<string> roleNames)
+		{
+			foreach (RbacRole role in Roles)
+			{
+				if(roleNames.Contains(role.Name))
+					yield return role;
+			}
 		}
 	}
 }

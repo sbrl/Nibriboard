@@ -1,23 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using SimpleHashing.Net;
 
 namespace Nibriboard.Userspace
 {
+	/// <summary>
+	/// Creates new <see cref="User" /> class instances for Newtonsoft.json.
+	/// </summary>
+	public class UserCreationConverter : CustomCreationConverter<User>
+	{
+		private UserManager userManager;
+		public UserCreationConverter(UserManager inUserManager)
+		{
+			userManager = inUserManager;
+		}
+
+		public override User Create(Type objectType)
+		{
+			return new User(userManager);
+		}
+	}
+
+	/// <summary>
+	/// Represents a single Nibriboard user.
+	/// </summary>
+	[JsonObject(MemberSerialization.OptOut)]
 	public class User
 	{
 		private static ISimpleHash passwordHasher = new SimpleHash();
+
+		private UserManager userManager;
 
 		public DateTime CreationTime { get; set; }
 		public string Username { get; set; }
 		public string HashedPassword { get; set; }
 
+		[JsonIgnore]
 		public List<RbacRole> Roles { get; set; }
 
-		public User()
+		private List<string> rolesText = null;
+		public List<string> RolesText {
+			get {
+				return new List<string>(Roles.Select((RbacRole role) => role.Name));
+			}
+			set {
+
+			}
+		}
+
+		public User(UserManager inUserManager)
 		{
+			userManager = inUserManager;
 		}
 
 		/// <summary>
@@ -46,6 +83,12 @@ namespace Nibriboard.Userspace
 		public bool HasPermission(RbacPermission permission)
 		{
 			return Roles.Any((RbacRole role) => role.HasPermission(permission));
+		}
+
+		[OnDeserialized]
+		internal void OnDeserialized(StreamingContext context)
+		{
+			Roles = new List<RbacRole>(userManager.ResolveRoles(RolesText));
 		}
 	}
 }
