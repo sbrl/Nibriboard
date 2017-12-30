@@ -28,8 +28,13 @@ namespace Nibriboard.Utilities
 			return Path.Combine(planeDirectory, "plane-index.json");
 		}
 
+		public static string RippleSpaceAccountData(string rippleSpaceRoot)
+		{
+			return Path.Combine(rippleSpaceRoot, "user-data.json");
+		}
 
-		public static string ChunkFilepath(string planeStorageDirectory, ChunkReference chunkRef)
+
+		public static string ChunkFilePath(string planeStorageDirectory, ChunkReference chunkRef)
 		{
 			return Path.Combine(planeStorageDirectory, chunkRef.AsFilepath());
 		}

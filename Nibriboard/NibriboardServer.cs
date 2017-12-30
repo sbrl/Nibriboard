@@ -7,6 +7,8 @@ using Nibriboard.RippleSpace;
 using Nibriboard.Client;
 using System.Reflection;
 using SBRL.Utilities;
+using Nibriboard.Userspace;
+using Nibriboard.Utilities;
 
 namespace Nibriboard
 {
@@ -46,6 +48,7 @@ namespace Nibriboard
 		public readonly int CommandPort = 31587;
 		public readonly int Port = 31586;
 
+		public readonly UserManager AccountManager;
 		public readonly RippleSpaceManager PlaneManager;
 		public readonly NibriboardApp AppServer;
 
@@ -61,6 +64,13 @@ namespace Nibriboard
 				Log.WriteLine("[NibriboardServer] Couldn't find packed ripple space at {0} - creating new ripple space instead.", pathToRippleSpace);
 				PlaneManager = new RippleSpaceManager(pathToRippleSpace);
 			}
+
+			// Next, load the user account data
+			string accountDataPath = CalcPaths.RippleSpaceAccountData(pathToRippleSpace);
+			AccountManager = new UserManager();
+			if(File.Exists(accountDataPath))
+				AccountManager.LoadUserDataFile(CalcPaths.RippleSpaceAccountData(pathToRippleSpace)).Wait();
+			
 
 			clientSettings = new ClientSettings() {
 				SecureWebSocket = false,
@@ -99,6 +109,13 @@ namespace Nibriboard
 		public async Task StartCommandListener()
 		{
 			await commandServer.Start();
+		}
+
+		public async Task SaveUserData()
+		{
+			await AccountManager.SaveUserDataFile(
+				CalcPaths.RippleSpaceAccountData(PlaneManager.SourceDirectory)
+			);
 		}
 	}
 }

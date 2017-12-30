@@ -40,7 +40,7 @@ namespace Nibriboard.Userspace
 		public string HashedPassword { get; set; }
 
 		[JsonIgnore]
-		public List<RbacRole> Roles { get; set; }
+		public List<RbacRole> Roles { get; set; } = new List<RbacRole>();
 
 		private List<string> rolesText = null;
 		public List<string> RolesText {
@@ -48,7 +48,7 @@ namespace Nibriboard.Userspace
 				return new List<string>(Roles.Select((RbacRole role) => role.Name));
 			}
 			set {
-
+				rolesText = value;
 			}
 		}
 
@@ -85,10 +85,15 @@ namespace Nibriboard.Userspace
 			return Roles.Any((RbacRole role) => role.HasPermission(permission));
 		}
 
+		public bool HasRole(RbacRole targetRole)
+		{
+			return Roles.Any((RbacRole role) => role.HasRole(targetRole));
+		}
+
 		[OnDeserialized]
 		internal void OnDeserialized(StreamingContext context)
 		{
-			Roles = new List<RbacRole>(userManager.ResolveRoles(RolesText));
+			Roles = new List<RbacRole>(userManager.ResolveRoles(rolesText));
 		}
 	}
 }

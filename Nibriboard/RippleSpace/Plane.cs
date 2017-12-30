@@ -310,7 +310,7 @@ namespace Nibriboard.RippleSpace
 			foreach(KeyValuePair<ChunkReference, Chunk> loadedChunkItem in loadedChunkspace)
 			{
 				// Figure out where to put the chunk and create the relevant directories
-				string chunkDestinationFilename = CalcPaths.ChunkFilepath(StorageDirectory, loadedChunkItem.Key);
+				string chunkDestinationFilename = CalcPaths.ChunkFilePath(StorageDirectory, loadedChunkItem.Key);
 				Directory.CreateDirectory(Path.GetDirectoryName(chunkDestinationFilename));
 
 				// Ask the chunk to save itself, but only if it isn't empty
@@ -336,7 +336,7 @@ namespace Nibriboard.RippleSpace
 			long totalSize = 0;
 			foreach (KeyValuePair<ChunkReference, Chunk> loadedChunkItem in loadedChunkspace)
 			{
-				string destFilename = CalcPaths.ChunkFilepath(StorageDirectory, loadedChunkItem.Key);
+				string destFilename = CalcPaths.ChunkFilePath(StorageDirectory, loadedChunkItem.Key);
 				if (!File.Exists(destFilename)) // Don't assume that the file exists - it might be an empty chunk
 					continue;
 				totalSize += (new FileInfo(destFilename)).Length;

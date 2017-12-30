@@ -28,5 +28,25 @@ namespace Nibriboard.Userspace
 		{
 			return Permissions.Contains(permission) || SubRoles.Any((RbacRole obj) => obj.HasPermission(permission));
 		}
+
+		public bool HasRole(RbacRole targetRole)
+		{
+			if (Name == targetRole.Name)
+				return true;
+			return SubRoles.Any((RbacRole subRole) => subRole.HasRole(targetRole));
+		}
+
+		public override string ToString()
+		{
+			List<string> subItems = new List<string>();
+			subItems.AddRange(SubRoles.Select((RbacRole subRole) => $"[r] {subRole.Name}"));
+			subItems.AddRange(Permissions.Select((RbacPermission subPermission) => $"[p] {subPermission.Name}"));
+
+			return string.Format(
+				"{0}: {1}",
+				Name,
+				string.Join(", ", subItems)
+			);
+		}
 	}
 }
