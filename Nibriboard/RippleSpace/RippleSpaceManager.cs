@@ -62,10 +62,6 @@ namespace Nibriboard.RippleSpace
 				Log.WriteLine("[RippleSpace] New blank ripplespace initialised.");
 			}
 		}
-		~RippleSpaceManager()
-		{
-			Directory.Delete(SourceDirectory, true);
-		}
 
 		/// <summary>
 		/// Gets the plane with the specified name from this RippleSpace.
