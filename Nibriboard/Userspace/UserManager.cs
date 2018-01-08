@@ -148,7 +148,12 @@ namespace Nibriboard.Userspace
 		/// <returns>The user with the specified name.</returns>
 		public User GetByName(string username)
 		{
-			return Users.Find((User user) => user.Username == username);
+			try {
+				return Users.Find((User user) => user.Username == username);
+			}
+			catch (NullReferenceException) {
+				return null;
+			}
 		}
 
 		/// <summary>

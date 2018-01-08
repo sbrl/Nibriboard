@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Nibriboard.Client;
 using Nibriboard.Client.Messages;
 using Nibriboard.RippleSpace;
+using Nibriboard.Userspace;
 using SBRL.GlidingSquirrel.Http;
 using SBRL.GlidingSquirrel.Websocket;
 using SBRL.Utilities;
@@ -17,7 +18,7 @@ namespace Nibriboard
 		public string FilePrefix { get; set; }
 
 		public ClientSettings ClientSettings { get; set; }
-		public RippleSpaceManager SpaceManager { get; set; }
+		public NibriboardServer NibriServer { get; set; }
 	}
 
 	public class NibriboardApp : WebsocketServer
@@ -25,10 +26,7 @@ namespace Nibriboard
 		private string filePrefix;
 		private List<string> embeddedFiles = new List<string>(EmbeddedFiles.ResourceList);
 
-		/// <summary>
-		/// The ripple space manager that this client manager is connected to.
-		/// </summary>
-		public RippleSpaceManager SpaceManager { get; private set; }
+		public NibriboardServer NibriServer;
 
 		public LineIncubator LineIncubator = new LineIncubator();
 
@@ -48,12 +46,27 @@ namespace Nibriboard
 		public NibriboardApp(NibriboardAppStartInfo startInfo, IPAddress inBindAddress, int inPort) : base(inBindAddress, inPort)
 		{
 			clientSettings = startInfo.ClientSettings;
-			SpaceManager = startInfo.SpaceManager;
+			NibriServer = startInfo.NibriServer;
 
 			filePrefix = startInfo.FilePrefix;
 			MimeTypeOverrides.Add(".ico", "image/x-icon");
 		}
 
+		public override bool ShouldAcceptConnection(HttpRequest connectionRequest, HttpResponse connectionResponse)
+		{
+			HttpBasicAuthCredentials credentials = connectionRequest.BasicAuthCredentials;
+			User user = NibriServer.AccountManager.GetByName(credentials.Username);
+			if (user == null || user.CheckPassword(credentials.Password)) {
+				// Authentication failed!
+				connectionResponse.ResponseCode = HttpResponseCode.Forbidden;
+				connectionResponse.ContentType = "text/plain";
+				connectionResponse.SetBody("Error: Invalid username or password.");
+				return false;
+			}
+
+			// Authentication suceeded :D
+			return true;
+		}
 
 		public override Task HandleClientConnected(object sender, ClientConnectedEventArgs eventArgs)
 		{
@@ -84,6 +97,10 @@ namespace Nibriboard
 				await response.SetBody("Error: That method isn't supported yet.");
 				logRequest(request, response);
                 return HttpConnectionAction.Continue;
+			}
+
+			if (!ShouldAcceptConnection(request, response)) {
+				return HttpConnectionAction.Continue;
 			}
 
 			if(request.Url == "/Settings.json")
@@ -203,12 +220,6 @@ namespace Nibriboard
 				request.Url
 			);
 		}
-
-        public override bool ShouldAcceptConnection(HttpRequest connectionRequest, HttpResponse connectionResponse)
-        {
-            // TODO: Implement support for user accounts here
-            return true;
-        }
 
         #endregion
     }

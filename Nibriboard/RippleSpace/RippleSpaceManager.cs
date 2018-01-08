@@ -4,17 +4,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Linq;
-using SharpCompress.Readers;
 using Nibriboard.Utilities;
-using SharpCompress.Writers;
-using SharpCompress.Common;
 
 namespace Nibriboard.RippleSpace
 {
 	public class RippleSpaceManager
 	{
 		/// <summary>
-		/// The temporary directory in which we are currently storing our unpacked planes temporarily.
+		/// The temporary directory in which we are strong out data.
 		/// </summary>
 		public string SourceDirectory { get; set; }
 
@@ -141,7 +138,7 @@ namespace Nibriboard.RippleSpace
 
 			// Save the planes to disk
 			List<Task<long>> planeSavers = new List<Task<long>>();
-			StreamWriter indexWriter = new StreamWriter(SourceDirectory + "index.list");
+			StreamWriter indexWriter = new StreamWriter(Path.Combine(SourceDirectory, "index.list"));
 			foreach(Plane currentPlane in Planes)
 			{
 				// Add the plane to the index
@@ -178,19 +175,24 @@ namespace Nibriboard.RippleSpace
 			Log.WriteLine($"[Core] Loading ripplespace from {sourceDirectory}.");
 
 			// Load the planes in
-			if (!File.Exists(rippleSpace.SourceDirectory + "index.list"))
+			if (!File.Exists(Path.Combine(rippleSpace.SourceDirectory, "index.list")))
 				throw new InvalidDataException($"Error: The ripplespace at {sourceDirectory} doesn't appear to contain an index file.");
 			
 			Log.WriteLine("[Core] Importing planes");
 			Stopwatch timer = Stopwatch.StartNew();
 
-			StreamReader planeList = new StreamReader(sourceDirectory + "index.list");
+			StreamReader planeList = new StreamReader(Path.Combine(sourceDirectory, "index.list"));
 
 			List<Task<Plane>> planeLoaders = new List<Task<Plane>>();
 			string nextPlaneName = string.Empty;
 			while ((nextPlaneName = await planeList.ReadLineAsync()) != null)
 			{
-				planeLoaders.Add(Plane.FromDirectory(CalcPaths.PlaneDirectory(sourceDirectory, nextPlaneName)));
+				string nextPlaneDirectory = CalcPaths.PlaneDirectory(sourceDirectory, nextPlaneName);
+				if (!Directory.Exists(nextPlaneDirectory)) {
+					Log.WriteLine($"[Core] Warning: Couldn't find listed plane {nextPlaneName} when loading ripplespace.");
+					continue;
+				}
+				planeLoaders.Add(Plane.FromDirectory(nextPlaneDirectory));
 			}
 			await Task.WhenAll(planeLoaders);
 

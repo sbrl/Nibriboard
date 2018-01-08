@@ -315,7 +315,7 @@ namespace Nibriboard.RippleSpace
 
 				// Ask the chunk to save itself, but only if it isn't empty
 				if (loadedChunkItem.Value.IsEmpty) {
-					// Delete the existing chunk file, if it 
+					// Delete the existing chunk file, if it exists
 					if (File.Exists(chunkDestinationFilename))
 						File.Delete(chunkDestinationFilename);
 					

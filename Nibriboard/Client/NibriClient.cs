@@ -303,7 +303,7 @@ namespace Nibriboard.Client
 			HandshakeResponseMessage handshakeResponse = new HandshakeResponseMessage();
 			handshakeResponse.Id = Id;
 			handshakeResponse.Colour = Colour;
-			foreach(Plane plane in manager.SpaceManager.Planes)
+			foreach(Plane plane in manager.NibriServer.PlaneManager.Planes)
 				handshakeResponse.Planes.Add(plane.Name);
 			
 			Send(handshakeResponse);
@@ -323,14 +323,14 @@ namespace Nibriboard.Client
 
 			// Create a new plane with the specified name if it doesn't exist already
 			// future we might want to allow the user to specify the chunk size
-			if(manager.SpaceManager[message.NewPlaneName] == default(Plane))
-				manager.SpaceManager.CreatePlane(new PlaneInfo(message.NewPlaneName));
+			if(manager.NibriServer.PlaneManager[message.NewPlaneName] == default(Plane))
+				manager.NibriServer.PlaneManager.CreatePlane(new PlaneInfo(message.NewPlaneName));
 
 			// Remove the event listener from the old plane if there is indeed an old plane to remove it from
 			if(CurrentPlane != null)
 				CurrentPlane.OnChunkUpdate -= handleChunkUpdateEvent;
 			// Swap out the current plane
-			CurrentPlane = manager.SpaceManager[message.NewPlaneName];
+			CurrentPlane = manager.NibriServer.PlaneManager[message.NewPlaneName];
 			// Attach a listener to the new plane
 			CurrentPlane.OnChunkUpdate += handleChunkUpdateEvent;
 

@@ -14,7 +14,7 @@ namespace Nibriboard
 {
 	/// <summary>
 	/// The main Nibriboard server.
-	/// This class manages not only the connected clients, but also holds the master reference to the <see cref="Nibriboard.RippleSpace.RippleSpaceManager"/>.
+	/// This class manages not only the connected clients, but also holds the master reference to the <see cref="Nibriboard.RippleSpace.NibriboardServer"/>.
 	/// </summary>
 	public class NibriboardServer
 	{
@@ -62,7 +62,7 @@ namespace Nibriboard
 			}
 			else {
 				Log.WriteLine("[NibriboardServer] Couldn't find packed ripple space at {0} - creating new ripple space instead.", pathToRippleSpace);
-				PlaneManager = new RippleSpaceManager(pathToRippleSpace);
+				PlaneManager = new RippleSpace.RippleSpaceManager(pathToRippleSpace);
 			}
 
 			// Next, load the user account data
@@ -84,7 +84,7 @@ namespace Nibriboard
 			AppServer = new NibriboardApp(new NibriboardAppStartInfo() {
 				FilePrefix = "Nibriboard.obj.client_dist",
 				ClientSettings = clientSettings,
-				SpaceManager = PlaneManager
+				NibriServer = this
 			}, IPAddress.Any, Port);
 
 			// Command Console Server setup
