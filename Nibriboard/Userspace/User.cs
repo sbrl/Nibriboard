@@ -28,21 +28,25 @@ namespace Nibriboard.Userspace
 	/// <summary>
 	/// Represents a single Nibriboard user.
 	/// </summary>
-	[JsonObject(MemberSerialization.OptOut)]
+	[JsonObject(MemberSerialization.OptIn)]
 	public class User
 	{
 		private static ISimpleHash passwordHasher = new SimpleHash();
 
 		private UserManager userManager;
 
+		[JsonProperty]
 		public DateTime CreationTime { get; set; }
+		[JsonProperty]
 		public string Username { get; set; }
+		[JsonProperty]
 		public string HashedPassword { get; set; }
 
 		[JsonIgnore]
 		public List<RbacRole> Roles { get; set; } = new List<RbacRole>();
 
 		private List<string> rolesText = null;
+		[JsonProperty("RolesText")]
 		public List<string> RolesText {
 			get {
 				return new List<string>(Roles.Select((RbacRole role) => role.Name));
