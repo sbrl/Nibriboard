@@ -145,7 +145,11 @@ namespace Nibriboard.Client
 
 		public NibriClient(NibriboardApp inManager, WebsocketClient inClient)
 		{
-			Log.WriteLine("[Nibriboard/WebSocket] New NibriClient connected with id #{0}.", Id);
+            Log.WriteLine(
+                "[Nibriboard/WebSocket] New NibriClient connected with id #{0} for user {1}.",
+                Id,
+                ConnectedUser != null ? ConnectedUser.Username : "Anonymous"
+            );
 
 			manager = inManager;
 			connection = inClient;

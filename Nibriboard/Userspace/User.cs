@@ -45,8 +45,8 @@ namespace Nibriboard.Userspace
 		[JsonIgnore]
 		public List<RbacRole> Roles { get; set; } = new List<RbacRole>();
 
-		[JsonProperty]
-		public List<string> RawRoles { get; set; } = null;
+        [JsonProperty]
+        public List<string> RawRoles = new List<string>();
 		public List<string> RolesText {
 			get {
 				return new List<string>(Roles.Select((RbacRole role) => role.Name));
@@ -94,9 +94,16 @@ namespace Nibriboard.Userspace
 			return Roles.Any((RbacRole role) => role.HasRole(targetRole));
 		}
 
+        [OnSerializing]
+        internal void OnSerializing(StreamingContext context)
+        {
+            // Update the textual list of roles just before serialisation
+            RawRoles = RolesText;
+        }
 		[OnDeserialized]
 		internal void OnDeserialized(StreamingContext context)
 		{
+            // Resolve the list of text roles to a list of RbacRole objects after deserialisation
 			Roles = new List<RbacRole>(userManager.ResolveRoles(RawRoles));
 		}
 	}

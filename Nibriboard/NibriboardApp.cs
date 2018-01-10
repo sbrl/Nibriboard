@@ -56,7 +56,7 @@ namespace Nibriboard
 		{
 			HttpBasicAuthCredentials credentials = connectionRequest.BasicAuthCredentials;
 			User user = NibriServer.AccountManager.GetByName(credentials != null ? credentials.Username : null);
-			if (user == null || user.CheckPassword(credentials != null ? credentials.Password : null)) {
+			if (user == null || !user.CheckPassword(credentials != null ? credentials.Password : null)) {
 				// Authentication failed!
 				connectionResponse.RequireHttpBasicAuthentication("Nibriboard");
 				connectionResponse.ContentType = "text/plain";

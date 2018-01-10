@@ -166,18 +166,19 @@ namespace Nibriboard.RippleSpace
 
 			RippleSpaceManager rippleSpace = new RippleSpaceManager(sourceDirectory);
 
-			if (!Directory.Exists(sourceDirectory))
-			{
+			if (!Directory.Exists(sourceDirectory)) {
 				Log.WriteLine($"[Core] Creating new ripplespace in {sourceDirectory}.");
 				return rippleSpace;
 			}
 
 			Log.WriteLine($"[Core] Loading ripplespace from {sourceDirectory}.");
 
-			// Load the planes in
-			if (!File.Exists(Path.Combine(rippleSpace.SourceDirectory, "index.list")))
-				throw new InvalidDataException($"Error: The ripplespace at {sourceDirectory} doesn't appear to contain an index file.");
-			
+            // Load the planes in
+            if (!File.Exists(Path.Combine(rippleSpace.SourceDirectory, "index.list"))) {
+                Log.WriteLine($"[Core] Warning: The ripplespace at {sourceDirectory} doesn't appear to contain an index file.");
+                return rippleSpace;
+            }
+
 			Log.WriteLine("[Core] Importing planes");
 			Stopwatch timer = Stopwatch.StartNew();
 
