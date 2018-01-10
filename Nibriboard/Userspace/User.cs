@@ -45,14 +45,14 @@ namespace Nibriboard.Userspace
 		[JsonIgnore]
 		public List<RbacRole> Roles { get; set; } = new List<RbacRole>();
 
-		private List<string> rolesText = null;
-		[JsonProperty("RolesText")]
+		[JsonProperty]
+		public List<string> RawRoles { get; set; } = null;
 		public List<string> RolesText {
 			get {
 				return new List<string>(Roles.Select((RbacRole role) => role.Name));
 			}
 			set {
-				rolesText = value;
+				RawRoles = value;
 			}
 		}
 
@@ -97,7 +97,7 @@ namespace Nibriboard.Userspace
 		[OnDeserialized]
 		internal void OnDeserialized(StreamingContext context)
 		{
-			Roles = new List<RbacRole>(userManager.ResolveRoles(rolesText));
+			Roles = new List<RbacRole>(userManager.ResolveRoles(RawRoles));
 		}
 	}
 }
