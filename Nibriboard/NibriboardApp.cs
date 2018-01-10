@@ -55,10 +55,10 @@ namespace Nibriboard
 		public override bool ShouldAcceptConnection(HttpRequest connectionRequest, HttpResponse connectionResponse)
 		{
 			HttpBasicAuthCredentials credentials = connectionRequest.BasicAuthCredentials;
-			User user = NibriServer.AccountManager.GetByName(credentials.Username);
-			if (user == null || user.CheckPassword(credentials.Password)) {
+			User user = NibriServer.AccountManager.GetByName(credentials != null ? credentials.Username : null);
+			if (user == null || user.CheckPassword(credentials != null ? credentials.Password : null)) {
 				// Authentication failed!
-				connectionResponse.ResponseCode = HttpResponseCode.Forbidden;
+				connectionResponse.RequireHttpBasicAuthentication("Nibriboard");
 				connectionResponse.ContentType = "text/plain";
 				connectionResponse.SetBody("Error: Invalid username or password.");
 				return false;
