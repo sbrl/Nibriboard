@@ -80,7 +80,7 @@ namespace Nibriboard
 			};
 
 			// HTTP / Websockets Server setup
-			SBRL.GlidingSquirrel.Log.LoggingLevel = SBRL.GlidingSquirrel.LogLevel.Debug;
+            SBRL.GlidingSquirrel.Log.LoggingLevel = SBRL.GlidingSquirrel.LogLevel.Info;
 			AppServer = new NibriboardApp(new NibriboardAppStartInfo() {
 				FilePrefix = "Nibriboard.obj.client_dist",
 				ClientSettings = clientSettings,
