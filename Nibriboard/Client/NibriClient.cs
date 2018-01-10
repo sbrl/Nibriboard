@@ -145,12 +145,6 @@ namespace Nibriboard.Client
 
 		public NibriClient(NibriboardApp inManager, WebsocketClient inClient)
 		{
-            Log.WriteLine(
-                "[Nibriboard/WebSocket] New NibriClient connected with id #{0} for user {1}.",
-                Id,
-                ConnectedUser != null ? ConnectedUser.Username : "Anonymous"
-            );
-
 			manager = inManager;
 			connection = inClient;
 
@@ -158,6 +152,11 @@ namespace Nibriboard.Client
 			connection.OnDisconnection += handleDisconnection;
 			connection.OnTextMessage += handleMessage;
 
+            Log.WriteLine(
+                "[Nibriboard/WebSocket] New NibriClient connected with id #{0} for user {1}.",
+                Id,
+                ConnectedUser != null ? ConnectedUser.Username : "Anonymous"
+            );
 		}
 
 		private async Task handleMessage(object sender, TextMessageEventArgs eventArgs)
