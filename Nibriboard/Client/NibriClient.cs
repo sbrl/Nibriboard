@@ -11,6 +11,7 @@ using Nibriboard.RippleSpace;
 
 using SBRL.GlidingSquirrel.Websocket;
 using System.Net;
+using Nibriboard.Userspace;
 
 namespace Nibriboard.Client
 {
@@ -76,6 +77,20 @@ namespace Nibriboard.Client
 				return connection.RemoteEndpoint;
 			}
 		}
+		/// <summary>
+		/// The user account of the currently connected client.
+		/// </summary>
+		public User ConnectedUser {
+			get {
+				if (connection.HandshakeRequest.BasicAuthCredentials == null)
+					return null;
+
+				return manager.NibriServer.AccountManager.GetByName(
+					connection.HandshakeRequest.BasicAuthCredentials.Username
+				);
+			}
+		}
+
 		/// <summary>
 		/// Fires when this nibri client disconnects.
 		/// </summary>
