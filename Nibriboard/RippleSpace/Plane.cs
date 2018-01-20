@@ -28,6 +28,15 @@ namespace Nibriboard.RippleSpace
 		public readonly int ChunkSize;
 
 		/// <summary>
+		/// A list of usernames who are able to both view and update the membership list of this plane.
+		/// </summary>
+		public List<string> Creators = new List<string>();
+		/// <summary>
+		/// A list of usernames who are able to view this plane, but not update the membership list.
+		/// </summary>
+		public List<string> Members = new List<string>();
+
+		/// <summary>
 		/// The path to the directory that the plane's information will be stored in.
 		/// </summary>
 		public readonly string StorageDirectory;
@@ -272,6 +281,31 @@ namespace Nibriboard.RippleSpace
 			Chunk chunk = await FetchChunk(containingChunk);
 			return chunk.Remove(targetLineUniqueId);
 		}
+
+		/// <summary>
+		/// Whether the specified username is allowed to view this Plane.
+		/// </summary>
+		/// <remarks>
+		/// In other words, whether the specified username can be found in either the Creators
+		/// or Members username lists.
+		/// </remarks>
+		/// <param name="targetUsername">The target username to search for.</param>
+		/// <returns>Whether the specified username is allowed to view this plane.</returns>
+		public bool HasMember(string targetUsername)
+		{
+			return Creators.Contains(targetUsername) || Members.Contains(targetUsername);
+		}
+
+		/// <summary>
+		/// Whether the specified username is listed as a creator of this plane.
+		/// </summary>
+		/// <param name="targetUsername">The target username to search for.</param>
+		/// <returns>Whether the specified username is listed as a creator of this plane.</returns>
+		public bool HasCreator(string targetUsername)
+		{
+			return Creators.Contains(targetUsername);
+		}
+
 
 		public async Task PerformMaintenance()
 		{

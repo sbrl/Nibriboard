@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Nibriboard.RippleSpace
@@ -10,6 +10,8 @@ namespace Nibriboard.RippleSpace
 	{
 		public string Name { get; set; }
 		public int ChunkSize { get; set; }
+		public List<string> Creators { get; set; } = new List<string>();
+		public List<string> Members { get; set; } = new List<string>();
 
 		public PlaneInfo()
 		{
@@ -26,7 +28,8 @@ namespace Nibriboard.RippleSpace
 		public static PlaneInfo FromPlane(Plane plane)
 		{
 			PlaneInfo result = new PlaneInfo(plane.Name, plane.ChunkSize);
-
+			result.Creators = plane.Creators;
+			result.Members = plane.Members;
 			return result;
 		}
 	}

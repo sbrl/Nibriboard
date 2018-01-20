@@ -153,6 +153,10 @@ namespace Nibriboard
 				await dest.WriteLineAsync("        Create a new named plane, optionally with the specified chunk size");
 				await dest.WriteLineAsync("    status {plane-name}");
 				await dest.WriteLineAsync("        Show the statistics of the specified plane");
+				await dest.WriteLineAsync("    grant {role:Creator|Member} {plane-name} {username}");
+				await dest.WriteLineAsync("        Grant role on plane-name to username");
+				await dest.WriteLineAsync("    revoke {role:Creator|Member} {plane-name} {username} *");
+				await dest.WriteLineAsync("        Revoke username's role on plane-name");
 				return;
 			}
 			string subAction = commandParts[1].Trim();
@@ -207,7 +211,55 @@ namespace Nibriboard
 					await dest.WriteLineAsync($"Primary chunk area size: {targetPlane.PrimaryChunkAreaSize}");
 					await dest.WriteLineAsync($"Min unloadeable chunks: {targetPlane.MinUnloadeableChunks}");
 					await dest.WriteLineAsync($"Soft loaded chunk limit: {targetPlane.SoftLoadedChunkLimit}");
+					await dest.WriteLineAsync($"Creators: {string.Join(", ", targetPlane.Creators)}");
+					await dest.WriteLineAsync($"Members: {string.Join(", ", targetPlane.Members)}");
 
+					break;
+				case "grant":
+					if (commandParts.Length < 5) {
+						await dest.WriteLineAsync("Error: No username specified!");
+						return;
+					}
+					if (commandParts.Length < 4) {
+						await dest.WriteLineAsync("Error: No plane name specified!");
+						return;
+					}
+					if (commandParts.Length < 3) {
+						await dest.WriteLineAsync("Error: No role specified!");
+						return;
+					}
+					string grantRoleName = commandParts[2];
+					string grantPlaneName = commandParts[3];
+					string grantUsername = commandParts[4];
+
+					if (grantRoleName.ToLower() != "creator" && grantRoleName.ToLower() != "member") {
+						await dest.WriteLineAsync($"Error: Invalid role {grantRoleName}. Valid values: Creator, Member. Is not case-sensitive.");
+						return;
+					}
+					Plane grantPlane = server.PlaneManager.GetByName(grantPlaneName);
+					if (grantPlane == null) {
+						await dest.WriteLineAsync($"Error: The plane with the name {grantPlaneName} could not be found.");
+						return;
+					}
+					if (server.AccountManager.GetByName(grantUsername) == null) {
+						await dest.WriteLineAsync($"Error: No user could be found with the name {grantUsername}.");
+						return;
+					}
+
+					switch (grantRoleName.ToLower()) {
+						case "creator":
+							grantPlane.Creators.Add(grantUsername);
+							break;
+						case "member":
+							grantPlane.Members.Add(grantUsername);
+							break;
+					}
+
+					await dest.WriteAsync($"{grantUsername} has been granted {grantRoleName} on {grantPlaneName} successfully. Saving - ");
+
+					long grantSaveTimeTaken = await grantPlane.Save();
+
+					await dest.WriteLineAsync($" done in {grantSaveTimeTaken}ms.");
 					break;
 				default:
 					await dest.WriteLineAsync($"Error: Unknown sub-action {subAction}.");
