@@ -128,6 +128,8 @@ namespace Nibriboard.RippleSpace
 			Name = inInfo.Name;
 			ChunkSize = inInfo.ChunkSize;
 			StorageDirectory = inStorageDirectory;
+			Creators = inInfo.Creators ?? new List<string>();
+			Members = inInfo.Members ?? new List<string>();
 
 			// Set the soft loaded chunk limit to double the number of chunks in the
 			// primary chunks area

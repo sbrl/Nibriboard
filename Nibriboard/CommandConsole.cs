@@ -215,16 +215,72 @@ namespace Nibriboard
 					await dest.WriteLineAsync($"Members: {string.Join(", ", targetPlane.Members)}");
 
 					break;
-				case "grant":
-					if (commandParts.Length < 5) {
+				case "revoke":
+					if (commandParts.Length < 5)
+					{
 						await dest.WriteLineAsync("Error: No username specified!");
 						return;
 					}
-					if (commandParts.Length < 4) {
+					if (commandParts.Length < 4)
+					{
 						await dest.WriteLineAsync("Error: No plane name specified!");
 						return;
 					}
-					if (commandParts.Length < 3) {
+					if (commandParts.Length < 3)
+					{
+						await dest.WriteLineAsync("Error: No role specified!");
+						return;
+					}
+					string revokeRoleName = commandParts[2];
+					string revokePlaneName = commandParts[3];
+					string revokeUsername = commandParts[4];
+
+					if (revokeRoleName.ToLower() != "creator" && revokeRoleName.ToLower() != "member")
+					{
+						await dest.WriteLineAsync($"Error: Invalid role {revokeRoleName}. Valid values: Creator, Member. Is not case-sensitive.");
+						return;
+					}
+					Plane revokePlane = server.PlaneManager.GetByName(revokePlaneName);
+					if (revokePlane == null)
+					{
+						await dest.WriteLineAsync($"Error: The plane with the name {revokePlaneName} could not be found.");
+						return;
+					}
+					if (server.AccountManager.GetByName(revokeUsername) == null)
+					{
+						await dest.WriteLineAsync($"Error: No user could be found with the name {revokeUsername}.");
+						return;
+					}
+
+					switch (revokeRoleName.ToLower())
+					{
+						case "creator":
+							revokePlane.Creators.Remove(revokeUsername);
+							break;
+						case "member":
+							revokePlane.Members.Remove(revokeUsername);
+							break;
+					}
+
+					await dest.WriteAsync($"{revokeUsername} has been revoked {revokeRoleName} on {revokePlaneName} successfully. Saving - ");
+
+					long revokeSaveTimeTaken = await revokePlane.Save();
+
+					await dest.WriteLineAsync($"done in {revokeSaveTimeTaken}ms.");
+					break;
+				case "grant":
+					if (commandParts.Length < 5)
+					{
+						await dest.WriteLineAsync("Error: No username specified!");
+						return;
+					}
+					if (commandParts.Length < 4)
+					{
+						await dest.WriteLineAsync("Error: No plane name specified!");
+						return;
+					}
+					if (commandParts.Length < 3)
+					{
 						await dest.WriteLineAsync("Error: No role specified!");
 						return;
 					}
@@ -232,25 +288,37 @@ namespace Nibriboard
 					string grantPlaneName = commandParts[3];
 					string grantUsername = commandParts[4];
 
-					if (grantRoleName.ToLower() != "creator" && grantRoleName.ToLower() != "member") {
+					if (grantRoleName.ToLower() != "creator" && grantRoleName.ToLower() != "member")
+					{
 						await dest.WriteLineAsync($"Error: Invalid role {grantRoleName}. Valid values: Creator, Member. Is not case-sensitive.");
 						return;
 					}
 					Plane grantPlane = server.PlaneManager.GetByName(grantPlaneName);
-					if (grantPlane == null) {
+					if (grantPlane == null)
+					{
 						await dest.WriteLineAsync($"Error: The plane with the name {grantPlaneName} could not be found.");
 						return;
 					}
-					if (server.AccountManager.GetByName(grantUsername) == null) {
+					if (server.AccountManager.GetByName(grantUsername) == null)
+					{
 						await dest.WriteLineAsync($"Error: No user could be found with the name {grantUsername}.");
 						return;
 					}
 
-					switch (grantRoleName.ToLower()) {
+					switch (grantRoleName.ToLower())
+					{
 						case "creator":
+							if (grantPlane.Creators.Contains(grantUsername)) {
+								await dest.WriteLineAsync($"Error: {grantUsername} is already a creator on {grantPlaneName}.");
+								return;
+							}
 							grantPlane.Creators.Add(grantUsername);
 							break;
 						case "member":
+							if (grantPlane.Members.Contains(grantUsername)) {
+								await dest.WriteLineAsync($"Error: {grantUsername} is already a member on {grantPlaneName}.");
+								return;
+							}
 							grantPlane.Members.Add(grantUsername);
 							break;
 					}
@@ -259,7 +327,7 @@ namespace Nibriboard
 
 					long grantSaveTimeTaken = await grantPlane.Save();
 
-					await dest.WriteLineAsync($" done in {grantSaveTimeTaken}ms.");
+					await dest.WriteLineAsync($"done in {grantSaveTimeTaken}ms.");
 					break;
 				default:
 					await dest.WriteLineAsync($"Error: Unknown sub-action {subAction}.");
