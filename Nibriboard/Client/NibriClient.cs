@@ -118,7 +118,11 @@ namespace Nibriboard.Client
 		/// <summary>
 		/// The name this client has assigned to themselves.
 		/// </summary>
-		public string Name { get; private set; }
+		public string Name {
+			get {
+				return connection.HandshakeRequest.BasicAuthCredentials.Username;
+			}
+		}
 		/// <summary>
 		/// The current area that this client is looking at.
 		/// </summary>

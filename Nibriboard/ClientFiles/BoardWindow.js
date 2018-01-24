@@ -51,6 +51,7 @@ class BoardWindow extends EventEmitter
 		
 		// Our unique id
 		this.Id = -1;
+		this.Name = "Unknown";
 		// Our colour
 		this.Colour = "rgba(255, 255, 255, 0.3)";
 		
@@ -387,8 +388,10 @@ class BoardWindow extends EventEmitter
 		
 		// Store the information send by the server
 		this.Id = message.Id;
+		this.Name = message.Name;
 		this.Colour = message.Colour;
 		
+		this.interface.setDisplayName(this.Name);
 		this.interface.OurColour = this.Colour;
 		this.interface.setConnectedStatus(true);
 		

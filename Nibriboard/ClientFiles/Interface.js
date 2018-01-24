@@ -189,6 +189,15 @@ class Interface extends EventEmitter
 	}
 	
 	/**
+	 * Sets the name displayed in the sidebar.
+	 * @param {string} newName The new name to display.
+	 */
+	setDisplayName(newName)
+	{
+		this.sidebar.querySelector(".name").innerText = newName;
+	}
+	
+	/**
 	 * Sets the displayed connection status.
 	 * @param {bool} newStatus The new connection status to display. true = connected - false = disconnected.
 	 */
