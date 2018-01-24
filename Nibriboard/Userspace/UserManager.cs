@@ -25,7 +25,7 @@ namespace Nibriboard.Userspace
 		public UserManager()
 		{
 			Permissions.AddRange(new RbacPermission[] {
-				new RbacPermission("view-public-plane", "View public planes"),
+				new RbacPermission("view-public-plane", "View public planes"), // Currently not implemented.
 				new RbacPermission("view-own-plane", "View your own planes."),
 				new RbacPermission("view-any-plane", "View anyone's planes."),
 				new RbacPermission("create-plane", "Create a new plane."),

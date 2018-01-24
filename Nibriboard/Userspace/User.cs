@@ -80,6 +80,15 @@ namespace Nibriboard.Userspace
 		}
 
 		/// <summary>
+		/// Recursively works out whether this user has the specified permission name.
+		/// </summary>
+		/// <param name="permissionName">The permission to resolve and then search for.</param>
+		/// <returns>Whether this user has the specified permission through one of their roles or not.</returns>
+		public bool HasPermission(string permissionName)
+		{
+			return HasPermission(userManager.ResolvePermission(permissionName));
+		}
+		/// <summary>
 		/// Recursively works out whether this user has the specified permission.
 		/// </summary>
 		/// <param name="permission">The permission to search for.</param>

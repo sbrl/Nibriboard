@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Linq;
 using Nibriboard.Utilities;
+using Nibriboard.Userspace;
 
 namespace Nibriboard.RippleSpace
 {
@@ -84,6 +85,24 @@ namespace Nibriboard.RippleSpace
 			}
 
 			return null;
+		}
+
+		/// <summary>
+		/// Compiles a list of planes that the specified user has access to, taking permissions into account.
+		/// </summary>
+		/// <returns>A list of planes that the specified user has access to.</returns>
+		/// <param name="targetUser">The target user to get the list of planes for.</param>
+		public IEnumerable<Plane> GetByUser(User targetUser)
+		{
+			// If they can't view any planes, then theres no point in iterating the list
+			if (!targetUser.HasPermission("view-own-plane") && !targetUser.HasPermission("view-any-plane"))
+				return new List<Plane>();
+
+			// If the user is allowed to view *any* plane, then we don't need to filter them :P
+			if (targetUser.HasPermission("view-any-plane"))
+				return Planes;
+			
+			return Planes.Where((Plane nextPlane) => nextPlane.HasMember(targetUser.Username));
 		}
 
 		/// <summary>
