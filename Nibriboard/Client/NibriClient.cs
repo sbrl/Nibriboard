@@ -103,7 +103,6 @@ namespace Nibriboard.Client
 		/// <summary>
 		/// The number of milliseconds since we last received a message from this client.
 		/// </summary>
-		/// <value>The milliseconds since last message.</value>
 		public int MillisecondsSinceLastMessage {
 			get {
 				return (int)((DateTime.Now - LastMessageTime).TotalMilliseconds);
@@ -117,19 +116,15 @@ namespace Nibriboard.Client
 
 
 		/// <summary>
-		/// The name this client has assignedto themselves.
+		/// The name this client has assigned to themselves.
 		/// </summary>
-		/// <value>The name.</value>
 		public string Name { get; private set; }
 		/// <summary>
 		/// The current area that this client is looking at.
 		/// </summary>
-		/// <value>The current view port.</value>
 		public Rectangle CurrentViewPort { get; private set; } = Rectangle.Zero;
 		/// <summary>
-		/// The absolute position in plane-space of this client's cursor.
-		/// </summary>
-		/// <value>The absolute cursor position.</value>
+		/// The absolute position in plane-space of this client's 
 		public Vector2 AbsoluteCursorPosition { get; private set; } = Vector2.Zero;
 		/// <summary>
 		/// This client's colour. Used to tell multiple clients apart visually.
@@ -321,6 +316,7 @@ namespace Nibriboard.Client
 			HandshakeResponseMessage handshakeResponse = new HandshakeResponseMessage();
 			handshakeResponse.Id = Id;
 			handshakeResponse.Colour = Colour;
+			handshakeResponse.Name = Name;
 			foreach(Plane plane in manager.NibriServer.PlaneManager.Planes)
 				handshakeResponse.Planes.Add(plane.Name);
 			

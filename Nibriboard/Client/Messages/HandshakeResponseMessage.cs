@@ -23,6 +23,11 @@ namespace Nibriboard.Client.Messages
 		public ColourHSL Colour;
 
 		/// <summary>
+		/// The name of this client.
+		/// </summary>
+		public string Name;
+
+		/// <summary>
 		/// A list of planes that this nibriboard server currently has.
 		/// </summary>
 		public List<string> Planes = new List<string>();
