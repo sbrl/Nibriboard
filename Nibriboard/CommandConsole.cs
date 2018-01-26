@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Nibriboard.Client;
 using Nibriboard.RippleSpace;
@@ -39,7 +40,10 @@ namespace Nibriboard
 
 				string rawCommand = await source.ReadLineAsync();
 				string[] commandParts = rawCommand.Split(" \t".ToCharArray());
-				Log.WriteLine("[CommandConsole] Client executing {0}", rawCommand);
+				string displayCommand = rawCommand;
+				if (displayCommand.ToLower().StartsWith("users add"))
+					displayCommand = Regex.Replace(displayCommand, "add ([^ ]+) .*$", "add $1 *******", RegexOptions.IgnoreCase);
+				Log.WriteLine($"[CommandConsole] Client executing {displayCommand}");
 
 				try
 				{
