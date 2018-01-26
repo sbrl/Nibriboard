@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using System.Linq;
+
 using Newtonsoft.Json;
+
 using Nibriboard.Client;
 using Nibriboard.Client.Messages;
 using Nibriboard.RippleSpace;
 using Nibriboard.Userspace;
+
 using SBRL.GlidingSquirrel.Http;
 using SBRL.GlidingSquirrel.Websocket;
 using SBRL.Utilities;
@@ -155,24 +159,27 @@ namespace Nibriboard
 		/// </summary>
 		/// <param name="sendingClient">The client sending the message.</param>
 		/// <param name="message">The message that is to bee sent.</param>
-		public void Broadcast(NibriClient sendingClient, Message message)
+		public async Task Broadcast(NibriClient sendingClient, Message message)
 		{
+			List<Task> senders = new List<Task>();
 			foreach(NibriClient client in NibriClients)
 			{
 				// Don't send the message to the sender
 				if(client == sendingClient)
 					continue;
 
-				client.Send(message);
+				senders.Add(client.Send(message));
 			}
+			await Task.WhenAll(senders);
 		}
 		/// <summary>
 		/// Sends a message to everyone on the same plane as the sender, except the sender themselves.
 		/// </summary>
 		/// <param name="sendingClient">The sending client.</param>
 		/// <param name="message">The message to send.</param>
-		public void BroadcastPlane(NibriClient sendingClient, Message message)
+		public async Task BroadcastPlane(NibriClient sendingClient, Message message)
 		{
+			List<Task> senders = new List<Task>();
 			foreach(NibriClient client in NibriClients)
 			{
 				// Don't send the message to the sender
@@ -181,9 +188,10 @@ namespace Nibriboard
 				// Only send the message to others on the same plane
 				if(client.CurrentPlane != sendingClient.CurrentPlane)
 					continue;
-
-				client.Send(message);
+				
+				senders.Add(client.Send(message));
 			}
+			await Task.WhenAll(senders);
 		}
 
 		/// <summary>
@@ -191,14 +199,17 @@ namespace Nibriboard
 		/// </summary>
 		/// <param name="plane">The plane to send the message to.</param>
 		/// <param name="message">The message to send.</param>
-		public void ReflectPlane(Plane plane, Message message)
+		public async Task ReflectPlane(Plane plane, Message message)
 		{
+			List<Task> senders = new List<Task>();
 			foreach(NibriClient client in NibriClients)
 			{
 				if(client.CurrentPlane != plane)
 					continue;
-				client.Send(message);
+				senders.Add(client.Send(message));
 			}
+
+			await Task.WhenAll(senders);
 		}
 
 		#endregion

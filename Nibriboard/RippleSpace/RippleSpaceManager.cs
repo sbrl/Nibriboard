@@ -92,7 +92,8 @@ namespace Nibriboard.RippleSpace
 		/// </summary>
 		/// <returns>A list of planes that the specified user has access to.</returns>
 		/// <param name="targetUser">The target user to get the list of planes for.</param>
-		public IEnumerable<Plane> GetByUser(User targetUser)
+		/// <param name="isCreator">Whether the a list of planes that the user is a creator of should be returned instead.</param>
+		public IEnumerable<Plane> GetByUser(User targetUser, bool isCreator = false)
 		{
 			// If they can't view any planes, then theres no point in iterating the list
 			if (!targetUser.HasPermission("view-own-plane") && !targetUser.HasPermission("view-any-plane"))
@@ -102,7 +103,11 @@ namespace Nibriboard.RippleSpace
 			if (targetUser.HasPermission("view-any-plane"))
 				return Planes;
 			
-			return Planes.Where((Plane nextPlane) => nextPlane.HasMember(targetUser.Username));
+			return Planes.Where(
+				(Plane nextPlane) => isCreator ?
+					nextPlane.HasCreator(targetUser.Username) : 
+					nextPlane.HasMember(targetUser.Username)
+			);
 		}
 
 		/// <summary>

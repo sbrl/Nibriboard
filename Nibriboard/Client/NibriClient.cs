@@ -61,7 +61,8 @@ namespace Nibriboard.Client
 			["LinePart"] = typeof(LinePartMessage),
 			["LineComplete"] = typeof(LineCompleteMessage),
 			["LineRemove"] = typeof(LineRemoveMessage),
-			["ViewportUpdate"] = typeof(ViewportUpdateMessage)
+			["ViewportUpdate"] = typeof(ViewportUpdateMessage),
+			["PlaneListRequest"] = typeof(PlaneListRequestMessage)
 		};
 
 		/// <summary>
@@ -151,6 +152,8 @@ namespace Nibriboard.Client
 			connection.OnDisconnection += handleDisconnection;
 			connection.OnTextMessage += handleMessage;
 
+			sendPlaneList(false).Wait();
+
             Log.WriteLine(
                 "[Nibriboard/WebSocket] New NibriClient connected with id #{0} for user {1}.",
                 Id,
@@ -216,12 +219,12 @@ namespace Nibriboard.Client
 		/// If you *really* need to send a raw message to the client, you can do so with the SendRawa() method.
 		/// </summary>
 		/// <param name="message">The message to send.</param>
-		public void Send(Message message)
+		public async Task Send(Message message)
 		{
 			try
 			{
 				string payload = JsonConvert.SerializeObject(message);
-				SendRaw(payload);
+				await SendRaw(payload);
 			}
 			catch(Exception error)
 			{
@@ -234,7 +237,7 @@ namespace Nibriboard.Client
 		/// Use the regular Send() method if you can possibly help it.
 		/// </summary>
 		/// <param name="message">The message to send.</param>
-		public bool SendRaw(string message)
+		public async Task<bool> SendRaw(string message)
 		{
             if (!Connected) {
 				Log.WriteLine($"[NibriClient#{Id}] Can't send a message as the client has disconnected.");
@@ -243,16 +246,16 @@ namespace Nibriboard.Client
 
 			Log.WriteLine("[NibriClient/#{0}] Sending message with length {1}.", Id, message.Length);
 			
-			connection.Send(message);
+			await connection.Send(message);
             return true;
 		}
 
 		/// <summary>
 		/// Sends a heartbeat message to this client.
 		/// </summary>
-		public void SendHeartbeat()
+		public async Task SendHeartbeat()
 		{
-			Send(new HeartbeatMessage());
+			await Send(new HeartbeatMessage());
 		}
 
 		#endregion
@@ -266,7 +269,7 @@ namespace Nibriboard.Client
 				return;
 			
 			// Tell the client that we're shutting down
-			Send(lastMessage);
+			await Send(lastMessage);
 
 			await connection.Close(WebsocketCloseReason.Normal, "Goodbye!");
 		}
@@ -303,10 +306,14 @@ namespace Nibriboard.Client
 
 
 		#region Message Handlers
+		protected async Task handlePlaneListRequestMessage(PlaneListRequestMessage message)
+		{
+			await sendPlaneList(message.IsCreator);
+		}
 		/// <summary>
 		/// Handles an incoming handshake request. We should only receive one of these!
 		/// </summary>
-		protected Task handleHandshakeRequestMessage(HandshakeRequestMessage message)
+		protected async Task handleHandshakeRequestMessage(HandshakeRequestMessage message)
 		{
 			CurrentViewPort = message.InitialViewport;
 			AbsoluteCursorPosition = message.InitialAbsCursorPosition;
@@ -314,7 +321,7 @@ namespace Nibriboard.Client
 			// Tell everyone else about the new client
 			ClientStatesMessage newClientNotification = new ClientStatesMessage();
 			newClientNotification.ClientStates.Add(GenerateStateSnapshot());
-			manager.Broadcast(this, newClientNotification);
+			await manager.Broadcast(this, newClientNotification);
 
 			// Send the new client a response to their handshake request
 			HandshakeResponseMessage handshakeResponse = new HandshakeResponseMessage();
@@ -324,13 +331,11 @@ namespace Nibriboard.Client
 			foreach(Plane plane in manager.NibriServer.PlaneManager.Planes)
 				handshakeResponse.Planes.Add(plane.Name);
 			
-			Send(handshakeResponse);
+			await Send(handshakeResponse);
 
 			// Tell the new client about everyone else who's connected
 			// FUTURE: If we need to handle a large number of connections, we should generate this message based on the chunks surrounding the client
-			Send(GenerateClientStateUpdate());
-
-			return Task.CompletedTask;
+			await Send(GenerateClientStateUpdate());
 		}
 		/// <summary>
 		/// Handles an incoming plane change request.
@@ -353,7 +358,7 @@ namespace Nibriboard.Client
 			CurrentPlane.OnChunkUpdate += handleChunkUpdateEvent;
 
 			// Tell the client that the switch over all went according to plan
-			Send(new PlaneChangeOkMessage() {
+			await Send(new PlaneChangeOkMessage() {
 				NewPlaneName = message.NewPlaneName,
 				GridSize = CurrentPlane.ChunkSize
 			});
@@ -400,16 +405,15 @@ namespace Nibriboard.Client
 		/// Handles an incoming cursor position message from the client..
 		/// </summary>
 		/// <param name="message">The message to process.</param>
-		protected Task handleCursorPositionMessage(CursorPositionMessage message) {
+		protected async Task handleCursorPositionMessage(CursorPositionMessage message) {
 			AbsoluteCursorPosition = message.AbsCursorPosition;
 
 			// Send the update to the other clients
 			// TODO: Buffer these updates and send them about 5 times a second
 			ClientStatesMessage updateMessage = new ClientStatesMessage();
 			updateMessage.ClientStates.Add(this.GenerateStateSnapshot());
-			manager.BroadcastPlane(this, updateMessage);
 
-			return Task.CompletedTask;
+			await manager.BroadcastPlane(this, updateMessage);
 		}
 
 		/// <summary>
@@ -428,7 +432,7 @@ namespace Nibriboard.Client
 		/// lines that are being drawn and their properties for live display.
 		/// </summary>
 		/// <param name="message">The LineStartMessage to process.</param>
-		protected Task handleLineStartMessage(LineStartMessage message)
+		protected async Task handleLineStartMessage(LineStartMessage message)
 		{
 			// Create a new line
 			manager.LineIncubator.CreateLine(
@@ -437,24 +441,22 @@ namespace Nibriboard.Client
 				message.LineWidth
 			);
 
-			manager.BroadcastPlane(this, new LineStartReflectionMessage() {
+			await manager.BroadcastPlane(this, new LineStartReflectionMessage() {
 				OtherClientId = Id,
 				LineId = message.LineId,
 				LineColour = message.LineColour,
 				LineWidth = message.LineWidth
 			});
-
-			return Task.CompletedTask;
 		}
 
 		/// <summary>
 		/// Handles messages containing a fragment of a line from the client.
 		/// </summary>
 		/// <param name="message">The message to process.</param>
-		protected Task handleLinePartMessage(LinePartMessage message)
+		protected async Task handleLinePartMessage(LinePartMessage message)
 		{
 			// Forward the line part to everyone on this plane
-			manager.BroadcastPlane(this, message);
+			await manager.BroadcastPlane(this, message);
 
 			List<LocationReference> linePoints = new List<LocationReference>(message.Points.Count);
 			foreach(Vector2 point in message.Points)
@@ -462,13 +464,11 @@ namespace Nibriboard.Client
 			
 			manager.LineIncubator.AddBit(message.LineId, linePoints);
 
-			manager.BroadcastPlane(this, new LinePartReflectionMessage() {
+			await manager.BroadcastPlane(this, new LinePartReflectionMessage() {
 				OtherClientId = Id,
 				LineId = message.LineId,
 				Points = message.Points
 			});
-
-			return Task.CompletedTask;
 		}
 
 		/// <summary>
@@ -488,19 +488,20 @@ namespace Nibriboard.Client
 			if(CurrentPlane == null)
 			{
 				Log.WriteLine("[NibriClient#{0}] Attempt to complete a line before selecting a plane - ignoring");
-				Send(new ErrorMessage() {
-					Message = "Error: You can't complete a line until you've selected a plane " +
-						"to draw it on!"
-				});
+				await Send(new ExceptionMessage(
+					401, "Error: You can't complete a line until you've selected a plane to draw it on!"
+				));
 				return;
 			}
 
 			Log.WriteLine("[NibriClient#{0}] Adding {1}px {2} line", Id, line.Width, line.Colour);
-			manager.BroadcastPlane(this, new LineCompleteReflectionMessage() {
-				OtherClientId = Id,
-				LineId = line.LineId
-			});
-			await CurrentPlane.AddLine(line);
+			await Task.WhenAll(
+				manager.BroadcastPlane(this, new LineCompleteReflectionMessage() {
+					OtherClientId = Id,
+					LineId = line.LineId
+				}),
+				CurrentPlane.AddLine(line)
+			);
 		}
 
 		/// <summary>
@@ -527,11 +528,20 @@ namespace Nibriboard.Client
 			ChunkUpdateMessage clientNotification = new ChunkUpdateMessage() {
 				Chunks = new List<Chunk>() { sendingChunk }
 			};
-			Send(clientNotification);
+			Send(clientNotification).Wait();
 		}
 
 		#endregion
 
+		protected async Task sendPlaneList(bool isCreator)
+		{
+			IEnumerable<Plane> planes = manager.NibriServer.PlaneManager.GetByUser(ConnectedUser, isCreator);
+			PlaneListResponseMessage message = new PlaneListResponseMessage();
+			foreach (Plane nextPlane in planes)
+				message.Planes.Add(new PlaneListItem(nextPlane, nextPlane.HasCreator(ConnectedUser.Username) ? "Creator" : "Member"));
+
+			await Send(message);
+		}
 
 		/// <summary>
 		/// Generates an update message that contains information about the locations and states of all connected clients.
@@ -564,7 +574,7 @@ namespace Nibriboard.Client
 		{
 			if(CurrentPlane == default(Plane))
 			{
-				Send(new ExceptionMessage("You're not on a plane yet, so you can't request chunks." +
+				await Send(new ExceptionMessage(1, "You're not on a plane yet, so you can't request chunks. " +
 										  "Try joining a plane and sending that request again."));
 				return;
 			}
@@ -582,7 +592,7 @@ namespace Nibriboard.Client
 				updateMessage.Chunks.Add(await CurrentPlane.FetchChunk(chunkRef));
 
 			Log.WriteLine("[NibriClient#{0}/SendChunks] Sending {1} chunks", Id, updateMessage.Chunks.Count);
-			Send(updateMessage);
+			await Send(updateMessage);
 		}
 	}
 }

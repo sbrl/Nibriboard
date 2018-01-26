@@ -132,7 +132,7 @@
 		<Compile Include="Client\Messages\LinePartMessage.cs" />
 		<Compile Include="Client\LineIncubator.cs" />
 		<Compile Include="Client\Messages\LineCompleteMessage.cs" />
-		<Compile Include="Client\Messages\ErrorMessage.cs" />
+		<Compile Include="Client\Messages\PlaneListRequestMessage.cs" />
 		<Compile Include="Client\Messages\PlaneChangeOkMessage.cs" />
 		<Compile Include="Client\RawChunkReference.cs" />
 		<Compile Include="Client\Messages\LinePartReflectionMessage.cs" />
@@ -152,6 +152,7 @@
 		<Compile Include="Userspace\RbacPermission.cs" />
 		<Compile Include="Userspace\RbacRole.cs" />
 		<Compile Include="Userspace\User.cs" />
+		<Compile Include="Client\Messages\PlaneListResponseMessage.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="commit-hash.txt" />
