@@ -12,11 +12,36 @@ using Newtonsoft.Json;
 
 namespace Nibriboard.RippleSpace
 {
+	public class MultiChunkUpdateEventArgs : EventArgs
+	{
+		/// <summary>
+		/// The type of updates being made to these chunks.
+		/// </summary>
+		public ChunkUpdateType UpdateType;
+
+		/// <summary>
+		/// The chunks that have been updated.
+		/// </summary>
+		public IEnumerable<Chunk> UpdatedChunks;
+	}
+
+	public delegate void MultiChunkUpdateEvent(object sender, MultiChunkUpdateEventArgs eventArgs);
+
 	/// <summary>
-	/// Represents an infinite plane.
+	/// Represents a single infinite plane.
 	/// </summary>
 	public class Plane
 	{
+		/// <summary>
+		/// Whether we're currently buffering chunk updates or not.
+		/// </summary>
+		private bool currentlyBufferingChunkUpdates = false;
+		/// <summary>
+		/// A temporary storage list for chunks that have been updated but haven't yet been included in 
+		/// a plane-wide chunk update event.
+		/// </summary>
+		private List<Chunk> updatedChunksBuffer = new List<Chunk>();
+
 		/// <summary>
 		/// The name of this plane.
 		/// </summary>
@@ -67,9 +92,9 @@ namespace Nibriboard.RippleSpace
 		public int SoftLoadedChunkLimit;
 
 		/// <summary>
-		/// Fired when one of the chunks on this plane updates.
+		/// Fired when one or more of the chunks on this plane updates.
 		/// </summary>
-		public event ChunkUpdateEvent OnChunkUpdate;
+		public event MultiChunkUpdateEvent OnChunkUpdates;
 
 		/// <summary>
 		/// The chunkspace that holds the currently loaded and active chunks.
@@ -270,12 +295,14 @@ namespace Nibriboard.RippleSpace
 					Log.WriteLine("[Plane/{0}] Warning: A line part has no points in it O.o", Name);
 			}
 
-			// Add each segment to the appropriate chunk
+			// Add each segment to the appropriate chunk, buffering the chunk update message
+			BeginChunkUpdateBuffering();
 			foreach(DrawnLine newLineSegment in chunkedLineParts)
 			{
 				Chunk containingChunk = await FetchChunk(newLineSegment.ContainingChunk);
 				containingChunk.Add(newLineSegment);
 			}
+			FinishChunkUpdateBuffering();
 		}
 
 		public async Task<bool> RemoveLineSegment(ChunkReference containingChunk, string targetLineUniqueId)
@@ -381,6 +408,21 @@ namespace Nibriboard.RippleSpace
 			return totalSize;
 		}
 
+		public void BeginChunkUpdateBuffering() {
+			Log.WriteLine("Beginning chunk update buffer");
+			updatedChunksBuffer.Clear();
+			currentlyBufferingChunkUpdates = true;
+		}
+		public void FinishChunkUpdateBuffering() {
+			currentlyBufferingChunkUpdates = false;
+			Log.WriteLine("Captured {0} chunk updates whilst buffering", updatedChunksBuffer.Count);
+			OnChunkUpdates(this, new MultiChunkUpdateEventArgs() {
+				UpdateType = ChunkUpdateType.Combination,
+				UpdatedChunks = updatedChunksBuffer.ToArray()
+			});
+			updatedChunksBuffer.Clear();
+		}
+
 		/// <summary>
 		/// Handles chunk updates from the individual loaded chunks on this plane.
 		/// Re-emits chunk updates it catches wind of at plane-level.
@@ -396,10 +438,20 @@ namespace Nibriboard.RippleSpace
 				return;
 			}
 
+
 			Log.WriteLine("[Plane {0}] Chunk at {1} updated because {2}", Name, updatingChunk.Location, eventArgs.UpdateType);
 
-			// Make the chunk update bubble up to plane-level
-			OnChunkUpdate(sender, eventArgs);
+			if (!currentlyBufferingChunkUpdates) {
+				// Make the chunk update bubble up to plane-level
+				OnChunkUpdates(this, new MultiChunkUpdateEventArgs()
+				{
+					UpdateType = eventArgs.UpdateType,
+					UpdatedChunks = new Chunk[] { updatingChunk },
+				});
+			}
+			else {
+				updatedChunksBuffer.Add(updatingChunk);
+			}
 		}
 
 		/// <summary>

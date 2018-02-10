@@ -42,7 +42,7 @@ namespace Nibriboard.RippleSpace
 	public delegate void ChunkUpdateEvent(object sender, ChunkUpdateEventArgs eventArgs);
 
 	/// <summary>
-	/// Represents a single chunk of an infinite <see cref="NibriboardServer.RippleSpace.Plane" />.
+	/// Represents a single chunk of an infinite <see cref="Plane" />.
 	/// </summary>
 	[Serializable]
     [JsonObject(MemberSerialization.OptIn)]
@@ -218,7 +218,9 @@ namespace Nibriboard.RippleSpace
 		/// <param name="targetLineUniqueId">The id of the line to remove.</param>
 		public bool Remove(string targetLineUniqueId)
 		{
-			return lines.RemoveAll((line) => line.UniqueId == targetLineUniqueId) > 0;
+			bool result = lines.RemoveAll((line) => line.UniqueId == targetLineUniqueId) > 0;
+			OnChunkUpdate(this, new ChunkUpdateEventArgs() { UpdateType = ChunkUpdateType.Deletion });
+			return result;
 		}
 
 		public IEnumerator<DrawnLine> GetEnumerator()

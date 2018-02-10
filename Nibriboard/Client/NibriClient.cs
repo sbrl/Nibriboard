@@ -351,11 +351,11 @@ namespace Nibriboard.Client
 
 			// Remove the event listener from the old plane if there is indeed an old plane to remove it from
 			if(CurrentPlane != null)
-				CurrentPlane.OnChunkUpdate -= handleChunkUpdateEvent;
+				CurrentPlane.OnChunkUpdates -= handleChunkUpdateEvent;
 			// Swap out the current plane
 			CurrentPlane = manager.NibriServer.PlaneManager[message.NewPlaneName];
 			// Attach a listener to the new plane
-			CurrentPlane.OnChunkUpdate += handleChunkUpdateEvent;
+			CurrentPlane.OnChunkUpdates += handleChunkUpdateEvent;
 
 			// Tell the client that the switch over all went according to plan
 			await Send(new PlaneChangeOkMessage() {
@@ -410,6 +410,7 @@ namespace Nibriboard.Client
 
 			// Send the update to the other clients
 			// TODO: Buffer these updates and send them about 5 times a second
+			// This will improve bandwidth & server resource usage when many clients are connected
 			ClientStatesMessage updateMessage = new ClientStatesMessage();
 			updateMessage.ClientStates.Add(this.GenerateStateSnapshot());
 
@@ -521,12 +522,16 @@ namespace Nibriboard.Client
 
 		#region RippleSpace Event Handlers
 
-		protected void handleChunkUpdateEvent(object sender, ChunkUpdateEventArgs eventArgs)
+		protected void handleChunkUpdateEvent(object sender, MultiChunkUpdateEventArgs eventArgs)
 		{
-			Chunk sendingChunk = sender as Chunk;
-			Log.WriteLine("[NibriClient#{0}] Sending chunk update for {1}", Id, sendingChunk.Location);
+			Log.WriteLine(
+				"[NibriClient#{0}] Sending {0} chunk updates (for {1})",
+				Id,
+				eventArgs.UpdatedChunks.Count(),
+				string.Join(", ", eventArgs.UpdatedChunks.Select((Chunk chunk) => chunk.Location))
+			);
 			ChunkUpdateMessage clientNotification = new ChunkUpdateMessage() {
-				Chunks = new List<Chunk>() { sendingChunk }
+				Chunks = new List<Chunk>(eventArgs.UpdatedChunks)
 			};
 			Send(clientNotification).Wait();
 		}

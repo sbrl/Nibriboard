@@ -62,7 +62,6 @@ namespace Nibriboard.RippleSpace
 
 		public static LocationReference Parse(Plane plane, string source)
 		{
-			// TODO: Decide if this is the format that we want to use for location references
 			if (!source.StartsWith("LocationReference:"))
 				throw new InvalidDataException($"Error: That isn't a valid location reference. Location references start with 'ChunkReference:'.");
 
