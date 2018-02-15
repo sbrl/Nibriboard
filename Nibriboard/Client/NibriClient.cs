@@ -506,7 +506,7 @@ namespace Nibriboard.Client
 
 			if(CurrentPlane == null)
 			{
-				Log.WriteLine("[NibriClient#{0}] Attempt to complete a line before selecting a plane - ignoring");
+				Log.WriteLine("[NibriClient#{0}] Attempt to complete a line before selecting a plane - ignoring", Id);
 				await Send(new ExceptionMessage(
 					401, "Error: You can't complete a line until you've selected a plane to draw it on!"
 				));

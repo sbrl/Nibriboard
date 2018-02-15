@@ -64,8 +64,11 @@ class RippleLink extends EventEmitter
 		this.emit(message.Event, message);
 	}
 	
-	handleErrorMessage(message) {
-		console.error(message.Message);
+	handleErrorMessage(error) {
+		console.error(error.Message);
+		let dialog = document.getElementById("dialog-error");
+		dialog.querySelector("error").innerText = error.Message;
+		dialog.querySelector("error-id").innerText = error.Code;
 	}
 	
 	/**
