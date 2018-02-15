@@ -216,7 +216,7 @@ namespace Nibriboard.Client
 
 		/// <summary>
 		/// Sends a <see cref="Message"/> to the client.
-		/// If you *really* need to send a raw message to the client, you can do so with the SendRawa() method.
+		/// If you *really* need to send a raw message to the client, you can do so with the SendRaw() method.
 		/// </summary>
 		/// <param name="message">The message to send.</param>
 		public async Task Send(Message message)
@@ -345,9 +345,27 @@ namespace Nibriboard.Client
 			Log.WriteLine("[NibriClient#{0}] Changing to plane {1}.", Id, message.NewPlaneName);
 
 			// Create a new plane with the specified name if it doesn't exist already
-			// future we might want to allow the user to specify the chunk size
-			if(manager.NibriServer.PlaneManager[message.NewPlaneName] == default(Plane))
-				manager.NibriServer.PlaneManager.CreatePlane(new PlaneInfo(message.NewPlaneName));
+			// Makes sure that the uesr has permission to do so
+			// future: we might want to allow the user to specify the chunk size
+			if (manager.NibriServer.PlaneManager[message.NewPlaneName] == default(Plane))
+			{
+				if (ConnectedUser.HasPermission("create-plane"))
+					manager.NibriServer.PlaneManager.CreatePlane(new PlaneInfo(message.NewPlaneName));
+				else {
+					await Send(new ExceptionMessage(
+						402, "Error: That plane doesn't exist, but you don't have permission to create it."
+					));
+					return;
+				}
+			}
+
+			Plane newPlane = manager.NibriServer.PlaneManager[message.NewPlaneName];
+			if (!newPlane.HasMember(ConnectedUser.Username)) {
+				await Send(new ExceptionMessage(
+					403, "Error: You don't have permission to view that plane. Try contacting it's owner!"
+				));
+				return;
+			}
 
 			// Remove the event listener from the old plane if there is indeed an old plane to remove it from
 			if(CurrentPlane != null)
