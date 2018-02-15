@@ -153,6 +153,7 @@
 		<Compile Include="Userspace\RbacRole.cs" />
 		<Compile Include="Userspace\User.cs" />
 		<Compile Include="Client\Messages\PlaneListResponseMessage.cs" />
+		<Compile Include="Utilities\Hash.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="commit-hash.txt" />

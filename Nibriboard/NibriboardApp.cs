@@ -14,6 +14,7 @@ using Nibriboard.Userspace;
 using SBRL.GlidingSquirrel.Http;
 using SBRL.GlidingSquirrel.Websocket;
 using SBRL.Utilities;
+using Nibriboard.Utilities;
 
 namespace Nibriboard
 {
@@ -68,6 +69,8 @@ namespace Nibriboard
 				return false;
 			}
 
+			// TODO: Origin checking here
+
 			// Authentication suceeded :D
 			return true;
 		}
@@ -112,6 +115,7 @@ namespace Nibriboard
 
 				string settingsJson = JsonConvert.SerializeObject(clientSettings);
 				response.ContentLength = settingsJson.Length;
+				response.Headers.Add("etag", Hash.SHA1(settingsJson));
 				response.ContentType = "application/json";
 				await response.SetBody(settingsJson);
 
@@ -138,12 +142,19 @@ namespace Nibriboard
 
             byte[] embeddedFile = EmbeddedFiles.ReadAllBytes(expandedFilePath);
 
-			try
-			{
+			// Generate and attach the etag to the response
+			response.Headers.Add("etag", Hash.SHA1(embeddedFile));
+			if (request.GetHeaderValue("if-none-match", string.Empty).Replace("\"", "") == response.Headers["etag"]) {
+				// It's the same! Tell them so.
+				response.ContentLength = 0;
+				response.ResponseCode = HttpResponseCode.NotModified;
+				return HttpConnectionAction.Continue;
+			}
+
+			try {
 				await response.SetBody(embeddedFile);
 			}
-			catch(Exception error)
-			{
+			catch(Exception error) {
 				Log.WriteLine($"[Nibriboard/EmbeddedFileHandler] Error: {error.Message} Details:");
 				Log.WriteLine(error.ToString());
 			}
