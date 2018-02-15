@@ -106,9 +106,10 @@ namespace Nibriboard
                 return HttpConnectionAction.Continue;
 			}
 
-			if (!ShouldAcceptConnection(request, response)) {
+			// TODO: Make authentication happen on the websocket only
+			/*if (!ShouldAcceptConnection(request, response)) {
 				return HttpConnectionAction.Continue;
-			}
+			}*/
 
 			if(request.Url == "/Settings.json")
 			{
