@@ -13,7 +13,7 @@ export default class WhiteboardSwitcher
 		this.dialog_element = inDialogElement;
 		this.ripple_link = inRippleLink;
 		
-		this.dialog_element.querySelector("#switch-whiteboard-list")
+		this.dialog_element.querySelector(".switch-whiteboard-list")
 			.addEventListener("click", (function(event) {
 				if(!event.target.classList.contains("plane-list-item"))
 					return;
@@ -49,7 +49,7 @@ export default class WhiteboardSwitcher
 	{
 		if(update_plane_list)
 			this.ripple_link.send({ "Event": "PlaneListRequest" });
-		this.dialog_element.open();
+		this.dialog_element.showModal();
 	}
 	
 	/**
@@ -57,14 +57,17 @@ export default class WhiteboardSwitcher
 	 * to recieve the list of planes just once.
 	 */
 	register_plane_list_receiver() {
-		this.ripple_link.on("PlaneListResponse", function(message) {
-			this.dialog_element.getElementById("switch-whiteboard-list")
-				.appendChild(
-					this.build_plane_list_html(message.Planes)
-				);
+		this.ripple_link.on("PlaneListResponse", (function(message) {
+			let planeListDisplay = this.dialog_element.querySelector(".switch-whiteboard-list");
+			// Clear the old list out
+			while (planeListDisplay.firstChild)
+    			planeListDisplay.removeChild(planeListDisplay.firstChild);
 			
-			this.dialog_element.open();
-		});
+			// Display the new list
+			planeListDisplay.appendChild(
+				this.build_plane_list_html(message.Planes)
+			);
+		}).bind(this));
 	}
 	
 	/**
@@ -86,5 +89,6 @@ export default class WhiteboardSwitcher
 			
 			result.appendChild(nextItem);
 		}
+		return result;
 	}
 }

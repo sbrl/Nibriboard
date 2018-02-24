@@ -30,6 +30,12 @@ module.exports = {
 						name: "theme/[name].[ext]"
 					}
 				}]
+			}, {
+				test: /polyfill\.js/,
+				use: [{
+					loader: "file-loader",
+					options: { name: "polyfills/[name].[ext]" }
+				}]
 			}
 		]
 	},

@@ -5,6 +5,11 @@ import FpsIndicator from "fps-indicator";
 import BoardWindow from './BoardWindow';
 
 window.addEventListener("load", function (event) {
+	
+	document.querySelectorAll("dialog").forEach(
+		(dialog) => window.dialogPolyfill.registerDialog(dialog)
+	);
+	
 	let fpsIndicator = FpsIndicator({
 		updatePeriod: 1000,
 		maxFps: 60
