@@ -71,7 +71,7 @@
 		
 		<Message Importance="high" Text="---[ additional client files ]---" />
 		
-		<CreateItem Include="$(ProjectDir)/ClientFiles/**/*.html;$(ProjectDir)/ClientFiles/**/*.css;$(ProjectDir)/ClientFiles/**/*.svg;$(ProjectDir)/ClientFiles/**/*.png;$(ProjectDir)/ClientFiles/**/*.ico" Exclude="$(ProjectDir)/ClientFiles/node_modules/**/*.*">
+		<CreateItem Include="$(ProjectDir)/ClientFiles/**/*.html;$(ProjectDir)/ClientFiles/**/*.svg;$(ProjectDir)/ClientFiles/**/*.png;$(ProjectDir)/ClientFiles/**/*.ico" Exclude="$(ProjectDir)/ClientFiles/node_modules/**/*.*">
 			<Output TaskParameter="Include" ItemName="StaticClientFiles" />
 		</CreateItem>
 		
