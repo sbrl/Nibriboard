@@ -9,8 +9,7 @@ namespace Nibriboard.Utilities
 	{
 		public static string SHA1(string input)
 		{
-			byte[] hash = (new SHA1Managed()).ComputeHash(Encoding.UTF8.GetBytes(input));
-			return string.Join("", hash.Select(b => b.ToString("x2")).ToArray());
+			return SHA1(Encoding.UTF8.GetBytes(input));
 		}
 		public static string SHA1(byte[] input)
 		{
