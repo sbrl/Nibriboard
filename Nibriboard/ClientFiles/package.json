@@ -7,6 +7,7 @@
   "dependencies": {
     "color": "^3.0.0",
     "cuid": "^2.1.0",
+    "dialog-polyfill": "^0.4.9",
     "event-emitter-es6": "1.*",
     "favicon-notification": "0.*",
     "fps-indicator": "1.*",
@@ -17,6 +18,7 @@
   },
   "devDependencies": {
     "acorn": "^5.4.1",
+    "file-loader": "^1.1.9",
     "webpack": "*"
   },
   "config": {

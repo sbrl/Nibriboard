@@ -14,6 +14,7 @@ import { get, clamp } from './Utilities';
 import Keyboard from './Utilities/Keyboard';
 import Interface from './Interface';
 import ChunkCache from './ChunkCache';
+import WhiteboardSwitcher from './WhiteboardSwitcher';
 
 class BoardWindow extends EventEmitter
 {
@@ -190,6 +191,14 @@ class BoardWindow extends EventEmitter
 		
 		// Keep the server up to date on our viewport and cursor position
 		this.cursorSyncer = new CursorSyncer(this, this.cursorUpdateFrequency)
+		
+		
+		// Plane list selector / whiteboard switcher
+		this.whiteboardSwitcher = new WhiteboardSwitcher(
+			document.getElementById("dialog-switch-whiteboard"),
+			this.rippleLink
+		);
+		this.whiteboardSwitcher.display(false);
 		
 		// RippleLink message bindings
 		
