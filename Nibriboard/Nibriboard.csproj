@@ -37,10 +37,6 @@
 			<HintPath>..\packages\MimeSharp.1.0.0\lib\MimeSharp.dll</HintPath>
 		</Reference>
 		<Reference Include="System.Drawing" />
-		<Reference Include="Newtonsoft.Json">
-			<HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-			<Package>monodevelop</Package>
-		</Reference>
 		<Reference Include="NCuid">
 			<HintPath>..\packages\NCuid.1.0.0\lib\net40\NCuid.dll</HintPath>
 		</Reference>
@@ -56,6 +52,9 @@
 		</Reference>
 		<Reference Include="SimpleHashing.Net">
 		  <HintPath>..\packages\SimpleHashing.Net.1.0.1\lib\SimpleHashing.Net.dll</HintPath>
+		</Reference>
+		<Reference Include="Newtonsoft.Json">
+		  <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 	<Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
