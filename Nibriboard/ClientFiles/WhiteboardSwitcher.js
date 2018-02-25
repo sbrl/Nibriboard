@@ -18,7 +18,9 @@ export default class WhiteboardSwitcher
 				if(!event.target.classList.contains("plane-list-item"))
 					return;
 				
-				this.switch_to(event.target.dataset.plane_name);
+				this.switch_to(event.target.dataset.plane_name).then((function() {
+				    this.dialog_element.close();
+				}).bind(this))
 			}).bind(this));
 		
 		this.register_plane_list_receiver();
