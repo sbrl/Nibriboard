@@ -2,14 +2,23 @@ html, body { font-size: 100%; }
 body
 {
     font-family: sans-serif;
+    color: #222222;
     overflow: hidden; /* Some browsers have weirdness */
 }
+
+h1, h2, h3, h4, h5, h6 { margin: 0; }
 
 hr
 {
     width: 80%; height: 0;
     border: 0;
     border-top: 0.1em solid hsl(237, 48%, 47%);
+}
+
+dialog {
+    border: 0;
+    box-shadow: 0.2em 0.2em 0.5em rgba(150, 150, 150, 0.4);
+    background: url(/images/graph-squares.png);
 }
 
 #canvas-main
@@ -144,4 +153,33 @@ hr
 {
     top: 0.2em !important; right: 0.2em !important;
     left: initial !important;
+}
+
+
+/**************************************/
+
+.switch-whiteboard-list {
+    display: flex; justify-content: center;
+    margin: 0; padding: 0;
+    
+    text-align: center;
+    list-style-type: none;
+}
+
+.switch-whiteboard-list > .plane-list-item {
+    margin: 0.25em;
+    width: 10em;
+    height: 10em;
+    
+    display: flex;
+    flex-direction: column; justify-content: center;
+    cursor: pointer;
+    
+    background: rgba(235, 235, 235, 0.5);
+    border: 0.3em solid hsl(101, 83%, 33%);
+    border-radius: 0.25em;
+}
+
+.switch-whiteboard-list > .plane-list-item.role-creator {
+    border: 0.3em solid hsl(52, 88%, 60%);
 }

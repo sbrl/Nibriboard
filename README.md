@@ -46,6 +46,7 @@ Note that if you're intending to use Nibriboard over the internet or an untruste
  	 - [webpack](https://webpack.js.org/) - Building and packing the client-sided js into a single bundle
  - Images:
      - [Transparent Square Tiles](https://www.toptal.com/designers/subtlepatterns/transparent-square-tiles/) from [subtlepatterns.com](https://subtlepatterns.com/)
+     - [Graph Paper](https://www.toptal.com/designers/subtlepatterns/graphy/) from [subtlepatterns.com](https://subtlepatterns.com)
      - Icons:
          - [OpenIconic](https://useiconic.com/open) - brush, move -> pan, sun -> point, eraser -> delete
  - Future reference: Libraries I am considering
