@@ -19,7 +19,8 @@
   "devDependencies": {
     "acorn": "^5.4.1",
     "file-loader": "^1.1.9",
-    "webpack": "*"
+    "webpack": "^4.0.0",
+    "webpack-cli": "^2.0.9"
   },
   "config": {
     "bundle_file": "NibriClient.js"
