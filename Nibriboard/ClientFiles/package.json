@@ -6,7 +6,7 @@
   "main": "index.js",
   "dependencies": {
     "color": "^3.0.0",
-    "cuid": "^2.1.0",
+    "cuid": "^2.1.1",
     "dialog-polyfill": "^0.4.9",
     "event-emitter-es6": "1.*",
     "favicon-notification": "0.*",
@@ -17,10 +17,10 @@
     "visvalingam-simplifier": "0.*"
   },
   "devDependencies": {
-    "acorn": "^5.4.1",
-    "file-loader": "^1.1.9",
-    "webpack": "^4.0.0",
-    "webpack-cli": "^2.0.9"
+    "acorn": "^5.5.3",
+    "file-loader": "^1.1.11",
+    "webpack": "^4.6.0",
+    "webpack-cli": "^2.0.15"
   },
   "config": {
     "bundle_file": "NibriClient.js"
