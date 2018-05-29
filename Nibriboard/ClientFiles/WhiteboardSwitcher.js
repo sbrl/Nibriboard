@@ -51,7 +51,7 @@ export default class WhiteboardSwitcher
 	{
 		if(update_plane_list)
 			this.ripple_link.send({ "Event": "PlaneListRequest" });
-		this.dialog_element.showModal();
+		
 	}
 	
 	/**
@@ -69,6 +69,7 @@ export default class WhiteboardSwitcher
 			planeListDisplay.appendChild(
 				this.build_plane_list_html(message.Planes)
 			);
+			this.dialog_element.showModal();
 		}).bind(this));
 	}
 	
