@@ -410,13 +410,6 @@ class BoardWindow extends EventEmitter
 		this.chunkCache = new ChunkCache(this);
 		// Create a new data structure to store client information in
 		this.otherClients = new ClientManager(this.rippleLink);
-		
-		// Land on a default plane
-		// future ask the user which plane they want to join
-		this.rippleLink.send({
-			"Event": "PlaneChange",
-			"NewPlaneName": "default-plane"
-		});
 	}
 	
 	/**
