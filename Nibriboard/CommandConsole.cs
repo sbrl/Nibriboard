@@ -56,7 +56,7 @@ namespace Nibriboard
 				string[] commandParts = rawCommand.Split(" \t".ToCharArray());
 				string displayCommand = rawCommand;
 				if (displayCommand.ToLower().StartsWith("users add") || displayCommand.ToLower().StartsWith("users checkpassword"))
-					displayCommand = Regex.Replace(displayCommand, "(?!:add|checkpassword) ([^ ]+) .*$", "add $1 *******", RegexOptions.IgnoreCase);
+					displayCommand = Regex.Replace(displayCommand, "(add|checkpassword) ([^ ]+) .*$", "$1 $2 *******", RegexOptions.IgnoreCase);
 				Log.WriteLine($"[CommandConsole] Client executing {displayCommand}");
 
 				try
