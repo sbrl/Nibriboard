@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Nibriboard.Client;
 using Nibriboard.RippleSpace;
@@ -34,22 +35,35 @@ namespace Nibriboard
 			while(true)
 			{
 				TcpClient nextClient = await commandServer.AcceptTcpClientAsync();
+				ThreadPool.QueueUserWorkItem(handleCommand, nextClient);
+			}
+		}
 
+		private async void handleCommand(object nextClientObj)
+		{
+			TcpClient nextClient = nextClientObj as TcpClient;
+			if (nextClient == null) {
+				Log.WriteLine("[CommandConsole/HandleCommand] Unable to cast state object to TcpClient");
+				return;
+			}
+
+			try
+			{
 				StreamReader source = new StreamReader(nextClient.GetStream());
 				StreamWriter destination = new StreamWriter(nextClient.GetStream()) { AutoFlush = true };
 
 				string rawCommand = await source.ReadLineAsync();
 				string[] commandParts = rawCommand.Split(" \t".ToCharArray());
 				string displayCommand = rawCommand;
-				if (displayCommand.ToLower().StartsWith("users add"))
-					displayCommand = Regex.Replace(displayCommand, "add ([^ ]+) .*$", "add $1 *******", RegexOptions.IgnoreCase);
+				if (displayCommand.ToLower().StartsWith("users add") || displayCommand.ToLower().StartsWith("users checkpassword"))
+					displayCommand = Regex.Replace(displayCommand, "(?!:add|checkpassword) ([^ ]+) .*$", "add $1 *******", RegexOptions.IgnoreCase);
 				Log.WriteLine($"[CommandConsole] Client executing {displayCommand}");
 
 				try
 				{
 					await executeCommand(destination, commandParts);
 				}
-				catch(Exception error)
+				catch (Exception error)
 				{
 					try
 					{
@@ -58,6 +72,10 @@ namespace Nibriboard
 					catch { nextClient.Close(); } // Make absolutely sure that the command server won't die
 				}
 				nextClient.Close();
+			}
+			catch (Exception error)
+			{
+				Log.WriteLine("[CommandConsole] Uncaught Error: {0}", error.ToString());
 			}
 		}
 
@@ -360,6 +378,8 @@ namespace Nibriboard
 				await dest.WriteLineAsync("        Adds a role to a user");
 				await dest.WriteLineAsync("    roles revoke {role-name} {username}");
 				await dest.WriteLineAsync("        Removes a role from a user");
+				await dest.WriteLineAsync("    checkpassword {username} {password}");
+				await dest.WriteLineAsync("        Checks a user's password.");
 				return;
 			}
 
@@ -389,6 +409,31 @@ namespace Nibriboard
 					server.AccountManager.AddUser(newUsername, password);
 					await server.SaveUserData();
 					await dest.WriteLineAsync($"Added user with name {newUsername} successfully.");
+					break;
+				case "checkpassword":
+					string checkUsername = (commandParts[2] ?? "").Trim();
+					string checkPassword = (commandParts[3] ?? "").Trim();
+
+					if (checkUsername.Length == 0) {
+						await dest.WriteLineAsync("Error: No username specified!");
+						break;
+					}
+					if (checkPassword.Length == 0) {
+						await dest.WriteLineAsync("Error: No password specified!");
+						break;
+					}
+
+					User checkUser = server.AccountManager.GetByName(checkUsername);
+					if (checkUser == null) {
+						await dest.WriteLineAsync($"Error: User '{checkUsername}' was not found.");
+						break;
+					}
+					if (!checkUser.CheckPassword(checkPassword)) {
+						await dest.WriteLineAsync("Error: That password was incorrect.");
+						break;
+					}
+
+					await dest.WriteLineAsync("Password check ok!");
 					break;
 				case "roles":
 					await handleRoleCommand(commandParts, dest);
