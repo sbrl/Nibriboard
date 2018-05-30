@@ -245,7 +245,7 @@ namespace Nibriboard.RippleSpace
 		}
 		public static async Task<Chunk> FromStream(Plane plane, Stream chunkSource)
 		{
-			BZip2Stream decompressor = new BZip2Stream(chunkSource, CompressionMode.Decompress);
+			BZip2Stream decompressor = new BZip2Stream(chunkSource, CompressionMode.Decompress, false);
 			StreamReader decompressedSource = new StreamReader(decompressor);
 
 			Chunk loadedChunk = JsonConvert.DeserializeObject<Chunk>(
@@ -276,7 +276,7 @@ namespace Nibriboard.RippleSpace
 		/// <param name="destination">The destination stream to save the chunk to.</param>
 		public async Task SaveTo(Stream destination)
 		{
-			BZip2Stream compressor = new BZip2Stream(destination, CompressionMode.Compress);
+			BZip2Stream compressor = new BZip2Stream(destination, CompressionMode.Compress, false);
 			StreamWriter destWriter = new StreamWriter(compressor) { AutoFlush = true };
 
 			await destWriter.WriteLineAsync(JsonConvert.SerializeObject(this));
