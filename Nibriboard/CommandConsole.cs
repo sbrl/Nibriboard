@@ -55,8 +55,8 @@ namespace Nibriboard
 				string rawCommand = await source.ReadLineAsync();
 				string[] commandParts = rawCommand.Split(" \t".ToCharArray());
 				string displayCommand = rawCommand;
-				if (displayCommand.ToLower().StartsWith("users add") || displayCommand.ToLower().StartsWith("users checkpassword"))
-					displayCommand = Regex.Replace(displayCommand, "(add|checkpassword) ([^ ]+) .*$", "$1 $2 *******", RegexOptions.IgnoreCase);
+				if (Regex.Match(displayCommand.ToLower(), @"^users (add|setpassword|checkpassword)") != null)
+					displayCommand = Regex.Replace(displayCommand, "(add|checkpassword|setpassword) ([^ ]+) .*$", "$1 $2 *******", RegexOptions.IgnoreCase);
 				Log.WriteLine($"[CommandConsole] Client executing {displayCommand}");
 
 				try
@@ -379,7 +379,9 @@ namespace Nibriboard
 				await dest.WriteLineAsync("    roles revoke {role-name} {username}");
 				await dest.WriteLineAsync("        Removes a role from a user");
 				await dest.WriteLineAsync("    checkpassword {username} {password}");
-				await dest.WriteLineAsync("        Checks a user's password.");
+				await dest.WriteLineAsync("        Checks a user's password");
+				await dest.WriteLineAsync("    setpassword {username} {password}");
+				await dest.WriteLineAsync("        Resets a user's password");
 				return;
 			}
 
@@ -435,6 +437,29 @@ namespace Nibriboard
 
 					await dest.WriteLineAsync("Password check ok!");
 					break;
+				case "setpassword":
+					string setPasswordUsername = (commandParts[2] ?? "").Trim();
+					string setPasswordPass = (commandParts[3] ?? "").Trim();
+
+					if(setPasswordUsername.Length == 0) {
+						await dest.WriteLineAsync("Error: No username specified.");
+						break;
+					}
+					if(setPasswordPass.Length == 0) {
+						await dest.WriteLineAsync("Error: No password specified.");
+					}
+
+					User setPasswordUser = server.AccountManager.GetByName(setPasswordUsername);
+					if(setPasswordUser == null) {
+						await dest.WriteLineAsync($"Error: User '{setPasswordUsername}' wasn't found.");
+						break;
+					}
+
+					setPasswordUser.SetPassword(setPasswordPass);
+					await server.SaveUserData();
+					await dest.WriteLineAsync($"Updated password for {setPasswordUser.Username} successfully.");
+					break;
+
 				case "roles":
 					await handleRoleCommand(commandParts, dest);
 					break;
