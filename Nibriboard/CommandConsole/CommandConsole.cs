@@ -12,7 +12,7 @@ using Nibriboard.RippleSpace;
 using Nibriboard.Userspace;
 using Nibriboard.Utilities;
 
-namespace Nibriboard
+namespace Nibriboard.CommandConsole
 {
 	public class CommandConsole
 	{
@@ -97,7 +97,6 @@ namespace Nibriboard
 					break;
 				case "plane":
 					await handlePlaneCommand(commandParts, dest);
-					break;
 
 				case "users":
 					await handleUsersCommand(commandParts, dest);
