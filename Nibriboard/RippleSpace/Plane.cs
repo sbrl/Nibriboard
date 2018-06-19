@@ -368,6 +368,9 @@ namespace Nibriboard.RippleSpace
 
 		public async Task<long> Save()
 		{
+			// Create the storage directory on disk if required
+			Directory.CreateDirectory(StorageDirectory);
+
 			// Save all the chunks to disk
 			List<Task> chunkSavers = new List<Task>();
 			foreach(KeyValuePair<ChunkReference, Chunk> loadedChunkItem in loadedChunkspace)
