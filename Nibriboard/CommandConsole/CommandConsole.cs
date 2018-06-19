@@ -95,30 +95,8 @@ namespace Nibriboard
 					await dest.WriteLineAsync("    users                Interact with user accounts");
 					await dest.WriteLineAsync("    clients              List the currently connected clients");
 					break;
-				case "version":
-					await dest.WriteLineAsync($"Nibriboard Server {NibriboardServer.Version}, built on {NibriboardServer.BuildDate.ToString("R")}");
-					await dest.WriteLineAsync("By Starbeamrainbowlabs, licensed under MPL-2.0");
-					break;
-				case "save":
-					await dest.WriteAsync("Saving ripple space - ");
-					Stopwatch timer = Stopwatch.StartNew();
-					long bytesWritten = await server.PlaneManager.Save();
-					long msTaken = timer.ElapsedMilliseconds;
-					await dest.WriteLineAsync("done.");
-					await dest.WriteLineAsync($"{Formatters.HumanSize(bytesWritten)} written in {msTaken}ms.");
-					await dest.WriteLineAsync($"Save is now {Formatters.HumanSize(server.PlaneManager.LastSaveSize)} in size.");
-					break;
 				case "plane":
 					await handlePlaneCommand(commandParts, dest);
-					break;
-
-				case "clients":
-
-					foreach(NibriClient client in server.AppServer.NibriClients) {
-						await dest.WriteLineAsync($"{client.Id}: {client.Name} from {client.RemoteEndpoint}, on {client.CurrentPlane.Name} looking at {client.CurrentViewPort}");
-					}
-					await dest.WriteLineAsync();
-					await dest.WriteLineAsync($"Total {server.AppServer.ClientCount} clients");
 					break;
 
 				case "users":
@@ -184,59 +162,6 @@ namespace Nibriboard
 			string subAction = commandParts[1].Trim();
 			switch (subAction)
 			{
-				case "list":
-					await dest.WriteLineAsync("Planes:");
-					foreach (Plane plane in server.PlaneManager.Planes)
-						await dest.WriteLineAsync($"    {plane.Name} @ {plane.ChunkSize} ({plane.LoadedChunks} / ~{plane.SoftLoadedChunkLimit} chunks loaded, {plane.UnloadableChunks} inactive, {plane.TotalChunks} total at last save)");
-					await dest.WriteLineAsync();
-					await dest.WriteLineAsync($"Total {server.PlaneManager.Planes.Count}");
-					break;
-				case "create":
-					if (commandParts.Length < 3)
-					{
-						await dest.WriteLineAsync("Error: No name specified for the new plane!");
-						return;
-					}
-					string newPlaneName = commandParts[2].Trim();
-					int chunkSize = server.PlaneManager.DefaultChunkSize;
-					if (commandParts.Length >= 4)
-						chunkSize = int.Parse(commandParts[3]);
-
-					server.PlaneManager.CreatePlane(new PlaneInfo(
-						newPlaneName,
-						chunkSize
-					));
-
-					await dest.WriteLineAsync($"Created plane with name {newPlaneName} and chunk size {chunkSize}.");
-
-					break;
-				case "status":
-					if (commandParts.Length < 3)
-					{
-						await dest.WriteLineAsync("Error: No plane name specified!");
-						return;
-					}
-
-					string targetPlaneName = commandParts[2].Trim();
-					Plane targetPlane = server.PlaneManager.GetByName(targetPlaneName);
-					if (targetPlane == null)
-					{
-						await dest.WriteLineAsync($"Error: A plane with the name {targetPlaneName} doesn't exist.");
-						return;
-					}
-
-					await dest.WriteLineAsync($"Name: {targetPlane.Name}");
-					await dest.WriteLineAsync($"Chunk size: {targetPlane.ChunkSize}");
-					await dest.WriteLineAsync($"Loaded chunks: {targetPlane.LoadedChunks}");
-					await dest.WriteLineAsync($"Unloaded chunks: {targetPlane.TotalChunks - targetPlane.LoadedChunks}");
-					await dest.WriteLineAsync($"Total chunks: {targetPlane.TotalChunks}");
-					await dest.WriteLineAsync($"Primary chunk area size: {targetPlane.PrimaryChunkAreaSize}");
-					await dest.WriteLineAsync($"Min unloadeable chunks: {targetPlane.MinUnloadeableChunks}");
-					await dest.WriteLineAsync($"Soft loaded chunk limit: {targetPlane.SoftLoadedChunkLimit}");
-					await dest.WriteLineAsync($"Creators: {string.Join(", ", targetPlane.Creators)}");
-					await dest.WriteLineAsync($"Members: {string.Join(", ", targetPlane.Members)}");
-
-					break;
 				case "revoke":
 					if (commandParts.Length < 5)
 					{

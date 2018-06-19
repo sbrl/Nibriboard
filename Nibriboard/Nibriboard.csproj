@@ -1,164 +1,160 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="BeforeBuild;Build" ToolsVersion="4.0">
-	<PropertyGroup>
-		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-		<Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-		<ProjectGuid>{B7F806D9-9C50-4BA8-A803-0FC2EC5F5932}</ProjectGuid>
-		<OutputType>Exe</OutputType>
-		<RootNamespace>Nibriboard</RootNamespace>
-		<AssemblyName>Nibriboard</AssemblyName>
-		<TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-		<ReleaseVersion>0.6</ReleaseVersion>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-		<DebugSymbols>true</DebugSymbols>
-		<DebugType>full</DebugType>
-		<Optimize>false</Optimize>
-		<OutputPath>bin\Debug</OutputPath>
-		<DefineConstants>DEBUG;</DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-		<ExternalConsole>true</ExternalConsole>
-		<PlatformTarget>x86</PlatformTarget>
-		<Externalconsole>true</Externalconsole>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-		<Optimize>true</Optimize>
-		<OutputPath>bin\Release</OutputPath>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-		<ExternalConsole>true</ExternalConsole>
-		<PlatformTarget>x86</PlatformTarget>
-	</PropertyGroup>
-	<!-- References -->
-	<ItemGroup>
-		<Reference Include="System" />
-		<Reference Include="MimeSharp">
-			<HintPath>..\packages\MimeSharp.1.0.0\lib\MimeSharp.dll</HintPath>
-		</Reference>
-		<Reference Include="System.Drawing" />
-		<Reference Include="NCuid">
-			<HintPath>..\packages\NCuid.1.0.0\lib\net40\NCuid.dll</HintPath>
-		</Reference>
-		<Reference Include="mscorlib" />
-		<Reference Include="SimpleHashing.Net">
-		  <HintPath>..\packages\SimpleHashing.Net.1.0.1\lib\SimpleHashing.Net.dll</HintPath>
-		</Reference>
-		<Reference Include="Newtonsoft.Json">
-		  <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-		</Reference>
-		<Reference Include="SharpCompress">
-		  <HintPath>..\packages\SharpCompress.0.21.1\lib\net45\SharpCompress.dll</HintPath>
-		</Reference>
-		<Reference Include="System.ValueTuple">
-		  <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
-		</Reference>
-		<Reference Include="GlidingSquirrel">
-		  <HintPath>..\packages\GlidingSquirrel.0.6.2-alpha\lib\net462\GlidingSquirrel.dll</HintPath>
-		</Reference>
-	</ItemGroup>
-	<Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-	
-	<Target Name="BeforeBuild">
-		<Exec IgnoreExitCode="true" WorkingDirectory="$(ProjectDir)" Command="git submodule update --init" />
-		<MakeDir Directories="$(ProjectDir)/obj/client_dist" />
-		
-		<Message Importance="high" Text="----------[ npm build ]----------" />
-		
-		<Exec WorkingDirectory="$(ProjectDir)/ClientFiles" Condition="!Exists('node_modules/')" Command="npm install" />
-		
-		<Exec WorkingDirectory="$(ProjectDir)/ClientFiles" Command="npm run build" />
-		
-		<Message Importance="high" Text="---[ additional client files ]---" />
-		
-		<CreateItem Include="$(ProjectDir)/ClientFiles/**/*.html;$(ProjectDir)/ClientFiles/**/*.svg;$(ProjectDir)/ClientFiles/**/*.png;$(ProjectDir)/ClientFiles/**/*.ico" Exclude="$(ProjectDir)/ClientFiles/node_modules/**/*.*">
-			<Output TaskParameter="Include" ItemName="StaticClientFiles" />
-		</CreateItem>
-		
-		<Copy SourceFiles="@(StaticClientFiles)" DestinationFolder="$(ProjectDir)/obj/client_dist/%(RecursiveDir)" />
-		
-		<Message Importance="high" Text="Generating embedded resource directives" />
-		<CreateItem Include="$(ProjectDir)/obj/client_dist/**">
-			<Output ItemName="EmbeddedResource" TaskParameter="Include" />
-		</CreateItem>
-		
-		<Exec WorkingDirectory="$(ProjectDir)" Command="git rev-parse HEAD &gt;commit-hash.txt" />
-		<Exec WorkingDirectory="$(ProjectDir)" Command="date --rfc-3339 seconds &gt;build-date.txt" />
-	</Target>
-	
-	<!-- todo: try a RemoveDir in a Before/After Clean -->
-	<ItemGroup>
-		<FileWrites Include="$(ProjectDir)/ClientFiles/node_modules/**/*" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<Compile Include="Program.cs" />
-		<Compile Include="Properties\AssemblyInfo.cs" />
-		<Compile Include="RippleSpace\Plane.cs" />
-		<Compile Include="RippleSpace\Chunk.cs" />
-		<Compile Include="RippleSpace\LocationReference.cs" />
-		<Compile Include="RippleSpace\ChunkReference.cs" />
-		<Compile Include="RippleSpace\DrawnLine.cs" />
-		<Compile Include="RippleSpace\Reference.cs" />
-		<Compile Include="NibriboardServer.cs" />
-		<Compile Include="Log.cs" />
-		<Compile Include="Utilities\EmbeddedFiles.cs" />
-		<Compile Include="Env.cs" />
-		<Compile Include="RippleSpace\RippleSpaceManager.cs" />
-		<Compile Include="Client\NibriClient.cs" />
-		<Compile Include="Client\ClientSettings.cs" />
-		<Compile Include="Utilities\PointExtensions.cs" />
-		<Compile Include="Utilities\JsonUtilities.cs" />
-		<Compile Include="Client\Messages\Message.cs" />
-		<Compile Include="Client\Messages\HandshakeRequestMessage.cs" />
-		<Compile Include="Client\Messages\CursorPositionMessage.cs" />
-		<Compile Include="RippleSpace\ClientState.cs" />
-		<Compile Include="Utilities\Rectangle.cs" />
-		<Compile Include="Utilities\Vector2.cs" />
-		<Compile Include="Client\Messages\ClientStatesMessage.cs" />
-		<Compile Include="Utilities\ColourHSL.cs" />
-		<Compile Include="Utilities\ToStringJsonConverter.cs" />
-		<Compile Include="Client\Messages\HandshakeResponseMessage.cs" />
-		<Compile Include="Client\Messages\ShutdownMessage.cs" />
-		<Compile Include="Client\Messages\IdleDisconnectMessage.cs" />
-		<Compile Include="Client\Messages\HeartbeatMessage.cs" />
-		<Compile Include="Client\Messages\ChunkUpdateMessage.cs" />
-		<Compile Include="Client\Messages\PlaneChangeMessage.cs" />
-		<Compile Include="Client\Messages\ExceptionMessage.cs" />
-		<Compile Include="Utilities\ChunkTools.cs" />
-		<Compile Include="Client\Messages\ChunkUpdateRequestMessage.cs" />
-		<Compile Include="Client\ChunkCache.cs" />
-		<Compile Include="Client\Messages\LinePartMessage.cs" />
-		<Compile Include="Client\LineIncubator.cs" />
-		<Compile Include="Client\Messages\LineCompleteMessage.cs" />
-		<Compile Include="Client\Messages\PlaneListRequestMessage.cs" />
-		<Compile Include="Client\Messages\PlaneChangeOkMessage.cs" />
-		<Compile Include="Client\RawChunkReference.cs" />
-		<Compile Include="Client\Messages\LinePartReflectionMessage.cs" />
-		<Compile Include="Client\Messages\LineCompleteReflectionMessage.cs" />
-		<Compile Include="Client\Messages\LineStartMessage.cs" />
-		<Compile Include="Client\Messages\LineStartReflectionMessage.cs" />
-		<Compile Include="Utilities\CalcPaths.cs" />
-		<Compile Include="RippleSpace\PlaneInfo.cs" />
-		<Compile Include="Utilities\BinaryIO.cs" />
-		<Compile Include="Client\Messages\ViewportUpdateMessage.cs" />
-		<Compile Include="NibriboardApp.cs" />
-		<Compile Include="Utilities\LineSimplifier.cs" />
-		<Compile Include="Client\Messages\LineRemoveMessage.cs" />
-		<Compile Include="CommandConsole.cs" />
-		<Compile Include="Utilities\Formatters.cs" />
-		<Compile Include="Userspace\UserManager.cs" />
-		<Compile Include="Userspace\RbacPermission.cs" />
-		<Compile Include="Userspace\RbacRole.cs" />
-		<Compile Include="Userspace\User.cs" />
-		<Compile Include="Client\Messages\PlaneListResponseMessage.cs" />
-		<Compile Include="Utilities\Hash.cs" />
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="commit-hash.txt" />
-		<EmbeddedResource Include="build-date.txt" />
-	</ItemGroup>
-	<!--
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="BeforeBuild;Build" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{B7F806D9-9C50-4BA8-A803-0FC2EC5F5932}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Nibriboard</RootNamespace>
+    <AssemblyName>Nibriboard</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <ReleaseVersion>0.6</ReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+    <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>true</Externalconsole>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <!-- References -->
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="MimeSharp">
+      <HintPath>..\packages\MimeSharp.1.0.0\lib\MimeSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="NCuid">
+      <HintPath>..\packages\NCuid.1.0.0\lib\net40\NCuid.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="SimpleHashing.Net">
+      <HintPath>..\packages\SimpleHashing.Net.1.0.1\lib\SimpleHashing.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpCompress">
+      <HintPath>..\packages\SharpCompress.0.21.1\lib\net45\SharpCompress.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="GlidingSquirrel">
+      <HintPath>..\packages\GlidingSquirrel.0.6.2-alpha\lib\net462\GlidingSquirrel.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Target Name="BeforeBuild">
+    <Exec IgnoreExitCode="true" WorkingDirectory="$(ProjectDir)" Command="git submodule update --init" />
+    <MakeDir Directories="$(ProjectDir)/obj/client_dist" />
+    <Message Importance="high" Text="----------[ npm build ]----------" />
+    <Exec WorkingDirectory="$(ProjectDir)/ClientFiles" Condition="!Exists('node_modules/')" Command="npm install" />
+    <Exec WorkingDirectory="$(ProjectDir)/ClientFiles" Command="npm run build" />
+    <Message Importance="high" Text="---[ additional client files ]---" />
+    <CreateItem Include="$(ProjectDir)/ClientFiles/**/*.html;$(ProjectDir)/ClientFiles/**/*.svg;$(ProjectDir)/ClientFiles/**/*.png;$(ProjectDir)/ClientFiles/**/*.ico" Exclude="$(ProjectDir)/ClientFiles/node_modules/**/*.*">
+      <Output TaskParameter="Include" ItemName="StaticClientFiles" />
+    </CreateItem>
+    <Copy SourceFiles="@(StaticClientFiles)" DestinationFolder="$(ProjectDir)/obj/client_dist/%(RecursiveDir)" />
+    <Message Importance="high" Text="Generating embedded resource directives" />
+    <CreateItem Include="$(ProjectDir)/obj/client_dist/**">
+      <Output ItemName="EmbeddedResource" TaskParameter="Include" />
+    </CreateItem>
+    <Exec WorkingDirectory="$(ProjectDir)" Command="git rev-parse HEAD &gt;commit-hash.txt" />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="date --rfc-3339 seconds &gt;build-date.txt" />
+  </Target>
+  <!-- todo: try a RemoveDir in a Before/After Clean -->
+  <ItemGroup>
+    <FileWrites Include="$(ProjectDir)/ClientFiles/node_modules/**/*" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RippleSpace\Plane.cs" />
+    <Compile Include="RippleSpace\Chunk.cs" />
+    <Compile Include="RippleSpace\LocationReference.cs" />
+    <Compile Include="RippleSpace\ChunkReference.cs" />
+    <Compile Include="RippleSpace\DrawnLine.cs" />
+    <Compile Include="RippleSpace\Reference.cs" />
+    <Compile Include="NibriboardServer.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="Utilities\EmbeddedFiles.cs" />
+    <Compile Include="Env.cs" />
+    <Compile Include="RippleSpace\RippleSpaceManager.cs" />
+    <Compile Include="Client\NibriClient.cs" />
+    <Compile Include="Client\ClientSettings.cs" />
+    <Compile Include="Utilities\PointExtensions.cs" />
+    <Compile Include="Utilities\JsonUtilities.cs" />
+    <Compile Include="Client\Messages\Message.cs" />
+    <Compile Include="Client\Messages\HandshakeRequestMessage.cs" />
+    <Compile Include="Client\Messages\CursorPositionMessage.cs" />
+    <Compile Include="RippleSpace\ClientState.cs" />
+    <Compile Include="Utilities\Rectangle.cs" />
+    <Compile Include="Utilities\Vector2.cs" />
+    <Compile Include="Client\Messages\ClientStatesMessage.cs" />
+    <Compile Include="Utilities\ColourHSL.cs" />
+    <Compile Include="Utilities\ToStringJsonConverter.cs" />
+    <Compile Include="Client\Messages\HandshakeResponseMessage.cs" />
+    <Compile Include="Client\Messages\ShutdownMessage.cs" />
+    <Compile Include="Client\Messages\IdleDisconnectMessage.cs" />
+    <Compile Include="Client\Messages\HeartbeatMessage.cs" />
+    <Compile Include="Client\Messages\ChunkUpdateMessage.cs" />
+    <Compile Include="Client\Messages\PlaneChangeMessage.cs" />
+    <Compile Include="Client\Messages\ExceptionMessage.cs" />
+    <Compile Include="Utilities\ChunkTools.cs" />
+    <Compile Include="Client\Messages\ChunkUpdateRequestMessage.cs" />
+    <Compile Include="Client\ChunkCache.cs" />
+    <Compile Include="Client\Messages\LinePartMessage.cs" />
+    <Compile Include="Client\LineIncubator.cs" />
+    <Compile Include="Client\Messages\LineCompleteMessage.cs" />
+    <Compile Include="Client\Messages\PlaneListRequestMessage.cs" />
+    <Compile Include="Client\Messages\PlaneChangeOkMessage.cs" />
+    <Compile Include="Client\RawChunkReference.cs" />
+    <Compile Include="Client\Messages\LinePartReflectionMessage.cs" />
+    <Compile Include="Client\Messages\LineCompleteReflectionMessage.cs" />
+    <Compile Include="Client\Messages\LineStartMessage.cs" />
+    <Compile Include="Client\Messages\LineStartReflectionMessage.cs" />
+    <Compile Include="Utilities\CalcPaths.cs" />
+    <Compile Include="RippleSpace\PlaneInfo.cs" />
+    <Compile Include="Utilities\BinaryIO.cs" />
+    <Compile Include="Client\Messages\ViewportUpdateMessage.cs" />
+    <Compile Include="NibriboardApp.cs" />
+    <Compile Include="Utilities\LineSimplifier.cs" />
+    <Compile Include="Client\Messages\LineRemoveMessage.cs" />
+    <Compile Include="Utilities\Formatters.cs" />
+    <Compile Include="Userspace\UserManager.cs" />
+    <Compile Include="Userspace\RbacPermission.cs" />
+    <Compile Include="Userspace\RbacRole.cs" />
+    <Compile Include="Userspace\User.cs" />
+    <Compile Include="Client\Messages\PlaneListResponseMessage.cs" />
+    <Compile Include="Utilities\Hash.cs" />
+    <Compile Include="CommandConsole\CommandConsole.cs" />
+    <Compile Include="CommandConsole\Modules\CommandVersion.cs" />
+    <Compile Include="CommandConsole\ICommandModule.cs" />
+    <Compile Include="CommandConsole\CommandRequest.cs" />
+    <Compile Include="CommandConsole\Modules\CommandSave.cs" />
+    <Compile Include="CommandConsole\Modules\CommandClients.cs" />
+    <Compile Include="CommandConsole\CommandParser.cs" />
+    <Compile Include="CommandConsole\Modules\CommandPlane.cs" />
+    <Compile Include="CommandConsole\ModuleDescription.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="commit-hash.txt" />
+    <EmbeddedResource Include="build-date.txt" />
+  </ItemGroup>
+  <!--
 	<ItemGroup>
 		<EmbeddedResource Include="ClientFiles\index.html" />
 		<EmbeddedResource Include="ClientFiles\NibriClient.js" />
@@ -171,27 +167,28 @@
 		<EmbeddedResource Include="ClientFiles\images\icons\point.png" />
 	</ItemGroup>
 	-->
-	<ItemGroup>
-		<Folder Include="RippleSpace\" />
-		<Folder Include="Utilities\" />
-		<Folder Include="ClientFiles\" />
-		<Folder Include="Client\" />
-		<Folder Include="Client\Messages\" />
-		<Folder Include="Userspace\" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Include="packages.config" />
-		<None Include="ClientFiles\index.js" />
-	</ItemGroup>
-	
-	<!-- MonoDevelop settings -->
-	<ProjectExtensions>
-	  <MonoDevelop>
-	    <Properties>
-	      <Policies>
-	        <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
-	      </Policies>
-	    </Properties>
-	  </MonoDevelop>
-	</ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="RippleSpace\" />
+    <Folder Include="Utilities\" />
+    <Folder Include="ClientFiles\" />
+    <Folder Include="Client\" />
+    <Folder Include="Client\Messages\" />
+    <Folder Include="Userspace\" />
+    <Folder Include="CommandConsole\" />
+    <Folder Include="CommandConsole\Modules\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="ClientFiles\index.js" />
+  </ItemGroup>
+  <!-- MonoDevelop settings -->
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>
