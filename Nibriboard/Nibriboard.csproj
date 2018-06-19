@@ -41,9 +41,6 @@
 			<HintPath>..\packages\NCuid.1.0.0\lib\net40\NCuid.dll</HintPath>
 		</Reference>
 		<Reference Include="mscorlib" />
-		<Reference Include="GlidingSquirrel">
-		  <HintPath>..\packages\GlidingSquirrel.0.6.1-alpha\lib\net462\GlidingSquirrel.dll</HintPath>
-		</Reference>
 		<Reference Include="SimpleHashing.Net">
 		  <HintPath>..\packages\SimpleHashing.Net.1.0.1\lib\SimpleHashing.Net.dll</HintPath>
 		</Reference>
@@ -55,6 +52,9 @@
 		</Reference>
 		<Reference Include="System.ValueTuple">
 		  <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+		</Reference>
+		<Reference Include="GlidingSquirrel">
+		  <HintPath>..\packages\GlidingSquirrel.0.6.2-alpha\lib\net462\GlidingSquirrel.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 	<Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
