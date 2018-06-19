@@ -12,6 +12,22 @@ using Newtonsoft.Json;
 
 namespace Nibriboard.RippleSpace
 {
+	public enum PlaneSavingMode
+	{
+		/// <summary>
+		/// Saves everything.
+		/// </summary>
+		All,
+		/// <summary>
+		/// Saves only the plane's metadata.
+		/// </summary>
+		MetadataOnly,
+		/// <summary>
+		/// Saves only the plane's chunks, and not the metadata.
+		/// </summary>
+		ChunkDataOnly
+	}
+
 	public class MultiChunkUpdateEventArgs : EventArgs
 	{
 		/// <summary>
@@ -366,47 +382,70 @@ namespace Nibriboard.RippleSpace
 				Log.WriteLine($"[RippleSpace/{Name}] Unloaded {unloadedChunks} inactive chunks.");
 		}
 
-		public async Task<long> Save()
+		/// <summary>
+		/// Saves this plane to disk.
+		/// Note that this only affects currently loaded chunks and the plane's metadata.
+		/// Unloaded chunks are already persisted on disk, so they don't need saving.
+		/// </summary>
+		/// <param name="savingMode">
+		/// What to save to disk. By default both the metatdata and the loaded chunks are 
+		/// saved, but this behaviour can be controlled via this argument.
+		/// </param>
+		/// <returns>The total number of bytes written to disk.</returns>
+		public async Task<long> Save(PlaneSavingMode savingMode = PlaneSavingMode.All)
 		{
 			// Create the storage directory on disk if required
 			Directory.CreateDirectory(StorageDirectory);
 
-			// Save all the chunks to disk
-			List<Task> chunkSavers = new List<Task>();
-			foreach(KeyValuePair<ChunkReference, Chunk> loadedChunkItem in loadedChunkspace)
-			{
-				// Figure out where to put the chunk and create the relevant directories
-				string chunkDestinationFilename = CalcPaths.ChunkFilePath(StorageDirectory, loadedChunkItem.Key);
-				Directory.CreateDirectory(Path.GetDirectoryName(chunkDestinationFilename));
-
-				// Ask the chunk to save itself, but only if it isn't empty
-				if (loadedChunkItem.Value.IsEmpty) {
-					// Delete the existing chunk file, if it exists
-					if (File.Exists(chunkDestinationFilename))
-						File.Delete(chunkDestinationFilename);
-					
-					continue;
-				}
-
-				Stream chunkDestination = File.Open(chunkDestinationFilename, FileMode.OpenOrCreate);
-				chunkSavers.Add(loadedChunkItem.Value.SaveTo(chunkDestination));
-			}
-			await Task.WhenAll(chunkSavers);
-
-			// Save the plane information
-			StreamWriter planeInfoWriter = new StreamWriter(CalcPaths.PlaneIndex(StorageDirectory));
-			await planeInfoWriter.WriteLineAsync(JsonConvert.SerializeObject(Info));
-			planeInfoWriter.Close();
-
-			// Calculate the total number bytes written
+			// For calculating the total number of bytes written
 			long totalSize = 0;
-			foreach (KeyValuePair<ChunkReference, Chunk> loadedChunkItem in loadedChunkspace)
+
+			if (savingMode == PlaneSavingMode.All || savingMode == PlaneSavingMode.ChunkDataOnly)
 			{
-				string destFilename = CalcPaths.ChunkFilePath(StorageDirectory, loadedChunkItem.Key);
-				if (!File.Exists(destFilename)) // Don't assume that the file exists - it might be an empty chunk
-					continue;
-				totalSize += (new FileInfo(destFilename)).Length;
+				// Save all the chunks to disk
+				List<Task> chunkSavers = new List<Task>();
+				foreach (KeyValuePair<ChunkReference, Chunk> loadedChunkItem in loadedChunkspace)
+				{
+					// Figure out where to put the chunk and create the relevant directories
+					string chunkDestinationFilename = CalcPaths.ChunkFilePath(StorageDirectory, loadedChunkItem.Key);
+					Directory.CreateDirectory(Path.GetDirectoryName(chunkDestinationFilename));
+
+					// Ask the chunk to save itself, but only if it isn't empty
+					if (loadedChunkItem.Value.IsEmpty)
+					{
+						// Delete the existing chunk file, if it exists
+						if (File.Exists(chunkDestinationFilename))
+							File.Delete(chunkDestinationFilename);
+
+						continue;
+					}
+
+					Stream chunkDestination = File.Open(chunkDestinationFilename, FileMode.OpenOrCreate);
+					chunkSavers.Add(loadedChunkItem.Value.SaveTo(chunkDestination));
+				}
+				await Task.WhenAll(chunkSavers);
+
+				// Calculate the number of bytes written
+				foreach (KeyValuePair<ChunkReference, Chunk> loadedChunkItem in loadedChunkspace)
+				{
+					string destFilename = CalcPaths.ChunkFilePath(StorageDirectory, loadedChunkItem.Key);
+					if (!File.Exists(destFilename)) // Don't assume that the file exists - it might be an empty chunk
+						continue;
+					totalSize += (new FileInfo(destFilename)).Length;
+				}
 			}
+
+			if (savingMode == PlaneSavingMode.All || savingMode == PlaneSavingMode.MetadataOnly)
+			{
+				// Save the plane information
+				string planeIndexPath = CalcPaths.PlaneIndex(StorageDirectory);
+				StreamWriter planeInfoWriter = new StreamWriter(planeIndexPath);
+				await planeInfoWriter.WriteLineAsync(JsonConvert.SerializeObject(Info));
+				planeInfoWriter.Close();
+
+				totalSize += (new FileInfo(planeIndexPath)).Length;
+			}
+
 
 			return totalSize;
 		}

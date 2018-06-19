@@ -286,9 +286,10 @@ namespace Nibriboard
 
 					await dest.WriteAsync($"{revokeUsername} has been revoked {revokeRoleName} on {revokePlaneName} successfully. Saving - ");
 
-					long revokeSaveTimeTaken = await revokePlane.Save();
+					DateTime revokeTimeStart = DateTime.Now;
+					await revokePlane.Save(PlaneSavingMode.MetadataOnly);
 
-					await dest.WriteLineAsync($"done in {revokeSaveTimeTaken}ms.");
+					await dest.WriteLineAsync($"done in {(DateTime.Now - revokeTimeStart).Milliseconds}ms.");
 					break;
 				case "grant":
 					if (commandParts.Length < 5)
@@ -347,9 +348,10 @@ namespace Nibriboard
 
 					await dest.WriteAsync($"{grantUsername} has been granted {grantRoleName} on {grantPlaneName} successfully. Saving - ");
 
-					long grantSaveTimeTaken = await grantPlane.Save();
+					DateTime grantTimeStart = DateTime.Now;
+					await grantPlane.Save(PlaneSavingMode.MetadataOnly);
 
-					await dest.WriteLineAsync($"done in {grantSaveTimeTaken}ms.");
+					await dest.WriteLineAsync($"done in {(DateTime.Now - grantTimeStart).Milliseconds}ms.");
 					break;
 				default:
 					await dest.WriteLineAsync($"Error: Unknown sub-action {subAction}.");
