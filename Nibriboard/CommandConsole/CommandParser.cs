@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+
 namespace Nibriboard.CommandConsole
 {
 	public enum OutputMode
@@ -9,6 +11,12 @@ namespace Nibriboard.CommandConsole
 
 	public static class CommandParser
 	{
+		public static async Task ExecuteSubcommand(ICommandModule parentCommandModule, string subcommandName, CommandRequest request)
+		{
+			await (Task)parentCommandModule.GetType()
+			                               .GetMethod(subcommandName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.IgnoreCase)
+				.Invoke(parentCommandModule, new object[] { request });
+		}
 
 		public static OutputMode ParseOutputMode(string outputModeText, OutputMode defaultMode = OutputMode.Text)
 		{

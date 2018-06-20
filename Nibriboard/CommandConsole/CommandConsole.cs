@@ -137,27 +137,6 @@ namespace Nibriboard.CommandConsole
 
 		private async Task handlePlaneCommand(string[] commandParts, StreamWriter dest)
 		{
-			if (commandParts.Length < 2)
-			{
-				await dest.WriteLineAsync("Nibriboard Server Command Console: plane");
-				await dest.WriteLineAsync("----------------------------------------");
-				await dest.WriteLineAsync("Interact with planes.");
-				await dest.WriteLineAsync("Usage:");
-				await dest.WriteLineAsync("    plane {subcommand}");
-				await dest.WriteLineAsync();
-				await dest.WriteLineAsync("Subcommands:");
-				await dest.WriteLineAsync("    list");
-				await dest.WriteLineAsync("        List all the currently loaded planes");
-				await dest.WriteLineAsync("    create {new-plane-name} [{chunkSize}]");
-				await dest.WriteLineAsync("        Create a new named plane, optionally with the specified chunk size");
-				await dest.WriteLineAsync("    status {plane-name}");
-				await dest.WriteLineAsync("        Show the statistics of the specified plane");
-				await dest.WriteLineAsync("    grant {role:Creator|Member} {plane-name} {username}");
-				await dest.WriteLineAsync("        Grant role on plane-name to username");
-				await dest.WriteLineAsync("    revoke {role:Creator|Member} {plane-name} {username} *");
-				await dest.WriteLineAsync("        Revoke username's role on plane-name");
-				return;
-			}
 			string subAction = commandParts[1].Trim();
 			switch (subAction)
 			{

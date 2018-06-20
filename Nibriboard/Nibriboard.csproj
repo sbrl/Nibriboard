@@ -149,6 +149,7 @@
     <Compile Include="CommandConsole\CommandParser.cs" />
     <Compile Include="CommandConsole\Modules\CommandPlane.cs" />
     <Compile Include="CommandConsole\ModuleDescription.cs" />
+    <Compile Include="CommandConsole\Modules\CommandPermissions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="commit-hash.txt" />

@@ -28,10 +28,27 @@ namespace Nibriboard.CommandConsole.Modules
 
 		public async Task Handle(CommandRequest request)
 		{
-			
+			if (request.Arguments.Length < 2)
+			{
+				await request.WriteLine("Nibriboard Server Command Console: plane");
+				await request.WriteLine("----------------------------------------");
+				await request.WriteLine(Description.ToLongString());
+				await request.WriteLine();
+				await request.WriteLine("Subcommands:");
+				await request.WriteLine("    list");
+				await request.WriteLine("        List all the currently loaded planes");
+				await request.WriteLine("    create {{new-plane-name}} [{{chunkSize}}]");
+				await request.WriteLine("        Create a new named plane, optionally with the specified chunk size");
+				await request.WriteLine("    status {{plane-name}}");
+				await request.WriteLine("        Show the statistics of the specified plane");
+				await request.WriteLine("    grant {{role:Creator|Member}} {{plane-name}} {{username}}");
+				return;
+			}
+
+			await CommandParser.ExecuteSubcommand(this, request.Arguments[1], request);
 		}
 
-		private async Task list(CommandRequest request)
+		public async Task List(CommandRequest request)
 		{
 			await request.WriteLine("Planes:");
 			foreach (Plane plane in server.PlaneManager.Planes)
@@ -40,7 +57,7 @@ namespace Nibriboard.CommandConsole.Modules
 			await request.WriteLine($"Total {server.PlaneManager.Planes.Count}");
 		}
 
-		private async Task create(CommandRequest request)
+		public async Task Create(CommandRequest request)
 		{
 			if (request.Arguments.Length < 3)
 			{
@@ -64,7 +81,7 @@ namespace Nibriboard.CommandConsole.Modules
 			await request.WriteLine($"Created plane with name {newPlaneName} and chunk size {chunkSize}.");
 		}
 
-		private async Task status(CommandRequest request)
+		public async Task Status(CommandRequest request)
 		{
 			if (request.Arguments.Length < 3)
 			{
