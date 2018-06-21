@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Nibriboard.Client;
+using Nibriboard.CommandConsole.Modules;
 using Nibriboard.RippleSpace;
 using Nibriboard.Userspace;
 using Nibriboard.Utilities;
@@ -19,12 +21,22 @@ namespace Nibriboard.CommandConsole
 		private NibriboardServer server;
 		private TcpListener commandServer;
 
+		private List<ICommandModule> commandModules = new List<ICommandModule>();
+
 		private int commandPort;
 
 		public CommandConsole(NibriboardServer inServer, int inCommandPort)
 		{
 			server = inServer;
 			commandPort = inCommandPort;
+
+			registerModule(new CommandVersion());
+			registerModule(new CommandClients());
+			registerModule(new CommandSave());
+			registerModule(new CommandPlane());
+			registerModule(new CommandUsers());
+			registerModule(new CommandRoles());
+			registerModule(new CommandPermissions());
 		}
 
 		public async Task Start()
@@ -53,15 +65,17 @@ namespace Nibriboard.CommandConsole
 				StreamWriter destination = new StreamWriter(nextClient.GetStream()) { AutoFlush = true };
 
 				string rawCommand = await source.ReadLineAsync();
-				string[] commandParts = rawCommand.Split(" \t".ToCharArray());
+				string[] commandParts = rawCommand.Split(" \t".ToCharArray()).Select((string arg) => arg.Trim()).ToArray();
 				string displayCommand = rawCommand;
 				if (Regex.Match(displayCommand.ToLower(), @"^users (add|setpassword|checkpassword)") != null)
 					displayCommand = Regex.Replace(displayCommand, "(add|checkpassword|setpassword) ([^ ]+) .*$", "$1 $2 *******", RegexOptions.IgnoreCase);
 				Log.WriteLine($"[CommandConsole] Client executing {displayCommand}");
 
+				CommandRequest request = new CommandRequest(nextClient, commandParts);
+
 				try
 				{
-					await executeCommand(destination, commandParts);
+					await executeCommand(request);
 				}
 				catch (Exception error)
 				{
@@ -79,60 +93,41 @@ namespace Nibriboard.CommandConsole
 			}
 		}
 
-		private async Task executeCommand(StreamWriter dest, string[] commandParts)
+		private async Task executeCommand(CommandRequest request)
 		{
-			string commandName = commandParts[0].Trim();
+			string commandName = request.Arguments[0].ToLower();
+
 			switch(commandName)
 			{
 				case "help":
-					await dest.WriteLineAsync("Nibriboard Server Command Console");
-					await dest.WriteLineAsync("=================================");
-					await dest.WriteLineAsync("Available commands:");
-					await dest.WriteLineAsync("    help                 Show this message");
-					await dest.WriteLineAsync("    version              Show the version of nibriboard that is currently running");
-					await dest.WriteLineAsync("    save                 Save the ripplespace to disk");
-					await dest.WriteLineAsync("    plane {subcommand}   Interact with planes");
-					await dest.WriteLineAsync("    users                Interact with user accounts");
-					await dest.WriteLineAsync("    clients              List the currently connected clients");
+					await request.WriteLine("Nibriboard Server Command Console");
+					await request.WriteLine("=================================");
+					await request.WriteLine("Available commands:");
+					foreach (ICommandModule nextModule in commandModules)
+						await request.WriteLine(nextModule.ToString());
 					break;
-				case "plane":
-					await handlePlaneCommand(commandParts, dest);
-
-				case "users":
-					await handleUsersCommand(commandParts, dest);
-					break;
-
-				/*case "chunk":
-					if(commandParts.Length < 2) {
-						await destination.WriteLineAsync("Error: No sub-action specified.");
-						break;
-					}
-
-					string chunkSubAction = commandParts[1].Trim();
-					switch(chunkSubAction)
-					{
-						case "list":
-							if(commandParts.Length < 3) {
-								await destination.WriteLineAsync("Error: No plane specified to list the chunks of!");
-								return;
-							}
-
-							Plane plane = server.PlaneManager.GetByName(commandParts[2].Trim());
-
-							foreach(Chunk chunk in plane.
-							break;
-
-						default:
-							await destination.WriteLineAsync($"Error: Unknown sub-action {chunkSubAction}.");
-							break;
-					}
-
-					break;*/
 
 				default:
-					await dest.WriteLineAsync($"Error: Unrecognised command {commandName}");
+					foreach (ICommandModule nextModule in commandModules) {
+						if (nextModule.Description.Name.ToLower() == commandName) {
+							await nextModule.Handle(request);
+							return;
+						}
+					}
+
+					await request.WriteLine($"Error: Unrecognised command {commandName}");
 					break;
 			}
+		}
+
+		private void registerModule(ICommandModule newCommandModule)
+		{
+			commandModules.Add(newCommandModule);
+		}
+		private void setupModules()
+		{
+			foreach (ICommandModule nextModule in commandModules)
+				nextModule.Setup(server);
 		}
 	}
 }
