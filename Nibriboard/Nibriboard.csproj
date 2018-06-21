@@ -53,7 +53,7 @@
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="GlidingSquirrel">
-      <HintPath>..\packages\GlidingSquirrel.0.6.2-alpha\lib\net462\GlidingSquirrel.dll</HintPath>
+      <HintPath>..\packages\GlidingSquirrel.0.6.3-alpha\lib\net462\GlidingSquirrel.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -147,7 +147,7 @@
     <Compile Include="CommandConsole\Modules\CommandSave.cs" />
     <Compile Include="CommandConsole\Modules\CommandClients.cs" />
     <Compile Include="CommandConsole\CommandParser.cs" />
-    <Compile Include="CommandConsole\Modules\CommandPlane.cs" />
+    <Compile Include="CommandConsole\Modules\CommandPlanes.cs" />
     <Compile Include="CommandConsole\ModuleDescription.cs" />
     <Compile Include="CommandConsole\Modules\CommandPermissions.cs" />
     <Compile Include="CommandConsole\Modules\CommandUsers.cs" />
