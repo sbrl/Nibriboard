@@ -29,9 +29,9 @@ namespace Nibriboard.CommandConsole.Modules
 
 		public async Task Handle(CommandRequest request)
 		{
-			OutputMode outputMode = CommandParser.ParseOutputMode(request.Arguments[1]);
+			OutputMode outputMode = CommandParser.ParseOutputMode(request.GetArg(1, "text"));
 
-			if (outputMode == OutputMode.Text)
+			if (outputMode == OutputMode.CSV)
 				await request.WriteLine("Id,Name,Remote Endpoint,Current Plane,Viewport");
 
 			foreach (NibriClient client in server.AppServer.NibriClients)

@@ -9,6 +9,7 @@ using System.Reflection;
 using SBRL.Utilities;
 using Nibriboard.Userspace;
 using Nibriboard.Utilities;
+using Nibriboard.CommandConsole;
 
 namespace Nibriboard
 {
@@ -43,7 +44,7 @@ namespace Nibriboard
 
 		private ClientSettings clientSettings;
 
-		private CommandConsole commandServer;
+		private CommandConsoleServer commandServer;
 
 		public readonly int CommandPort = 31587;
 		public readonly int Port = 31586;
@@ -88,7 +89,7 @@ namespace Nibriboard
 			}, IPAddress.Any, Port);
 
 			// Command Console Server setup
-			commandServer = new CommandConsole(this, CommandPort);
+			commandServer = new CommandConsoleServer(this, CommandPort);
 		}
 
 		public async Task Start()

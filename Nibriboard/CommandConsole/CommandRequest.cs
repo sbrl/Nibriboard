@@ -20,6 +20,13 @@ namespace Nibriboard.CommandConsole
 			dest = new StreamWriter(client.GetStream()) { AutoFlush = true };
 		}
 
+		public string GetArg(int index, string defaultValue)
+		{
+			if (index >= Arguments.Length)
+				return defaultValue;
+			return Arguments[index];
+		}
+
 		public async Task WriteLine(string text = "", params object[] args)
 		{
 			await Write($"{text}\n", args);

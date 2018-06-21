@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
+
+using Nibriboard.Utilities;
 
 namespace Nibriboard.CommandConsole
 {
@@ -13,9 +16,13 @@ namespace Nibriboard.CommandConsole
 	{
 		public static async Task ExecuteSubcommand(ICommandModule parentCommandModule, string subcommandName, CommandRequest request)
 		{
-			await (Task)parentCommandModule.GetType()
-			                               .GetMethod(subcommandName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.IgnoreCase)
-				.Invoke(parentCommandModule, new object[] { request });
+			MethodInfo method = parentCommandModule.GetType()
+				.GetMethod(
+				    subcommandName,
+				    // We want public methods that aren't static - and we don't know what casing the method has
+				    BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase
+				);
+			await (Task)method.Invoke(parentCommandModule, new object[] { request });
 		}
 
 		public static OutputMode ParseOutputMode(string outputModeText, OutputMode defaultMode = OutputMode.Text)

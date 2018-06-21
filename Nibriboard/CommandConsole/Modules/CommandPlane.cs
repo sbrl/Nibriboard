@@ -42,6 +42,7 @@ namespace Nibriboard.CommandConsole.Modules
 				await request.WriteLine("    status {{plane-name}}");
 				await request.WriteLine("        Show the statistics of the specified plane");
 				await request.WriteLine("    grant {{role:Creator|Member}} {{plane-name}} {{username}}");
+				await request.WriteLine();
 				return;
 			}
 
@@ -52,7 +53,7 @@ namespace Nibriboard.CommandConsole.Modules
 		{
 			await request.WriteLine("Planes:");
 			foreach (Plane plane in server.PlaneManager.Planes)
-				await request.WriteLine($"    {plane.Name} @ {plane.ChunkSize} ({plane.LoadedChunks} / ~{plane.SoftLoadedChunkLimit} chunks loaded, {plane.UnloadableChunks} inactive, {plane.TotalChunks} total at last save)");
+				await request.WriteLine($"    {plane.Name} @ {plane.ChunkSize} ({plane.LoadedChunks} / ~{plane.SoftLoadedChunkLimit} chunks loaded, {plane.UnloadableChunks} inactive, {plane.TotalSavedChunks} total at last save)");
 			await request.WriteLine();
 			await request.WriteLine($"Total {server.PlaneManager.Planes.Count}");
 		}
@@ -100,8 +101,9 @@ namespace Nibriboard.CommandConsole.Modules
 			await request.WriteLine($"Name: {targetPlane.Name}");
 			await request.WriteLine($"Chunk size: {targetPlane.ChunkSize}");
 			await request.WriteLine($"Loaded chunks: {targetPlane.LoadedChunks}");
-			await request.WriteLine($"Unloaded chunks: {targetPlane.TotalChunks - targetPlane.LoadedChunks}");
-			await request.WriteLine($"Total chunks: {targetPlane.TotalChunks}");
+			// BUG: This isn't technically correct, as we can have phantom chunks loaded in the primary chunk area that haven't been drawn to, and so aren't on disk.
+			await request.WriteLine($"Unloaded chunks: {targetPlane.TotalSavedChunks - targetPlane.LoadedChunks}");
+			await request.WriteLine($"Total saved chunks: {targetPlane.TotalSavedChunks}");
 			await request.WriteLine($"Primary chunk area size: {targetPlane.PrimaryChunkAreaSize}");
 			await request.WriteLine($"Min unloadeable chunks: {targetPlane.MinUnloadeableChunks}");
 			await request.WriteLine($"Soft loaded chunk limit: {targetPlane.SoftLoadedChunkLimit}");

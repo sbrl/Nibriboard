@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -8,15 +7,12 @@ using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Nibriboard.Client;
+
 using Nibriboard.CommandConsole.Modules;
-using Nibriboard.RippleSpace;
-using Nibriboard.Userspace;
-using Nibriboard.Utilities;
 
 namespace Nibriboard.CommandConsole
 {
-	public class CommandConsole
+	public class CommandConsoleServer
 	{
 		private NibriboardServer server;
 		private TcpListener commandServer;
@@ -25,7 +21,7 @@ namespace Nibriboard.CommandConsole
 
 		private int commandPort;
 
-		public CommandConsole(NibriboardServer inServer, int inCommandPort)
+		public CommandConsoleServer(NibriboardServer inServer, int inCommandPort)
 		{
 			server = inServer;
 			commandPort = inCommandPort;
@@ -41,6 +37,8 @@ namespace Nibriboard.CommandConsole
 
 		public async Task Start()
 		{
+			setupModules();
+
 			commandServer = new TcpListener(IPAddress.IPv6Loopback, server.CommandPort);
 			commandServer.Start();
 			Log.WriteLine("[CommandConsole] Listening on {0}.", new IPEndPoint(IPAddress.IPv6Loopback, server.CommandPort));
@@ -103,8 +101,9 @@ namespace Nibriboard.CommandConsole
 					await request.WriteLine("Nibriboard Server Command Console");
 					await request.WriteLine("=================================");
 					await request.WriteLine("Available commands:");
+					await request.WriteLine();
 					foreach (ICommandModule nextModule in commandModules)
-						await request.WriteLine(nextModule.ToString());
+						await request.WriteLine(nextModule.Description.ToString() + "\n");
 					break;
 
 				default:
@@ -123,6 +122,7 @@ namespace Nibriboard.CommandConsole
 		private void registerModule(ICommandModule newCommandModule)
 		{
 			commandModules.Add(newCommandModule);
+			Log.WriteLine($"[CommandConsole] Registered module {newCommandModule.Description.Name}");
 		}
 		private void setupModules()
 		{

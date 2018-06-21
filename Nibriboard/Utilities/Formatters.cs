@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Nibriboard.Utilities
 {
@@ -13,6 +14,17 @@ namespace Nibriboard.Utilities
 			int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
 			double num = Math.Round(bytes / Math.Pow(1024, place), 1);
 			return (Math.Sign(byteCount) * num).ToString() + suf[place];
+		}
+
+		public static string ToTitleCase(this string str)
+		{
+			char[] strArray = str.ToCharArray();
+			for (int i = 0; i < str.Length; i++)
+			{
+				if (i == 0 || " \t\r\n".ToCharArray().Contains(str[i - 1]))
+					strArray[i] = char.ToUpper(str[i]);
+			}
+			return new string(strArray);
 		}
 	}
 }

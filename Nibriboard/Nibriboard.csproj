@@ -140,7 +140,7 @@
     <Compile Include="Userspace\User.cs" />
     <Compile Include="Client\Messages\PlaneListResponseMessage.cs" />
     <Compile Include="Utilities\Hash.cs" />
-    <Compile Include="CommandConsole\CommandConsole.cs" />
+    <Compile Include="CommandConsole\CommandConsoleServer.cs" />
     <Compile Include="CommandConsole\Modules\CommandVersion.cs" />
     <Compile Include="CommandConsole\ICommandModule.cs" />
     <Compile Include="CommandConsole\CommandRequest.cs" />

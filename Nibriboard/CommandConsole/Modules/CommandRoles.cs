@@ -39,9 +39,9 @@ namespace Nibriboard.CommandConsole.Modules
 				await request.WriteLine("Subcommands:");
 				await request.WriteLine("    list");
 				await request.WriteLine("        Lists all roles");
-				await request.WriteLine("    grant {role-name} {username}");
+				await request.WriteLine("    grant {{{{role-name}}}} {{{{username}}}}");
 				await request.WriteLine("        Adds a role to a user");
-				await request.WriteLine("    revoke {role-name} {username}");
+				await request.WriteLine("    revoke {{{{role-name}}}} {{{{username}}}}");
 				await request.WriteLine("        Removes a role from a user");
 				return;
 			}

@@ -39,11 +39,11 @@ namespace Nibriboard.CommandConsole.Modules
 				await request.WriteLine("Subcommands:");
 				await request.WriteLine("    list");
 				await request.WriteLine("        Lists all users.");
-				await request.WriteLine("    add {username} {password}");
+				await request.WriteLine("    add {{{{username}}}} {{{{password}}}}");
 				await request.WriteLine("        Adds a new user");
-				await request.WriteLine("    checkpassword {username} {password}");
+				await request.WriteLine("    checkpassword {{{{username}}}} {{{{password}}}}");
 				await request.WriteLine("        Checks a user's password");
-				await request.WriteLine("    setpassword {username} {password}");
+				await request.WriteLine("    setpassword {{{{username}}}} {{{{password}}}}");
 				await request.WriteLine("        Resets a user's password");
 				return;
 			}

@@ -35,9 +35,9 @@ namespace Nibriboard.CommandConsole.Modules
 				await request.WriteLine(Description.ToLongString());
 				await request.WriteLine();
 				await request.WriteLine("Subcommands:");
-				await request.WriteLine("    grant {role:Creator|Member} {plane-name} {username}");
+				await request.WriteLine("    grant {{{{role:Creator|Member}}}} {{{{plane-name}}}} {{{{username}}}}");
 				await request.WriteLine("        Grant role on plane-name to username");
-				await request.WriteLine("    revoke {role:Creator|Member} {plane-name} {username} *");
+				await request.WriteLine("    revoke {{{{role:Creator|Member}}}} {{{{plane-name}}}} {{{{username}}}} *");
 				await request.WriteLine("        Revoke username's role on plane-name");
 				return;
 			}

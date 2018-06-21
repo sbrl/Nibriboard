@@ -153,7 +153,7 @@ namespace Nibriboard.RippleSpace
 		/// This is, understandably, a rather expensive operation - so use with caution!
 		/// Also, this count is only accurate to the last save.
 		/// </description>
-		public int TotalChunks {
+		public int TotalSavedChunks {
 			get {
 				return Directory.GetFileSystemEntries(StorageDirectory, "*.chunk").Length;
 			}
