@@ -37,7 +37,7 @@ namespace Nibriboard.CommandConsole.Modules
 				await request.WriteLine("Subcommands:");
 				await request.WriteLine("    grant {{{{role:Creator|Member}}}} {{{{plane-name}}}} {{{{username}}}}");
 				await request.WriteLine("        Grant role on plane-name to username");
-				await request.WriteLine("    revoke {{{{role:Creator|Member}}}} {{{{plane-name}}}} {{{{username}}}} *");
+				await request.WriteLine("    revoke {{{{role:Creator|Member}}}} {{{{plane-name}}}} {{{{username}}}}");
 				await request.WriteLine("        Revoke username's role on plane-name");
 				return;
 			}
@@ -98,7 +98,8 @@ namespace Nibriboard.CommandConsole.Modules
 					break;
 			}
 
-			await request.Write($"{grantUsername} has been granted {grantRoleName} on {grantPlaneName} successfully. Saving - ");
+			await request.WriteLine($"{grantUsername} has been granted {grantRoleName} on {grantPlaneName} successfully.");
+			await request.Write("Saving - ");
 
 			DateTime grantTimeStart = DateTime.Now;
 			await grantPlane.Save(PlaneSavingMode.MetadataOnly);
@@ -149,7 +150,8 @@ namespace Nibriboard.CommandConsole.Modules
 					break;
 			}
 
-			await request.WriteLine($"{username} has been revoked {roleName} on {planeName} successfully. Saving - ");
+			await request.WriteLine($"{username} has been revoked {roleName} on {planeName} successfully.");
+			await request.Write("Saving - ");
 
 			DateTime timeStart = DateTime.Now;
 			await targetPlane.Save(PlaneSavingMode.MetadataOnly);
