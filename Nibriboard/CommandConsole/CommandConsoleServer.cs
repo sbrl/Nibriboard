@@ -29,7 +29,7 @@ namespace Nibriboard.CommandConsole
 			registerModule(new CommandVersion());
 			registerModule(new CommandClients());
 			registerModule(new CommandSave());
-			registerModule(new CommandPlane());
+			registerModule(new CommandPlanes());
 			registerModule(new CommandUsers());
 			registerModule(new CommandRoles());
 			registerModule(new CommandPermissions());

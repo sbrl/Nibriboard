@@ -7,17 +7,17 @@ using Nibriboard.Utilities;
 
 namespace Nibriboard.CommandConsole.Modules
 {
-	public class CommandPlane : ICommandModule
+	public class CommandPlanes : ICommandModule
 	{
 		private NibriboardServer server;
 
 		public ModuleDescription Description { get; } = new ModuleDescription(
-			"plane",
+			"planes",
 			"{{subcommand}}",
 			"Interact with planes"
 		);
 
-		public CommandPlane()
+		public CommandPlanes()
 		{
 		}
 
@@ -30,8 +30,8 @@ namespace Nibriboard.CommandConsole.Modules
 		{
 			if (request.Arguments.Length < 2)
 			{
-				await request.WriteLine("Nibriboard Server Command Console: plane");
-				await request.WriteLine("----------------------------------------");
+				await request.WriteLine("Nibriboard Server Command Console: planes");
+				await request.WriteLine("-----------------------------------------");
 				await request.WriteLine(Description.ToLongString());
 				await request.WriteLine();
 				await request.WriteLine("Subcommands:");
