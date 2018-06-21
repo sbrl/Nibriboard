@@ -129,7 +129,8 @@ namespace Nibriboard.Client
 		/// </summary>
 		public Rectangle CurrentViewPort { get; private set; } = Rectangle.Zero;
 		/// <summary>
-		/// The absolute position in plane-space of this client's 
+		/// The absolute position in plane-space of this client's
+		/// </summary> 
 		public Vector2 AbsoluteCursorPosition { get; private set; } = Vector2.Zero;
 		/// <summary>
 		/// This client's colour. Used to tell multiple clients apart visually.
@@ -182,6 +183,8 @@ namespace Nibriboard.Client
 			
 			try
 			{
+				// FUTURE: Use can reflect here to find the message type class too I think
+				// Hall of mirrors here we come! :D
 				Type messageType = messageEventTypes[eventName];
 				Type jsonNet = typeof(JsonConvert);
 				MethodInfo deserialiserInfo = jsonNet.GetMethods().First(method => method.Name == "DeserializeObject" && method.IsGenericMethod);
