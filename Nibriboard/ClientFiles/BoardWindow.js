@@ -26,6 +26,9 @@ class BoardWindow extends EventEmitter
 		this.maxFps = 60;
 		// The target fps at which we should send cursor updates.
 		this.cursorUpdateFrequency = 5;
+		// The target fps we should update the debug info at.
+		// WARNING: This is expensive - it should not be done too often!
+		this.debugUpdateFrequency = 2;
 		
 		// The radius of other clients' cursors.
 		this.otherCursorRadius = 10;
@@ -163,6 +166,8 @@ class BoardWindow extends EventEmitter
 		
 		// Make the canvas track the window size
 		this.trackWindowSize();
+		
+		this.last_debug_update = 0;
 	}
 	
 	/**
@@ -241,7 +246,10 @@ class BoardWindow extends EventEmitter
 		if(typeof this.chunkCache != "undefined" && this.gridSize != -1)
 			this.chunkCache.update(dt, this.viewport);
 		
-		this.interface.updateDebugInfo(dt);
+		if(new Date() - this.last_debug_update > 1000 / this.debugUpdateFrequency) {
+			this.interface.updateDebugInfo(this.last_dt);
+			this.last_debug_update = +new Date();
+		}
 	}
 	
 	/**
