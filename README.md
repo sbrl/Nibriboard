@@ -2,7 +2,9 @@
 
 > An infinite whiteboard for recording those big ideas.
 
-Nibriboard is a product of an initial idea that I thought I could get done in about 3 weeks in February 2017, but 9 months later I'm going strong, but not quite there yet :P
+Nibriboard is a product of an initial idea that I thought I could get done in about 3 weeks in February 2017, but some considerable time later I'm still going strong, but not quite there yet :P
+
+![A screenshot of what the interface looked like in July 2018.](https://raw.githubusercontent.com/sbrl/Nibriboard/master/screenshots/2018-July.png)
 
 ## Features
  - Infinite whiteboard that can be panned around (limited only by your hard drive space and floating-point number limits)
