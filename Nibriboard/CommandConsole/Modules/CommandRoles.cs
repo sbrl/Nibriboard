@@ -39,6 +39,8 @@ namespace Nibriboard.CommandConsole.Modules
 				await request.WriteLine("Subcommands:");
 				await request.WriteLine("    list");
 				await request.WriteLine("        Lists all roles");
+				await request.WriteLine("    listperms [{{{{format:text|csv]}}}}]");
+				await request.WriteLine("        List all possible permissions that can be assigned to a role. Not to be confused with plane permissions.");
 				await request.WriteLine("    grant {{{{role-name}}}} {{{{username}}}}");
 				await request.WriteLine("        Adds a role to a user");
 				await request.WriteLine("    revoke {{{{role-name}}}} {{{{username}}}}");
@@ -54,6 +56,16 @@ namespace Nibriboard.CommandConsole.Modules
 			await request.WriteLine(string.Join("\n", server.AccountManager.Roles.Select(
 				(RbacRole role) => role.ToString()
 			)));
+		}
+
+		public async Task ListPerms(CommandRequest request) {
+			foreach(RbacPermission perm in server.AccountManager.Permissions) {
+				await request.WriteLine(
+					request.GetArg(2, "text") == "csv" ?
+						$"{perm.Name},{perm.Description}" :
+						$"{perm.Name}: {perm.Description}"
+				);
+			}
 		}
 
 		public async Task Grant(CommandRequest request)

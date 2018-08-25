@@ -363,7 +363,8 @@ namespace Nibriboard.Client
 			}
 
 			Plane newPlane = manager.NibriServer.PlaneManager[message.NewPlaneName];
-			if (!newPlane.HasMember(ConnectedUser.Username)) {
+			Console.WriteLine($"Can view any plane: ${ConnectedUser.HasPermission("view-any-plane")}");
+			if (!newPlane.HasMember(ConnectedUser.Username) || !ConnectedUser.HasPermission("view-any-plane")) {
 				await Send(new ExceptionMessage(
 					403, "Error: You don't have permission to view that plane. Try contacting it's owner!"
 				));
