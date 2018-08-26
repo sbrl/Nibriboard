@@ -6,11 +6,15 @@ using System.Diagnostics;
 using System.Linq;
 using Nibriboard.Utilities;
 using Nibriboard.Userspace;
+using System.Threading;
 
 namespace Nibriboard.RippleSpace
 {
 	public class RippleSpaceManager
 	{
+		private CancellationTokenSource canceller = new CancellationTokenSource();
+		private CancellationToken cancellationToken { get { return canceller.Token; } }
+
 		/// <summary>
 		/// The temporary directory in which we are strong out data.
 		/// </summary>
@@ -143,7 +147,7 @@ namespace Nibriboard.RippleSpace
 		{
 			Log.WriteLine("[RippleSpace/Maintenance] Automated maintenance monkey created.");
 
-			while (true)
+			while (!cancellationToken.IsCancellationRequested)
 			{
 				Stopwatch maintenanceStopwatch = Stopwatch.StartNew();
 
@@ -152,8 +156,19 @@ namespace Nibriboard.RippleSpace
 
 				LastMaintenanceDuration = maintenanceStopwatch.ElapsedMilliseconds;
 
-				await Task.Delay(MaintenanceInternal);
+				try {
+					await Task.Delay(MaintenanceInternal, cancellationToken);
+				} catch (TaskCanceledException) {
+					break;
+				}
 			}
+
+			Log.WriteLine("[RippleSpace/Maintenance] Stopped automated maintenance monkey.");
+		}
+
+		public void StopMaintenanceMonkey()
+		{
+			canceller.Cancel();
 		}
 
 		public async Task<long> Save()

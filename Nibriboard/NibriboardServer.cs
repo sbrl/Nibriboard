@@ -44,7 +44,6 @@ namespace Nibriboard
 
 		private ClientSettings clientSettings;
 
-		private CommandConsoleServer commandServer;
 
 		public readonly int CommandPort = 31587;
 		public readonly int Port = 31586;
@@ -52,6 +51,7 @@ namespace Nibriboard
 		public readonly UserManager AccountManager;
 		public readonly RippleSpaceManager PlaneManager;
 		public readonly NibriboardApp AppServer;
+		public readonly CommandConsoleServer CommandServer;
 
 		public NibriboardServer(string pathToRippleSpace, int inPort = 31586)
 		{
@@ -89,7 +89,7 @@ namespace Nibriboard
 			}, IPAddress.Any, Port);
 
 			// Command Console Server setup
-			commandServer = new CommandConsoleServer(this, CommandPort);
+			CommandServer = new CommandConsoleServer(this, CommandPort);
 		}
 
 		public async Task Start()
@@ -109,7 +109,7 @@ namespace Nibriboard
 		/// </summary>
 		public async Task StartCommandListener()
 		{
-			await commandServer.Start();
+			await CommandServer.Start();
 		}
 
 		public async Task SaveUserData()

@@ -46,14 +46,14 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SharpCompress">
-      <HintPath>..\packages\SharpCompress.0.21.1\lib\net45\SharpCompress.dll</HintPath>
-    </Reference>
     <Reference Include="System.ValueTuple">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="SharpCompress">
+      <HintPath>..\packages\SharpCompress.0.22.0\lib\net45\SharpCompress.dll</HintPath>
+    </Reference>
     <Reference Include="GlidingSquirrel">
-      <HintPath>..\packages\GlidingSquirrel.0.6.3-alpha\lib\net462\GlidingSquirrel.dll</HintPath>
+      <HintPath>..\packages\GlidingSquirrel.0.7.1-alpha\lib\net462\GlidingSquirrel.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -152,6 +152,7 @@
     <Compile Include="CommandConsole\Modules\CommandPermissions.cs" />
     <Compile Include="CommandConsole\Modules\CommandUsers.cs" />
     <Compile Include="CommandConsole\Modules\CommandRoles.cs" />
+    <Compile Include="CommandConsole\Modules\CommandShutdown.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="commit-hash.txt" />

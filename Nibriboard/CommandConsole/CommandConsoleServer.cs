@@ -17,6 +17,13 @@ namespace Nibriboard.CommandConsole
 		private NibriboardServer server;
 		private TcpListener commandServer;
 
+		private CancellationTokenSource canceller = new CancellationTokenSource();
+		private CancellationToken cancellationToken {
+			get {
+				return canceller.Token;
+			}
+		}
+
 		private List<ICommandModule> commandModules = new List<ICommandModule>();
 
 		private int commandPort;
@@ -33,20 +40,35 @@ namespace Nibriboard.CommandConsole
 			registerModule(new CommandUsers());
 			registerModule(new CommandRoles());
 			registerModule(new CommandPermissions());
+			registerModule(new CommandShutdown());
 		}
 
 		public async Task Start()
 		{
 			setupModules();
 
+			
 			commandServer = new TcpListener(IPAddress.IPv6Loopback, server.CommandPort);
+			cancellationToken.Register(commandServer.Stop);
 			commandServer.Start();
 			Log.WriteLine("[CommandConsole] Listening on {0}.", new IPEndPoint(IPAddress.IPv6Loopback, server.CommandPort));
-			while(true)
+			while(!cancellationToken.IsCancellationRequested)
 			{
-				TcpClient nextClient = await commandServer.AcceptTcpClientAsync();
+				TcpClient nextClient;
+				try {
+					nextClient = await commandServer.AcceptTcpClientAsync();
+				}
+				catch (ObjectDisposedException) {
+					break;
+				}
 				ThreadPool.QueueUserWorkItem(handleCommand, nextClient);
 			}
+			Log.WriteLine("[CommandConsole] Stopped listening on {0}", new IPEndPoint(IPAddress.IPv6Loopback, server.CommandPort));
+		}
+
+		public void Stop()
+		{
+			canceller.Cancel();
 		}
 
 		private async void handleCommand(object nextClientObj)
