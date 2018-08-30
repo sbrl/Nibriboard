@@ -86,7 +86,7 @@ namespace Nibriboard
 				FilePrefix = "Nibriboard.obj.client_dist",
 				ClientSettings = clientSettings,
 				NibriServer = this
-			}, IPAddress.Any, Port);
+			}, IPAddress.IPv6Any, Port);
 
 			// Command Console Server setup
 			CommandServer = new CommandConsoleServer(this, CommandPort);
