@@ -99,7 +99,7 @@ namespace Nibriboard.CommandConsole.Modules
 			user.Roles.Add(roleToGrant);
 			await server.SaveUserData();
 
-			await request.WriteLine($"Role {roleToGrant.Name} added to {user.Username} successfully.");
+			await request.WriteLine($"Ok: Role {roleToGrant.Name} added to {user.Username} successfully.");
 		}
 
 		public async Task Revoke(CommandRequest request)
@@ -133,7 +133,7 @@ namespace Nibriboard.CommandConsole.Modules
 			user.Roles.Remove(roleToGrant);
 			await server.SaveUserData();
 
-			await request.WriteLine($"Role {roleToGrant.Name} removed from {user.Username} successfully.");
+			await request.WriteLine($"Ok: Role {roleToGrant.Name} removed from {user.Username} successfully.");
 		}
 	}
 }

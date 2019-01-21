@@ -78,7 +78,7 @@ namespace Nibriboard.CommandConsole.Modules
 
 			server.AccountManager.AddUser(newUsername, password);
 			await server.SaveUserData();
-			await request.WriteLine($"Added user with name {newUsername} successfully.");
+			await request.WriteLine($"Ok: Added user with name {newUsername} successfully.");
 		}
 
 		public async Task CheckPassword(CommandRequest request)
@@ -136,7 +136,7 @@ namespace Nibriboard.CommandConsole.Modules
 
 			setPasswordUser.SetPassword(setPasswordPass);
 			await server.SaveUserData();
-			await request.WriteLine($"Updated password for {setPasswordUser.Username} successfully.");
+			await request.WriteLine($"Ok: Updated password for {setPasswordUser.Username} successfully.");
 		}
 	}
 }

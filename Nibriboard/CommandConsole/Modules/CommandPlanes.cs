@@ -153,7 +153,7 @@ namespace Nibriboard.CommandConsole.Modules
 			await createdPlane.Save(PlaneSavingMode.MetadataOnly);
 
 
-			await request.WriteLine($"Created plane with name {newPlaneName} and chunk size {chunkSize}.");
+			await request.WriteLine($"Ok: Created plane with name {newPlaneName} and chunk size {chunkSize}.");
 		}
 
 		public async Task Status(CommandRequest request)

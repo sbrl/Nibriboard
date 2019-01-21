@@ -98,7 +98,7 @@ namespace Nibriboard.CommandConsole.Modules
 					break;
 			}
 
-			await request.WriteLine($"{grantUsername} has been granted {grantRoleName} on {grantPlaneName} successfully.");
+			await request.WriteLine($"Ok: {grantUsername} has been granted {grantRoleName} on {grantPlaneName} successfully.");
 			await request.Write("Saving - ");
 
 			DateTime grantTimeStart = DateTime.Now;
@@ -150,7 +150,7 @@ namespace Nibriboard.CommandConsole.Modules
 					break;
 			}
 
-			await request.WriteLine($"{username} has been revoked {roleName} on {planeName} successfully.");
+			await request.WriteLine($"Ok: {username} has been revoked {roleName} on {planeName} successfully.");
 			await request.Write("Saving - ");
 
 			DateTime timeStart = DateTime.Now;
