@@ -22,6 +22,12 @@ namespace Nibriboard.CommandConsole
 				    // We want public methods that aren't static - and we don't know what casing the method has
 				    BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase
 				);
+
+			if (method == null) {
+				await request.WriteLine($"Error: No subcommand with the name '{subcommandName}' exists (type 'help' instead for a list).");
+				return;
+			}
+
 			await (Task)method.Invoke(parentCommandModule, new object[] { request });
 		}
 
