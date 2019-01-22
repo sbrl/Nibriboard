@@ -39,6 +39,8 @@ namespace Nibriboard.CommandConsole.Modules
 				await request.WriteLine("        Grant permission on plane-name to username");
 				await request.WriteLine("    revoke {{{{perm:Creator|Member}}}} {{{{plane-name}}}} {{{{username}}}}");
 				await request.WriteLine("        Revoke username's role permission plane-name");
+				await request.WriteLine("    get {{{{plane-name}}}} {{{{username}}}}");
+				await request.WriteLine("        Get a username's permission on the specified plane. Note that a user's role needs to be consulted too to determine whether they can or cannot perform an action.");
 				await request.WriteLine("    set {{{{perm:Creator|Member}}}} {{{{plane-name}}}} {{{{username}}}}");
 				await request.WriteLine("        Set username's perm on plane-name to a specific value, removing all other permissions");
 				return;
@@ -161,6 +163,40 @@ namespace Nibriboard.CommandConsole.Modules
 
 		}
 
+		public async Task Get(CommandRequest request)
+		{
+			if (request.Arguments.Length < 4) {
+				await request.WriteLine("Error: No username specified!");
+				return;
+			}
+			if (request.Arguments.Length < 3) {
+				await request.WriteLine("Error: No plane name specified!");
+				return;
+			}
+			string planeName = request.Arguments[2];
+			string username = request.Arguments[3];
+
+
+			Plane targetPlane = server.PlaneManager.GetByName(planeName);
+			if (targetPlane == null) {
+				await request.WriteLine($"Error: The plane with the name {planeName} could not be found.");
+				return;
+			}
+			if (server.AccountManager.GetByName(username) == null) {
+				await request.WriteLine($"Error: No user could be found with the name {username}.");
+				return;
+			}
+
+			string role = "None";
+			if (targetPlane.Creators.Contains(username))
+				role = "Creator";
+			else if (targetPlane.Members.Contains(username))
+				role = "Member";
+
+			await request.WriteLine(role);
+
+		}
+
 		public async Task Set(CommandRequest request)
 		{
 			if (request.Arguments.Length < 5) {
@@ -179,17 +215,20 @@ namespace Nibriboard.CommandConsole.Modules
 			string planeName = request.Arguments[3];
 			string username = request.Arguments[4];
 
-			if (roleName.ToLower() != "creator" && roleName.ToLower() != "member") {
+			if (roleName.ToLower() != "creator" && roleName.ToLower() != "member")
+			{
 				await request.WriteLine($"Error: Invalid role {roleName}. Valid values: Creator, Member. Is not case-sensitive.");
 				return;
 			}
 
 			Plane targetPlane = server.PlaneManager.GetByName(planeName);
-			if (targetPlane == null) {
+			if (targetPlane == null)
+			{
 				await request.WriteLine($"Error: The plane with the name {planeName} could not be found.");
 				return;
 			}
-			if (server.AccountManager.GetByName(username) == null) {
+			if (server.AccountManager.GetByName(username) == null)
+			{
 				await request.WriteLine($"Error: No user could be found with the name {username}.");
 				return;
 			}
@@ -200,6 +239,5 @@ namespace Nibriboard.CommandConsole.Modules
 			// The grant command handler should be able to handle it from here
 			await Grant(request);
 		}
-
 	}
 }
