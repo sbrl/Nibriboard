@@ -153,6 +153,7 @@
     <Compile Include="CommandConsole\Modules\CommandUsers.cs" />
     <Compile Include="CommandConsole\Modules\CommandRoles.cs" />
     <Compile Include="CommandConsole\Modules\CommandShutdown.cs" />
+    <Compile Include="CommandConsole\Modules\CommandStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="commit-hash.txt" />

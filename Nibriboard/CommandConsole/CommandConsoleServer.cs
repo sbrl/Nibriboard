@@ -34,6 +34,7 @@ namespace Nibriboard.CommandConsole
 			commandPort = inCommandPort;
 
 			registerModule(new CommandVersion());
+			registerModule(new CommandStatus());
 			registerModule(new CommandClients());
 			registerModule(new CommandSave());
 			registerModule(new CommandPlanes());
