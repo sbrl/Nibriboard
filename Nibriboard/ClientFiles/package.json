@@ -17,7 +17,7 @@
     "visvalingam-simplifier": "^0.1.5"
   },
   "devDependencies": {
-    "acorn": "^7.0.0",
+    "acorn": "^7.1.1",
     "file-loader": "^4.2.0",
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.7"
