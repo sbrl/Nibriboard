@@ -6,7 +6,7 @@
   "main": "index.js",
   "dependencies": {
     "color": "^3.1.2",
-    "cuid": "^2.1.8",
+    "cuid": "^2.1.6",
     "dialog-polyfill": "^0.5.0",
     "event-emitter-es6": "1.*",
     "favicon-notification": "0.*",
