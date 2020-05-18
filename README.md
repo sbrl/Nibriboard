@@ -39,12 +39,14 @@ Note that if you're intending to use Nibriboard over the internet or an untruste
 
 This may or may not work with Ubuntu's provided mono packages, though was tested with those provided by mono-project. Note: if for whatever reason you don't have `mono-roslyn` (which provides `msbuild`), use `mono-xbuild` and `xbuild` in their respective places.
 
-* packages: `sudo apt install mono-devel mono-roslyn libnewtonsoft-json-cil-dev`
+* packages: `sudo apt install mono-devel mono-roslyn`
 * nuget for dependencies: `wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe` (note: `msbuild -restore` did not work)
 * `mono nuget.exe restore`
 * `msbuild`
 
 Finally, run with `mono Nibriboard/bin/Debug/Nibriboard.exe`
+
+> *If you have any trouble with nuget and the JSON dependencies, there's a package you can try installing: `libnewtonsoft-json-cil-dev`*
 
 ## Credits
  - Main code - [Starbeamrainbowlabs](https://starbeamrainbowlabs.com/)
