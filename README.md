@@ -22,16 +22,31 @@ Nibriboard is a product of an initial idea that I thought I could get done in ab
 
 
 ## Getting Started
+
 Nibriboard is _not_ ready for general consumption just yet. It's got no authentication yet for one! If you'd like to play around with it, then you'll need the following:
 
  - git
  - Node.JS + npm
- - mono if you're on Linux / macOS / etc.
+ - mono if you're on Linux / macOS / etc. (See below for Ubuntu 20.04 instructions)
  
-Once you've verified that you've got the above installed and in your PATH, simply run `msbuild` in the root of this repository to build Nibriboard. Windows users may need to use a _Visual Studio Command Prompt_ if the `msbuild` command isn't in your `PATH` environment variable.
+Once you've verified that you've got the above installed and in your PATH, simply run `msbuild` (or `dotnet msbuild`, or `xbuild`) in the root of this repository to build Nibriboard.
+
+Windows users may need to use a _Visual Studio Command Prompt_ if the `msbuild` command isn't in your `PATH` environment variable.
 
 Note that if you're intending to use Nibriboard over the internet or an untrusted network, you should proxy it behind nginx to provide TLS, as Nirbiboard doesn't handle HTTPS on it's own.
 
+### Getting Started with Ubuntu 20.04 (and probably others)
+
+This may or may not work with Ubuntu's provided mono packages, though was tested with those provided by mono-project. Note: if for whatever reason you don't have `mono-roslyn` (which provides `msbuild`), use `mono-xbuild` and `xbuild` in their respective places.
+
+* packages: `sudo apt install mono-devel mono-roslyn`
+* nuget for dependencies: `wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe` (note: `msbuild -restore` did not work)
+* `mono nuget.exe restore`
+* `msbuild`
+
+Finally, run with `mono Nibriboard/bin/Debug/Nibriboard.exe`
+
+> *If you have any trouble with nuget and the JSON dependencies, there's a package you can try installing: `libnewtonsoft-json-cil-dev`*
 
 ## Credits
  - Main code - [Starbeamrainbowlabs](https://starbeamrainbowlabs.com/)
